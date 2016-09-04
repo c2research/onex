@@ -36,3 +36,5 @@ node_modules/
 # Python
 env/
 *.pyc
+
+*.swp

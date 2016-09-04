@@ -10,4 +10,12 @@ Open your favorite Terminal and run the following command.
 $ pip install -r requirements.txt
 ```
 
-This will install neccessary dependencies for the server. You can also install in a virtualenv but please don't commit the virtualenv folder to the repo.
+This will install neccessary dependencies for the server. You can also install in a virtualenv.
+
+## Run the server
+
+Run the following command to start the server.
+
+```
+$ python run.py
+```
