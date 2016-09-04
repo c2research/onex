@@ -29,6 +29,10 @@
 *.app
 
 # Node
-node_modules/*
+node_modules/
 .DS_Store
 .tags
+
+# Python
+env/
+*.pyc
