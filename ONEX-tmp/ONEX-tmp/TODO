@@ -1,0 +1,2 @@
+- Refactor SpringOutlier to use new TimeSeriesSetSlice class.
+- Switch SpringOutlier to new DTW with dropout and better types.
