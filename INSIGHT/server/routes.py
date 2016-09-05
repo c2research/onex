@@ -35,6 +35,7 @@ def api_sample_query():
 
 
 @app.route('/find')
+def api_find_best_match():
     dataset_id = request.args.get('dataset', None)
     if dataset_id:
         pass
