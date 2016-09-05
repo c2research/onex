@@ -4,6 +4,10 @@ var InsightStore = require('./../flux/stores/InsightStore');
 var InsightConstants = require('./../flux/constants/InsightConstants');
 var InsightActions = require('./../flux/actions/InsightActions');
 
+var InsightBanner = require('./InsightBanner');
+
+var resizeId;
+
 /**
  * Retrieve the current data from the store
  * @return {object}
@@ -13,6 +17,7 @@ function getState() {
     data: InsightStore.getStateData()
   };
 }
+
 
 /**
  * The InsightPlatform will layout the framework of the app, and action
@@ -48,10 +53,11 @@ var InsightPlatform = React.createClass({
      InsightStore.removeChangeListener(this._onChange);
    },
    render: function() {
-     console.log("rendering")
      return (
-        <h1> insight </h1>
-      );
+       <div className="insightPlatform">
+         <InsightBanner baseTitle="insight" />
+        </div>
+     );
    },
 
    /** private functions **/

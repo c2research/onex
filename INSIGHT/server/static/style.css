@@ -1,3 +1,32 @@
-h1 {
-  color: red;
+body {
+  background: #FFF;
+  font-family: "Helvetica Neue",sans-serif, Helvetica, Arial;
+  font-size: 15px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 100%;
+  overflow-x: hidden;
+  max-height: : 100%;
+  overflow-y: hidden;
+}
+.insightPlatform {
+  height: 100%;
+  border: 0%;
+  margin: 0;
+}
+div.insightBanner {
+  position: fixed;
+  width: 100%;
+  left: 0;
+  background-color: rgba(230, 230, 230, 0.35);
+  -webkit-box-shadow: 0px 1px 2px 0px rgba(0,49,196,1);
+  -moz-box-shadow: 0px 1px 2px 0px rgba(0,49,196,1);
+  box-shadow: 0px 1px 2px 0px rgba(0,49,196,1);
+}
+h1.insightBanner {
+  text-align: center;
+  font-size: 5em;
+  font-weight: lighter;
+  border-bottom: none;
+  margin: 0;
 }

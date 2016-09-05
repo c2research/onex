@@ -3,8 +3,8 @@ var InsightConstants = require('./../constants/InsightConstants');
 
 var InsightActions = {
   /**
-   * @param  {number} index
-   * exampe function
+   * @param {number} index
+   * example function
    */
   displayTimeSeries: function(index) {
 	  AppDispatcher.dispatch({
