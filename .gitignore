@@ -33,6 +33,17 @@ node_modules/
 .DS_Store
 .tags
 
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+bundle.js
+
 # Python
 env/
 *.pyc
