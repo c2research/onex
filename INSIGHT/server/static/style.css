@@ -30,3 +30,16 @@ h1.insightBanner {
   border-bottom: none;
   margin: 0;
 }
+div.controlPanel {
+  z-index: 100;
+  position: fixed;
+  left: 1%;
+  top: 5%;
+  bot: 5%;
+  height: 90%;
+  min-width: 30px;
+  width: 200px;
+  background-color: rgba(230, 230, 230, 0.55);
+  border-color: black;
+  border-radius: 4px;
+}

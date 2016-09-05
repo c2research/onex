@@ -32,7 +32,22 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	getStateData: function() {
 		return 5;
+	},
+
+	/**
+	 * @return {boolean} - if app should render the control panel
+	 */
+	getControlPanelVisible: function() {
+		return data.controlPanelVisible;
+	},
+
+	/**
+	 * @param {boolean} value - if app should render the control panel
+	 */
+	setControlPanelVisible: function(value) {
+		data.controlPanelVisible = value;
 	}
+
 });
 
 // Register callback to handle all updates
@@ -47,6 +62,8 @@ AppDispatcher.register(function(action) {
 			//calculateDimensions()
 			//InsightStore.emitChange();
 			break;
+		case InsightConstants.CONTROL_PANEL_VISIBLE:
+			//if(InsightStore.emitChange();
 		default:
 		  // no op
 		}

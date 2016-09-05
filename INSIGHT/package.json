@@ -4,12 +4,11 @@
   "description": "Web app for time series exploration",
   "main": "app.js",
   "scripts": {
-    "build": "browserify -t [ babelify --presets [ react ] ] app/js/app.js -o server/static/js/bundle.js",
-    "start": "python run.py"
+    "build": "browserify -t [ babelify --presets [ react ] ] app/js/app.js -o server/static/js/bundle.js"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "babel-preset-react": "^6.11.1",
     "babelify": "^7.3.0",
     "browserify": "^13.1.0",
@@ -17,5 +16,8 @@
     "keymirror": "^0.1.1",
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
+  },
+  "dependencies": {
+    "object-assign": "^4.1.0"
   }
 }

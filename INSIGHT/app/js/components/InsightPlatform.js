@@ -5,6 +5,7 @@ var InsightConstants = require('./../flux/constants/InsightConstants');
 var InsightActions = require('./../flux/actions/InsightActions');
 
 var InsightBanner = require('./InsightBanner');
+var InsightControlPanel = require('./InsightControlPanel')
 
 var resizeId;
 
@@ -38,6 +39,10 @@ var InsightPlatform = React.createClass({
    _onChange: function() {
      this.setState(getState());
    },
+   componentWillMount: function() {
+     //set initial state values
+     this.setState(getState());
+   },
    componentDidMount: function() {
      //add event for resizing
      window.addEventListener('resize', this._eventListenerResize);
@@ -53,10 +58,12 @@ var InsightPlatform = React.createClass({
      InsightStore.removeChangeListener(this._onChange);
    },
    render: function() {
+     var visible = this.state.controlPanelVisible;
+
      return (
        <div className="insightPlatform">
          <InsightBanner baseTitle="insight" />
-        </div>
+       </div>
      );
    },
 
