@@ -22,11 +22,11 @@ $ python run.py
 
 ## To build application 
 
-### builds and bundles react app into plain js
+Builds and bundles react app into plain js
 ```
 $ npm run build
 ```
-### alternate command to start the server
+Alternate command to start the server
 ```
 $ npm start
 ```
