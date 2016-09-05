@@ -19,3 +19,14 @@ Run the following command to start the server.
 ```
 $ python run.py
 ```
+
+## To build application 
+
+### builds and bundles react app into plain js
+```
+$ npm run build
+```
+### alternate command to start the server
+```
+$ npm start
+```
