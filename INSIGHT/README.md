@@ -26,7 +26,4 @@ Builds and bundles react app into plain js
 ```
 $ npm run build
 ```
-Alternate command to start the server
-```
-$ npm start
-```
+
