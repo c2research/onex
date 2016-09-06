@@ -6,7 +6,11 @@ var assign = require('object-assign');
 var CHANGE_EVENT = 'change';
 
 var data = {
-	controlPanelVisible: true
+	controlPanelVisible: true,
+	datasets: [],
+	query: null,
+	selectedDatasetIndex: -1,
+	selectedDataset: null
 };
 
 
@@ -51,7 +55,44 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	setControlPanelVisible: function(value) {
 		data.controlPanelVisible = value;
-	}
+	},
+
+	/** talking to server with ajax calls **/
+	/**
+	 * @return {Object} - the array of dataset items
+	 */
+	getDatasetList: function() {
+		$.ajax({
+			url: '/_datasetlist',
+			dataType: 'json',
+			success: function(response) {
+				data.datasetlist = response;
+				this.emitChange();
+			},
+			error: function(xhr) {
+				console.log("error in outlierUpdateChart");
+			}
+		});
+	},
+
+	/**
+	 * @return {JSONObject} - a list of points
+	 */
+	getDataset: function(index) {
+		$.ajax({
+			url: '/_datasetlist',
+			data: index,
+			dataType: 'json',
+			success: function(response) {
+				data.selectedDataset = index;
+				data.datasetlist = response;
+				this.emitChange();
+			},
+			error: function(xhr) {
+				console.log("error in outlierUpdateChart");
+			}
+		});
+	},
 
 });
 

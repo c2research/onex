@@ -60,11 +60,12 @@ var InsightPlatform = React.createClass({
    },
    render: function() {
      var visible = this.state.controlPanelVisible;
+     var width = 350;
 
      return (
        <div className="insightPlatform">
          <InsightBanner baseTitle="insight" />
-         <InsightControlPanel visible={visible} height="500px" width="300px" />
+         <InsightControlPanel visible={visible} width={width} />
        </div>
      );
    },
