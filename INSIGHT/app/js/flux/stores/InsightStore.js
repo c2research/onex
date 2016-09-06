@@ -5,6 +5,11 @@ var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
 
+var data = {
+	controlPanelVisible: true
+};
+
+
 var InsightStore = assign({}, EventEmitter.prototype, {
 	/**
 	 * emits a change event, which is registered in view controller

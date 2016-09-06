@@ -15,7 +15,8 @@ var resizeId;
  */
 function getState() {
   return {
-    data: InsightStore.getStateData()
+    data: InsightStore.getStateData(),
+    controlPanelVisible: InsightStore.getControlPanelVisible()
   };
 }
 
@@ -63,6 +64,7 @@ var InsightPlatform = React.createClass({
      return (
        <div className="insightPlatform">
          <InsightBanner baseTitle="insight" />
+         <InsightControlPanel visible={visible} height="500px" width="300px" />
        </div>
      );
    },
