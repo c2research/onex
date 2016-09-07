@@ -7,9 +7,12 @@ var InsightDistanceDropdown = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
+     var distanceList = this.props.distanceList;
+     var distanceCurrentIndex = this.props.distanceCurrentIndex;
+
      var panelJSX =
-     <div>
-        <h2> Distance Dropdown </h2>
+     <div className="section">
+        <h2> Distance </h2>
      </div>;
 
      return <div> {panelJSX} </div>;

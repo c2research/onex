@@ -15,11 +15,19 @@ var resizeId;
  */
 function getState() {
   return {
-    data: InsightStore.getStateData(),
-    controlPanelVisible: InsightStore.getControlPanelVisible()
+    controlPanelVisible: InsightStore.getControlPanelVisible(),
+    datasetList: InsightStore.getDatasetList(),
+    datasetCurrentSet: InsightStore.getDatasetCurrentSet(),
+    datasetCurrentIndex: InsightStore.getDatasetCurrentIndex(),
+    queryList: InsightStore.getQueryList(),
+    queryCurrentIndex: InsightStore.getQueryCurrentIndex(),
+    distanceList: InsightStore.getDistanceList(),
+    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
+    thresholdRange: InsightStore.getThresholdRange(),
+    thresholdCurrent: InsightStore.getThresholdCurrent(),
+    thresholdStep: InsightStore.getThresholdStep()
   };
 }
-
 
 /**
  * The InsightPlatform will layout the framework of the app, and action
@@ -59,13 +67,22 @@ var InsightPlatform = React.createClass({
      InsightStore.removeChangeListener(this._onChange);
    },
    render: function() {
-     var visible = this.state.controlPanelVisible;
-     var width = 350;
+     var width = 275;
 
      return (
        <div className="insightPlatform">
          <InsightBanner baseTitle="insight" />
-         <InsightControlPanel visible={visible} width={width} />
+         <InsightControlPanel visible={this.state.controlPanelVisible}
+                              width={width}
+                              datasetList={this.state.datasetList}
+                              datasetCurrentIndex={this.state.datasetCurrentIndex}
+                              queryList={this.state.queryList}
+                              queryCurrentIndex={this.state.queryCurrentIndex}
+                              distanceList={this.state.distanceList}
+                              distanceCurrentIndex={this.state.distanceCurrentIndex}
+                              thresholdRange={this.state.thresholdRange}
+                              thresholdCurrent={this.state.thresholdCurrent}
+                              thresholdStep={this.state.thresholdStep} />
        </div>
      );
    },

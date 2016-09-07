@@ -8,7 +8,7 @@ var InsightRandomQueryButton = React.createClass({
      var divStyle = {width: this.props.width};
 
      var panelJSX =
-     <div>
+     <div className="section">
         <h2> Random Query </h2>
      </div>;
 

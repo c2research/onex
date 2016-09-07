@@ -7,9 +7,12 @@ var InsightQueryDropdown = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
+     var queryList=this.props.queryList;
+     var queryCurrentIndex=this.props.queryCurrentIndex;
+
      var panelJSX =
-     <div>
-        <h2> Query Dropdown </h2>
+     <div className="section">
+        <h2> Query </h2>
      </div>;
 
      return <div> {panelJSX} </div>;
