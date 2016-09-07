@@ -57,3 +57,11 @@ h2 {
 h2:hover {
   border-bottom: 1px solid #A74AC7	;
 }
+input {
+  margin-right: 10px;
+  margin-left: 25px;
+}
+.sliderDiv {
+  align-self: center;
+  text-align: center;
+}

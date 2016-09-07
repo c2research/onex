@@ -60,10 +60,10 @@ var InsightActions = {
   /**
    * initiates function seq to get a new random query
    */
-  selectThreshold: function(index) {
+  selectThreshold: function(val) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_THRESHOLD,
-      id: index
+      id: val
     });
   }
 };

@@ -186,7 +186,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			url: '/_datasetlist',
 			dataType: 'json',
 			success: function(response) {
-				data.datasetList = response;
+				var endlist = [];
+				for (var i = 0; i < response.size(); i++) {
+					//format for dropdown
+					endlist.push({value: i, label: response[i]});
+				}
+				data.datasetList = endlist;
 				this.emitChange();
 			},
 			error: function(xhr) {
@@ -306,6 +311,8 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.SELECT_DISTANCE:
 			break;
 		case InsightConstants.SELECT_THRESHOLD:
+			InsightStore.setThresholdCurrent(action.id);
+			InsightStore.emitChange();
 			break;
 
 		default:
