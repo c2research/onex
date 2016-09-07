@@ -17,7 +17,7 @@ var data = {
 	queryCurrentIndex: -1,
 	distanceList: [],
 	distanceCurrentIndex: 0,
-	thresholdRange: [0.001, 1.000],
+	thresholdRange: [0.000, 1.000],
 	thresholdCurrent: 0.01,
 	thresholdStep: 0.001
 };

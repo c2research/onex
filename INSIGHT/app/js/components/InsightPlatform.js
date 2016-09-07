@@ -5,7 +5,8 @@ var InsightConstants = require('./../flux/constants/InsightConstants');
 var InsightActions = require('./../flux/actions/InsightActions');
 
 var InsightBanner = require('./InsightBanner');
-var InsightControlPanel = require('./InsightControlPanel')
+var InsightControlPanel = require('./InsightControlPanel');
+var InsightView = require('./InsightView');
 
 var resizeId;
 
@@ -83,6 +84,7 @@ var InsightPlatform = React.createClass({
                               thresholdRange={this.state.thresholdRange}
                               thresholdCurrent={this.state.thresholdCurrent}
                               thresholdStep={this.state.thresholdStep} />
+         <InsightView />
        </div>
      );
    },

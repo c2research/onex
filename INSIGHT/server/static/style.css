@@ -65,3 +65,9 @@ input {
   align-self: center;
   text-align: center;
 }
+.chart {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+}
