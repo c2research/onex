@@ -1,11 +1,15 @@
 <!doctype html>
 <html>
 <head>
-  <title>INSIGHT</title>
+  <title>Insight</title>
+  <link rel=stylesheet type=text/css href="{{ url_for('static', filename='resources/font-awesome-4.6.3/css/font-awesome.min.css') }}">
   <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+
+  <link rel="stylesheet" href="https://unpkg.com/react-select/dist/react-select.css">
+	<link rel="stylesheet" href="https://unpkg.com/react-virtualized/styles.css">
+	<link rel="stylesheet" href="https://unpkg.com/react-virtualized-select/styles.css">
 </head>
 <body>
-
   <div id="app"></div>
   <script src="{{ url_for('static', filename='js/bundle.js') }}"></script>
 </body>
