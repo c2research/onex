@@ -122,7 +122,7 @@ public:
      * \param otherSeq index of a sequence in the other dataset.
      * \param otherInt an interval in the selected sequence in the other dataset.
      * \param metric a metric object that performs the distance calculation.
-     * \return the calculated distance.
+     * \return the calculated distance. If the arguments are invalide, return -1.
      */
     seqitem_t distance(int seq, TimeInterval interval,
                   GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
@@ -137,6 +137,8 @@ public:
      * \param otherInt an interval in the selected sequence in the other dataset.
      * \param strat search strategy.
      * \param warps TODO(Cuong): what is this?
+     * \return a kBest struct containing information of the best-matched sequence.
+     *         if the arguments are invalid, the seq field of this struct is -1.
      */
     kBest similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                  SearchStrategy strat=EBOTTOM_TOP, int warps=-1);

@@ -62,7 +62,7 @@ public:
                   TimeInterval inta, TimeInterval intb,
                   SeriesDistanceMetric *metric);
 
-    int similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
+    kBest similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
     int outlier(int dbindex, int length);
 
     // Meta and other commands.

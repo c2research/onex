@@ -181,7 +181,7 @@ seqitem_t OnlineSession::findDist(int indexa, int indexb,
     return datasets[indexa]->distance(seqa, inta, datasets[indexb], seqb, intb, metric);
 }
 
-int OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat, int r)
+kBest OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat, int r)
 {
     if (strat == -1)
         strat = EHIGHER_LOWER;
@@ -189,11 +189,7 @@ int OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint,
     if (r == -1)
         r = defaultR;
 
-    kBest best = datasets[dbindex]->similar(datasets[qindex], qseq, qint, (SearchStrategy) strat, r);
-    getout() << "Distance: " << best.dist << endl;
-    printint(dbindex, best.seq, best.interval);
-
-    return 0;
+    return datasets[dbindex]->similar(datasets[qindex], qseq, qint, (SearchStrategy) strat, r);
 }
 
 int OnlineSession::outlier(int dbindex, int length)
@@ -406,6 +402,7 @@ int OnlineSession::run(istream &in, bool interactive)
     SeriesDistanceMetric *metric;
     double darg1;
     GroupableTimeSeriesSet *t;
+    kBest best;
 
     clock_t time;
 
@@ -567,14 +564,14 @@ int OnlineSession::run(istream &in, bool interactive)
 
                 checkIndex(iarg1);
                 checkIndex(iarg2);
-                t = datasets[iarg1];
         //        getout() << "Searching similar sequences for Time Series Set " << iarg1 << ":" << t->getName();
-                t = datasets[iarg2];
           //      getout() << ", query string at " << iarg3 << " in dataset " << iarg2 << ":" << t->getName();
             //    getout() << " in interval [" << iarg4 << "," << iarg5 << "] with strategy="
               //       << iarg6 << "." << endl;
 
-                similar(iarg1, iarg2, iarg3, TimeInterval(iarg4, iarg5), iarg6);
+                best = similar(iarg1, iarg2, iarg3, TimeInterval(iarg4, iarg5), iarg6);
+                getout() << "Distance: " << best.dist << endl;
+                printint(iarg1, best.seq, best.interval);
 
                 break;
 
