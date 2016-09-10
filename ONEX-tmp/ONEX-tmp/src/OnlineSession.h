@@ -57,7 +57,7 @@ public:
 
     // Distance metric and search related commands.
     int printdists(void);
-    int printdist(int indexa, int indexb,
+    seqitem_t findDist(int indexa, int indexb,
                   int seqa, int seqb,
                   TimeInterval inta, TimeInterval intb,
                   SeriesDistanceMetric *metric);

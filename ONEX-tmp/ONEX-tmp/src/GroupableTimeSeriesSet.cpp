@@ -161,13 +161,13 @@ bool GroupableTimeSeriesSet::validGrouping(void)
     return grouping != NULL;
 }
 
-void GroupableTimeSeriesSet::distance(int seq, TimeInterval interval,
+seqitem_t GroupableTimeSeriesSet::distance(int seq, TimeInterval interval,
                                       GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                                       SeriesDistanceMetric *metric)
 {
     if (!valid() || !other->valid()) {
         cerr << "Warning: Attempted to test distance from invalid dataset." << endl;
-        return;
+        return -1;
     }
 
     TimeSeriesInterval a = dataset->getInterval(seq, interval);
@@ -175,32 +175,31 @@ void GroupableTimeSeriesSet::distance(int seq, TimeInterval interval,
 
     seqitem_t dist = metric->run(a, b, INF);
 
-    cout << "Distance between sequences: " << dist << endl;
+    return dist;
 }
 
-void GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
+kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                                      SearchStrategy strat, int warps)
 {
+    kBest best;
+    best.seq = -1;
     if (!valid() || !other->valid()) {
         cerr << "Warning: Attempted to find similarities using an invalid database." << endl;
-        return;
+        return best;
     }
 
     if (grouping == NULL) {
         cerr << "Warning: Attempted to find similarities on ungrouped dataset." << endl;
-        return;
+        return best;
     }
 
-    kBest best = grouping->getBestInterval(otherInt.length(),
+    best = grouping->getBestInterval(otherInt.length(),
                                            other->dataset->getRawData(otherSeq, otherInt.start),
                                            strat, warps);
-
+    return best;
   //  cout << "Found most similar interval." << endl;
  //   cout << "Sequence number and interval: " << best.seq << "@"
    //                   << "[" << best.interval.start << ", " << best.interval.end << "]." << endl;
-    cout << "Distance: " << best.dist << endl;
- //   cout << "Sequence: " << endl;
-    dataset->printInterval(cout, best.seq, best.interval);
 }
 
 void GroupableTimeSeriesSet::outlier(int length)

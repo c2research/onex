@@ -122,9 +122,9 @@ public:
      * \param otherSeq index of a sequence in the other dataset.
      * \param otherInt an interval in the selected sequence in the other dataset.
      * \param metric a metric object that performs the distance calculation.
+     * \return the calculated distance.
      */
-    // TODO(Cuong): make this function return something
-    void distance(int seq, TimeInterval interval,
+    seqitem_t distance(int seq, TimeInterval interval,
                   GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                   SeriesDistanceMetric *metric);
 
@@ -138,7 +138,7 @@ public:
      * \param strat search strategy.
      * \param warps TODO(Cuong): what is this?
      */
-    void similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
+    kBest similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                  SearchStrategy strat=EBOTTOM_TOP, int warps=-1);
 
     void outlier(int length);

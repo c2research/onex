@@ -173,14 +173,12 @@ int OnlineSession::printdists(void)
     return 0;
 }
 
-int OnlineSession::printdist(int indexa, int indexb,
+seqitem_t OnlineSession::findDist(int indexa, int indexb,
               int seqa, int seqb,
               TimeInterval inta, TimeInterval intb,
               SeriesDistanceMetric *metric)
 {
-    datasets[indexa]->distance(seqa, inta, datasets[indexb], seqb, intb, metric);
-
-    return 0;
+    return datasets[indexa]->distance(seqa, inta, datasets[indexb], seqb, intb, metric);
 }
 
 int OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat, int r)
@@ -191,7 +189,9 @@ int OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint,
     if (r == -1)
         r = defaultR;
 
-    datasets[dbindex]->similar(datasets[qindex], qseq, qint, (SearchStrategy) strat, r);
+    kBest best = datasets[dbindex]->similar(datasets[qindex], qseq, qint, (SearchStrategy) strat, r);
+    getout() << "Distance: " << best.dist << endl;
+    printint(dbindex, best.seq, best.interval);
 
     return 0;
 }
@@ -596,7 +596,7 @@ int OnlineSession::run(istream &in, bool interactive)
                 getout() << "Using distance metric " << metric->name << " to find distance:" << endl;
                 getout() << "A: DB:" << iarg1 << ", " << iarg2 << "@[" << iarg3 << "," << iarg4 << "]." << endl;
                 getout() << "B: DB:" << iarg5 << ", " << iarg6 << "@[" << iarg7 << "," << iarg8 << "]." << endl;
-                getout() << "Distance: " << printdist(iarg1, iarg5,
+                getout() << "Distance: " << findDist(iarg1, iarg5,
                                                       iarg2, iarg6,
                                                       TimeInterval(iarg3, iarg4), TimeInterval(iarg7, iarg8),
                                                       metric) << endl;
