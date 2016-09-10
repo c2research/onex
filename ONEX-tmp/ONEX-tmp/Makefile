@@ -17,8 +17,8 @@ INC=src
 DATA=data
 
 # Source and header files.
-SRC_OBJS=main trillionDTW util deque TimeSeries OnlineSession Grouping
-INC_OBJS=     trillionDTW util deque TimeSeries OnlineSession Grouping
+SRC_OBJS=main trillionDTW util deque TimeSeries OnlineSession Grouping GroupableTimeSeriesSet
+INC_OBJS=     trillionDTW util deque TimeSeries OnlineSession Grouping GroupableTimeSeriesSet
 
 OBJ_PATHS=$(addprefix $(SRC)/, $(addsuffix .o, $(SRC_OBJS)))
 SRC_PATHS=$(addprefix $(SRC)/, $(addsuffix .cpp, $(SRC_OBJS)))

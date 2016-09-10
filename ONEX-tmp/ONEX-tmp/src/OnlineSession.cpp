@@ -10,257 +10,6 @@
 #include <stdio.h>
 #include <time.h>
 
-GroupableTimeSeriesSet::GroupableTimeSeriesSet(OnlineSession *session,
-                                               TimeSeriesSet *dataset,
-                                               TimeSeriesSetGrouping *grouping)
-{
-    this->session = session;
-    this->dataset = dataset;
-    this->grouping = grouping;
-}
-
-GroupableTimeSeriesSet::GroupableTimeSeriesSet(const GroupableTimeSeriesSet &other)
-{
-    this->session = other.session;
-
-    this->dataset = NULL;
-    this->grouping = NULL;
-
-    if (other.dataset != NULL)
-        this->dataset = new TimeSeriesSet(*other.dataset);
-
-    if (other.grouping != NULL)
-        this->grouping = new TimeSeriesSetGrouping(*other.grouping);
-}
-
-GroupableTimeSeriesSet::~GroupableTimeSeriesSet(void)
-{
-    if (dataset != NULL)
-        delete dataset;
-
-    if (grouping != NULL)
-        delete grouping;
-}
-
-void GroupableTimeSeriesSet::resetDB(void)
-{
-    resetGrouping();
-
-    if (dataset != NULL)
-        delete dataset;
-
-    dataset = NULL;
-}
-
-bool GroupableTimeSeriesSet::valid(void)
-{
-    if (dataset == NULL)
-        return false;
-
-    return dataset->valid();
-}
-
-int GroupableTimeSeriesSet::dbFromFile(const char *path)
-{
-    resetDB();
-
-    dataset = new TimeSeriesSet(path);
-
-    if (!dataset->valid()) {
-        session->geterr() << "Warning: Failed to read file. Dataset not added." << endl;
-        delete dataset;
-        dataset = NULL;
-    }
-
-    return (valid())? 0 : -1;
-}
-
-int GroupableTimeSeriesSet::dbToFile(const char *path)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to save invalid dataset." << endl;
-        return -1;
-    }
-
-    return dataset->toFile(path);
-}
-
-int GroupableTimeSeriesSet::odbFromFile(const char *path, int seqCount, int seqLength, int del)
-{
-    resetDB();
-
-    dataset = new TimeSeriesSet(path, seqCount, seqLength, del);
-
-    if (!dataset->valid()) {
-        session->geterr() << "Warning: Failed to read file. Dataset not added." << endl;
-        delete dataset;
-        dataset = NULL;
-    }
-
-    return (valid())? 0 : -1;
-}
-
-int GroupableTimeSeriesSet::odbToFile(const char *path)
-{
-    session->geterr() << "Warning: Saving to old file format is temporarily disabled." << endl;
-
-    return -1;
-}
-
-int GroupableTimeSeriesSet::groupsToFile(const char *path)
-{
-    if (!validGrouping()) {
-        session->geterr() << "Warning: Attempted to save grouping before generating groups." << endl;
-        return -1;
-    }
-
-    return grouping->toFile(path);
-}
-
-int GroupableTimeSeriesSet::groupsFromFile(const char *path)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to load groups for invalid dataset." << endl;
-        return -1;
-    }
-
-    if (grouping != NULL) {
-        resetGrouping();
-    }
-
-    grouping = new TimeSeriesSetGrouping(dataset);
-
-    int res = grouping->fromFile(path);
-    if (res == 0)
-        grouping->genEnvelopes();
-
-    return res;
-}
-
-void GroupableTimeSeriesSet::normalize(void)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to normalize invalid dataset." << endl;
-        return;
-    }
-
-    dataset->normalize();
-}
-
-void GroupableTimeSeriesSet::genGrouping(seqitem_t ST)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to group invalid dataset." << endl;
-        return;
-    }
-
-    resetGrouping();
-
-    grouping = new TimeSeriesSetGrouping(dataset, ST);
-    grouping->group();
-    grouping->genEnvelopes();
-}
-
-void GroupableTimeSeriesSet::resetGrouping(void)
-{
-    if (grouping != NULL)
-        delete grouping;
-
-    grouping = NULL;
-}
-
-bool GroupableTimeSeriesSet::validGrouping(void)
-{
-    return grouping != NULL;
-}
-
-void GroupableTimeSeriesSet::distance(int seq, TimeInterval interval,
-                                      GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
-                                      SeriesDistanceMetric *metric)
-{
-    if (!valid() || !other->valid()) {
-        session->geterr() << "Warning: Attempted to test distance from invalid dataset." << endl;
-        return;
-    }
-
-    TimeSeriesInterval a = dataset->getInterval(seq, interval);
-    TimeSeriesInterval b = other->dataset->getInterval(otherSeq, otherInt);
-
-    seqitem_t dist = metric->run(a, b, INF);
-
-    session->getout() << "Distance between sequences: " << dist << endl;
-}
-
-void GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
-                                     SearchStrategy strat, int warps)
-{
-    if (!valid() || !other->valid()) {
-        session->geterr() << "Warning: Attempted to find similarities using an invalid database." << endl;
-        return;
-    }
-
-    if (grouping == NULL) {
-        session->geterr() << "Warning: Attempted to find similarities on ungrouped dataset." << endl;
-        return;
-    }
-
-    kBest best = grouping->getBestInterval(otherInt.length(),
-                                           other->dataset->getRawData(otherSeq, otherInt.start),
-                                           strat, warps);
-
-  //  session->getout() << "Found most similar interval." << endl;
- //   session->getout() << "Sequence number and interval: " << best.seq << "@"
-   //                   << "[" << best.interval.start << ", " << best.interval.end << "]." << endl;
-    session->getout() << "Distance: " << best.dist << endl;
- //   session->getout() << "Sequence: " << endl;
-    dataset->printInterval(session->getout(), best.seq, best.interval);
-}
-
-void GroupableTimeSeriesSet::outlier(int length)
-{
-    session->geterr() << "Warning: Outlier search not yet implemented." << endl;
-}
-
-void GroupableTimeSeriesSet::printdb(void)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to print invalid dataset." << endl;
-        return;
-    }
-
-    dataset->printData(session->getout());
-}
-
-void GroupableTimeSeriesSet::descdb(void)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to describe invalid dataset." << endl;
-        return;
-    }
-
-    dataset->printDesc(session->getout());
-}
-
-void GroupableTimeSeriesSet::printint(int seq, TimeInterval interval)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to print interval from invalid dataset." << endl;
-        return;
-    }
-
-    dataset->printInterval(session->getout(), seq, interval);
-}
-
-const char *GroupableTimeSeriesSet::getName(void)
-{
-    if (!valid()) {
-        session->geterr() << "Warning: Attempted to get name of invalid dataset." << endl;
-        return "<ERROR>";
-    }
-
-    return dataset->getName();
-}
-
 OnlineSession::OnlineSession(double defaultST, int defaultR, ostream *out, ostream *err)
 {
     this->defaultST = defaultST;
@@ -287,7 +36,7 @@ OnlineSession::~OnlineSession(void)
 int OnlineSession::randdb(int range, int seqCount, int seqLength)
 {
     TimeSeriesSet *dataset = &TimeSeriesSet::randomSet(seqCount, seqLength, range);
-    datasets.push_back(new GroupableTimeSeriesSet(this, dataset));
+    datasets.push_back(new GroupableTimeSeriesSet(dataset));
 
     return 0;
 }
@@ -309,7 +58,7 @@ int OnlineSession::killdb(int index)
 
 int OnlineSession::loaddb(const char *path)
 {
-    GroupableTimeSeriesSet *db = new GroupableTimeSeriesSet(this);
+    GroupableTimeSeriesSet *db = new GroupableTimeSeriesSet();
 
     int ret = db->dbFromFile(path);
 
@@ -329,7 +78,7 @@ int OnlineSession::savedb(int index, const char *path)
 
 int OnlineSession::loadolddb(const char *path, int seqCount, int seqLength, int newlineDrop)
 {
-    GroupableTimeSeriesSet *db = new GroupableTimeSeriesSet(this);
+    GroupableTimeSeriesSet *db = new GroupableTimeSeriesSet();
 
     int ret = db->odbFromFile(path, seqCount, seqLength, newlineDrop);
 
@@ -343,7 +92,7 @@ int OnlineSession::loadolddb(const char *path, int seqCount, int seqLength, int 
 }
 int OnlineSession::saveolddb(int index, const char *path)
 {
-    *err << "Warning: Attempted to save old-format database. This is temporarily unavailable." << endl;
+    *err << "Warning: Attempted to save old-format database. is temporarily unavailable." << endl;
 
     return -1;
 }
