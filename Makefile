@@ -17,7 +17,7 @@ make_onex_and_bindings:
 	$(MAKE) $(TARGET).so
 
 $(TARGET).so: $(TARGET).o $(ONEX_LIB)/*.o
-	g++ -std=c++11 -shared -Wl,--export-dynamic $(TARGET).o $(ONEX_LIB)/*.o -lpython$(PYTHON_VERSION) -lboost_python -o $(TARGET).so
+	g++ -std=c++11 -shared $(TARGET).o $(ONEX_LIB)/*.o -lpython$(PYTHON_VERSION) -lboost_python -o $(TARGET).so
 
 $(TARGET).o: $(TARGET).cpp
 	g++ -I$(PYTHON_INCLUDE) -I$(BOOST_INC) -I$(ONEX_INC) -fPIC -c $(TARGET).cpp

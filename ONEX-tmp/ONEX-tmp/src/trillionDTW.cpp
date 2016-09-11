@@ -12,8 +12,8 @@
 /// "Faster Retrieval with a Two-Pass Dynamic-Time-Warping Lower Bound", Pattern Recognition 42(9), 2009.
 void lower_upper_lemire(double *t, int len, int r, double *l, double *u)
 {
-    struct deque du(2*r + 2);
-    struct deque dl(2*r + 2);
+    deque du(2*r + 2);
+    deque dl(2*r + 2);
 
     du.push_back(0);
     dl.push_back(0);
