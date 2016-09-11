@@ -165,6 +165,11 @@ int OnlineSession::printint(int index, int seq, TimeInterval interval)
     return 0;
 }
 
+TimeSeriesInterval OnlineSession::getinterval(int index, int seq, TimeInterval interval) 
+{
+    return datasets[index]->getinterval(seq, interval);
+}
+
 int OnlineSession::printdists(void)
 {
     printDistMetrics();

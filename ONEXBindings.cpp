@@ -10,6 +10,7 @@ OnlineSession os;
  * Load dataset from a given path.
  * 
  * \param path to the dataset in relation to the server.  
+ *
  * \return index of the dataset in the dataset list.
 */
 int loadDataset(const char* path) 
@@ -27,6 +28,7 @@ int loadDataset(const char* path)
  * \param seqCount number of time series sequence in the dataset.
  * \param seqLength length of each sequence.
  * \param firstColumnsDrop number of starting columns to drop at each row.
+ *
  * \return index of the dataset in the dataset list.
  */
 int loadDatasetWithParams(const char* path, int seqCount, int seqLength, int firstColumnsDrop)
@@ -75,12 +77,32 @@ int groupDataset(int index, double ST)
   *             start - starting position of the result in the sequence.
   *             end   - ending position of the result in the sequence.
   */
-// TODO(Cuong) should we include warp parameter?
 py::tuple findSimilar(int dbIndex, int qIndex, int qSeq, 
                       int qStart, int qEnd, int strat) //, int warp); 
 {
-  kBest best = os.similar(dbIndex, qIndex, qSeq, TimeInterval(qStart, qEnd), strat, -1);
+  //TODO(Cuong) hard-code warp parameter or let user put it in?
+  kBest best = os.similar(dbIndex, qIndex, qSeq, TimeInterval(qStart, qEnd), strat, 50);
   return py::make_tuple(best.dist, best.seq, best.interval.start, best.interval.end);
+}
+
+/**
+ * Get a subsequence in a dataset.
+ * 
+ * \param dbIndex index of a dataset in the dataset list.
+ * \param dbSeq index of a sequence in the dataset.
+ * \param dbStart starting position of the subsequence in the sequence.
+ * \param dbEnd ending position of the subsequence in the sequence.
+ *
+ * \return a Python list containing the data points in the subsequence.
+ */
+py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
+{
+  py::list result;
+  TimeSeriesInterval interval = os.getinterval(dbIndex, dbSeq, TimeInterval(dbStart, dbEnd));
+  for (int i = 0; i < interval.length(); i++) {
+    result.append(interval[i]);
+  }
+  return result;
 }
 
 BOOST_PYTHON_MODULE(ONEXBindings)
@@ -90,6 +112,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("unloadDataset", unloadDataset);
   py::def("groupDataset", groupDataset);
   py::def("findSimilar", findSimilar);
+  py::def("getSubsequence", getSubsequence);
 }
 
 
