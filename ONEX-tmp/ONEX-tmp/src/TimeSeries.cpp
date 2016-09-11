@@ -438,7 +438,8 @@ TimeSeriesSet::TimeSeriesSet(int seqCount, int seqLength, seqitem_t *data)
 TimeSeriesSet::TimeSeriesSet(const char *path)
 {
     ifstream in(path);
-
+    data = NULL;
+    name = NULL;
     if (!in.is_open()) {
         fprintf(stderr, "Failed to open file for reading: %s.\n", path);
         seqCount = seqLength = min = max = 0;
