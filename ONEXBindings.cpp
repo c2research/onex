@@ -11,7 +11,8 @@ OnlineSession os;
  */
 int loadDataset(const char* path) 
 {
-  return os.loaddb(path);
+  int index = os.loaddb(path);
+  return index;
 }
 
 /**
@@ -27,7 +28,7 @@ int unloadDataset(int index)
  */
 int groupDataset(int index, double ST) 
 {
-  os.initdbgroups(index, ST);  
+  return os.initdbgroups(index, ST);
 }
 
 BOOST_PYTHON_MODULE(ONEXBindings)
