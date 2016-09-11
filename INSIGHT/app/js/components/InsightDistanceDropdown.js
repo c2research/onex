@@ -10,9 +10,17 @@ var InsightDistanceDropdown = React.createClass({
      var distanceList = this.props.distanceList;
      var distanceCurrentIndex = this.props.distanceCurrentIndex;
 
+     var list = ["Dynamic Timewarping", "Markov", "Generalized Dynamic Timewarping", "Euclidean"];
+
+     var optionsJSX = null;
+     //list.map(function(opt){
+     //   return <input type="radio" value={opt} key={opt}></input>;
+     //});
+
      var panelJSX =
      <div className="section">
         <h2> Distance </h2>
+        {optionsJSX}
      </div>;
 
      return <div> {panelJSX} </div>;

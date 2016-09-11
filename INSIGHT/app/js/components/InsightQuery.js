@@ -1,4 +1,5 @@
 var React = require('react');
+var InsightQueryDropdown = require('./InsightQueryDropdown');
 
 /**
  * This dropdown will have all the pre-existing queries
@@ -10,17 +11,21 @@ var InsightQuery = React.createClass({
      var queryList=this.props.queryList;
      var queryCurrentIndex=this.props.queryCurrentIndex;
 
+     //fix this whenever possible:
+     var magicNumber = 275 - 10 - 20 - 30 + "px";
+
      var panelJSX =
      <div className="section">
         <h2> Query </h2>
-
-        <div>
-          <h3 className="options"> Load A File </h3>
+        <div className="options">
+          <InsightQueryDropdown />
         </div>
-        <div>
-          <h3 className="options"> Choose from the dataset </h3>
+        <div className="options">
+          <div className="iconWrapper"> <i className="fa fa-upload" aria-hidden="false"></i></div>
+          <h3 className="options"> Load A File  </h3>
         </div>
-        <div>
+        <div  className="options">
+        <div className="iconWrapper"> <i className="fa fa-gears" aria-hidden="false"></i></div>
           <h3 className="options"> Interative Query Building </h3>
         </div>
 

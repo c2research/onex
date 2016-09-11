@@ -1,3 +1,4 @@
+ /* ---------->>> GLOBAL <<<-----------*/
 body {
   background: #FFF;
   font-family: "Helvetica Neue",sans-serif, Helvetica, Arial;
@@ -15,6 +16,7 @@ body {
   border: 0%;
   margin: 0;
 }
+ /* ---------->>> BANNER <<<-----------*/
 div.insightBanner {
   position: fixed;
   width: 100%;
@@ -31,6 +33,7 @@ h1.insightBanner {
   border-bottom: none;
   margin: 0;
 }
+ /* ---------->>> CONTROLPANEL <<<-----------*/
 div.controlPanel {
   z-index: -1;
   position: fixed;
@@ -50,6 +53,7 @@ div.section {
   margin-right: 15px;
   margin-left: 15px;
 }
+ /* ---------->>> TABS <<<-----------*/
 div.controlPanelTabPane {
   margin-top: 0;
   margin-left: 0;
@@ -79,12 +83,27 @@ div.tabSingleWrapper:hover {
 div.notselected {
   font-style: italic;
 }
-h3.selected {
-
-}
+/* ---------->>> OPTIONS:CONTROLPANEL <<<-----------*/
 h3.options {
   text-align: left;
 }
+div.options {
+  transform-origin:left;
+  -webkit-transition: all 0.4 s; /* For Safari 3.1 to 6.0 */
+  transition: box-shadow 0.4s, color 0.4s, width 0.4s, background 0.4s, font-size 0.4s;
+  box-shadow: inset 0 0 0 0 #c2c2d6;
+  margin-left: 10px;
+}
+div.options:hover {
+  box-shadow: inset 300px 0 0 0 #c2c2d6;
+}
+div.iconWrapper {
+  float: left;
+  margin-right: 10px;
+}
+
+
+
 h3 {
   margin: 5px;
   font-weight: lighter;;
