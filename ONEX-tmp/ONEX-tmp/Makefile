@@ -25,9 +25,8 @@ SRC_PATHS=$(addprefix $(SRC)/, $(addsuffix .cpp, $(SRC_OBJS)))
 INC_PATHS=$(addprefix $(INC)/, $(addsuffix .h, $(INC_OBJS)))
 
 
-
 # Compiler flags.
-CCFLAGS=-Isrc -std=c++0x -Wall -Wextra -Wno-unused-parameter -Wformat -fpermissive -O2
+CCFLAGS=-Isrc -std=c++0x -Wall -Wextra -Wno-unused-parameter -Wformat -fpermissive -O2 -fPIC
 DEBUG=#-pg -g
 
 # Default rule for compiling object files.

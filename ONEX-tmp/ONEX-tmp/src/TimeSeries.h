@@ -100,12 +100,12 @@ class TimeSeriesSet
 {
 protected:
 
-    seqitem_t *data;
+    seqitem_t *data = NULL;
     int seqCount, seqLength;
 
     seqitem_t min, max;
 
-    char *name;
+    char *name = NULL;
 
 public:
 

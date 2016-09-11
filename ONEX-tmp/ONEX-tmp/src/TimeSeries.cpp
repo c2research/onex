@@ -661,10 +661,9 @@ void TimeSeriesSet::printDesc(ostream &out)
 
 void TimeSeriesSet::printData(ostream &out)
 {
-    int w, p;
+    /*int w, p;
     w = out.width();
     p = out.precision();
-    /*
     out << "Printing time series set '" << name;
     out << "' with " << seqCount <<" sequences of length " << seqLength << ":";
 
@@ -685,10 +684,9 @@ void TimeSeriesSet::printData(ostream &out)
 
 void TimeSeriesSet::printInterval(ostream &out, int seq, TimeInterval interval)
 {
-    int w, p;
+    /*int w, p;
     w = out.width();
     p = out.precision();
-/*
     out << "Printing time series interval " << seq << "@[" << interval.start << "," << interval.end << "]." << endl;
 
     out.width(10);

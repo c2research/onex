@@ -61,10 +61,9 @@ int OnlineSession::loaddb(const char *path)
     GroupableTimeSeriesSet *db = new GroupableTimeSeriesSet();
 
     int ret = db->dbFromFile(path);
-
     if (ret == 0) {
         datasets.push_back(db);
-        return 0;
+        return datasets.size() - 1;
     } else {
         delete db;
         return -1;
@@ -462,8 +461,8 @@ int OnlineSession::run(istream &in, bool interactive)
                 getout() << "Loading Time Series Set from file '" << sarg1 << "'." << endl;
 
                 res = loaddb(sarg1.c_str());
-                if (res == 0) {
-                    getout() << "Dataset successfully loaded. Index: " << datasets.size()-1 << endl;
+                if (res != -1) {
+                    getout() << "Dataset successfully loaded. Index: " << res << endl;
                 } else {
                     getout() << "Failed to load dataset." << endl;
                 }
