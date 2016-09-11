@@ -438,7 +438,8 @@ TimeSeriesSet::TimeSeriesSet(int seqCount, int seqLength, seqitem_t *data)
 TimeSeriesSet::TimeSeriesSet(const char *path)
 {
     ifstream in(path);
-
+    data = NULL;
+    name = NULL;
     if (!in.is_open()) {
         fprintf(stderr, "Failed to open file for reading: %s.\n", path);
         seqCount = seqLength = min = max = 0;
@@ -661,10 +662,9 @@ void TimeSeriesSet::printDesc(ostream &out)
 
 void TimeSeriesSet::printData(ostream &out)
 {
-    int w, p;
+    /*int w, p;
     w = out.width();
     p = out.precision();
-    /*
     out << "Printing time series set '" << name;
     out << "' with " << seqCount <<" sequences of length " << seqLength << ":";
 
@@ -685,10 +685,9 @@ void TimeSeriesSet::printData(ostream &out)
 
 void TimeSeriesSet::printInterval(ostream &out, int seq, TimeInterval interval)
 {
-    int w, p;
+    /*int w, p;
     w = out.width();
     p = out.precision();
-/*
     out << "Printing time series interval " << seq << "@[" << interval.start << "," << interval.end << "]." << endl;
 
     out.width(10);

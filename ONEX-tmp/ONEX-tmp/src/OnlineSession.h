@@ -3,6 +3,7 @@
 
 #include "TimeSeries.h"
 #include "Grouping.h"
+#include "GroupableTimeSeriesSet.h"
 
 #include <map>
 #include <string>
@@ -10,54 +11,6 @@
 #include <vector>
 
 using namespace std;
-
-class OnlineSession;
-
-class GroupableTimeSeriesSet
-{
-protected:
-
-    TimeSeriesSet *dataset;
-    TimeSeriesSetGrouping *grouping;
-    OnlineSession *session;
-
-public:
-
-    GroupableTimeSeriesSet(OnlineSession *session, TimeSeriesSet *dataset=NULL, TimeSeriesSetGrouping *grouping=NULL);
-    GroupableTimeSeriesSet(const GroupableTimeSeriesSet &other);
-    ~GroupableTimeSeriesSet(void);
-
-    void resetDB(void);
-
-    bool valid();
-    bool validGrouping();
-
-    int dbFromFile(const char *path);
-    int dbToFile(const char *path);
-
-    int odbFromFile(const char *path, int seqCount, int seqLength, int del=0);
-    int odbToFile(const char *path);
-
-    int groupsToFile(const char *path);
-    int groupsFromFile(const char *path);
-
-    void normalize(void);
-
-    void genGrouping(seqitem_t ST);
-    void resetGrouping(void);
-
-    void distance(int seq, TimeInterval interval,
-                  GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
-                  SeriesDistanceMetric *metric);
-    void similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherint,
-                 SearchStrategy strat=EBOTTOM_TOP, int warps=-1);
-    void outlier(int length);
-
-    void printdb(void);
-    void descdb(void);
-    void printint(int seq, TimeInterval interval);
-    const char *getName(void);
-};
 
 class OnlineSession
 {
@@ -104,12 +57,12 @@ public:
 
     // Distance metric and search related commands.
     int printdists(void);
-    int printdist(int indexa, int indexb,
+    seqitem_t findDist(int indexa, int indexb,
                   int seqa, int seqb,
                   TimeInterval inta, TimeInterval intb,
                   SeriesDistanceMetric *metric);
 
-    int similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
+    kBest similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
     int outlier(int dbindex, int length);
 
     // Meta and other commands.
