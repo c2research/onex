@@ -26,7 +26,8 @@ function getState() {
     distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
     thresholdRange: InsightStore.getThresholdRange(),
     thresholdCurrent: InsightStore.getThresholdCurrent(),
-    thresholdStep: InsightStore.getThresholdStep()
+    thresholdStep: InsightStore.getThresholdStep(),
+    viewMode: InsightStore.getViewMode()
   };
 }
 
@@ -83,8 +84,8 @@ var InsightPlatform = React.createClass({
                               distanceCurrentIndex={this.state.distanceCurrentIndex}
                               thresholdRange={this.state.thresholdRange}
                               thresholdCurrent={this.state.thresholdCurrent}
-                              thresholdStep={this.state.thresholdStep} />
-         <InsightView />
+                              thresholdStep={this.state.thresholdStep}
+                              viewMode={this.state.viewMode} />
        </div>
      );
    },

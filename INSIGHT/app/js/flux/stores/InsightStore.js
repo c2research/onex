@@ -4,6 +4,8 @@ var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
 var $ = require('jquery');
 
+var InsightConstants = require('./../constants/InsightConstants');
+
 var CHANGE_EVENT = 'change';
 
 var MAX_RANDOM_QUERIES = 5;//recycle after 5
@@ -17,9 +19,10 @@ var data = {
 	queryCurrentIndex: -1,
 	distanceList: [],
 	distanceCurrentIndex: 0,
-	thresholdRange: [0.000, 1.000],
+	thresholdRange: [0.00, 1.00],
 	thresholdCurrent: 0.01,
-	thresholdStep: 0.001
+	thresholdStep: 0.001,
+	viewMode: InsightConstants.VIEW_MODE_SIMILARITY
 };
 
 /**
@@ -143,6 +146,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * @return {InsightConstants} - the current view mode
+	 */
+	getViewMode: function() {
+		return data.viewMode;
+	},
+
+	/**
 	 * @param {boolean} value - if app should render the control panel
 	 */
 	setControlPanelVisible: function(value) {
@@ -176,6 +186,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	setDistanceCurrentIndex: function(v) {
 		data.queryCurrentIndex = v;
+	},
+	/**
+	 * @param {InsightConstant} - the view mode to switch to
+	 */
+	setViewMode: function(mode) {
+		if (data.viewMode != mode) {
+			data.viewMode = mode;
+		}
 	},
 
 	/**
@@ -314,6 +332,19 @@ AppDispatcher.register(function(action) {
 			InsightStore.setThresholdCurrent(action.id);
 			InsightStore.emitChange();
 			break;
+		case InsightConstants.VIEW_MODE_SIMILARITY:
+			InsightStore.setViewMode(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.VIEW_MODE_SEASONAL:
+			InsightStore.setViewMode(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.VIEW_MODE_CLUSTER:
+			InsightStore.setViewMode(action.actionType);
+			InsightStore.emitChange();
+			break;
+
 
 		default:
 		  // no op

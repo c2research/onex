@@ -12,12 +12,14 @@ var InsightThresholdSlider = React.createClass({
      var thresholdCurrent = this.props.thresholdCurrent;
      var thresholdStep = this.props.thresholdStep;
 
+
      var panelJSX =
      <div className="section sliderDiv">
         <h2> Threshold </h2>
         <input
            id="slider1"
            type="range"
+           width="140px"
            max={this.props.thresholdRange[1]}
            min={this.props.thresholdRange[0]}
            step={this.props.thresholdStep}

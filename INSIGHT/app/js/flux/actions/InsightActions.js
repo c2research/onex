@@ -65,6 +65,15 @@ var InsightActions = {
       actionType: InsightConstants.SELECT_THRESHOLD,
       id: val
     });
+  },
+  /**
+   * initiates function seq to change view mode
+   */
+  switchViewMode: function(mode) {
+    AppDispatcher.dispatch({
+      actionType: mode,
+      id: 0
+    });
   }
 };
 
