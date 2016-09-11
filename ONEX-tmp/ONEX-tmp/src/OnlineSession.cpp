@@ -83,7 +83,7 @@ int OnlineSession::loadolddb(const char *path, int seqCount, int seqLength, int 
 
     if (ret == 0) {
         datasets.push_back(db);
-        return 0;
+        return datasets.size() - 1;
     } else {
         delete db;
         return -1;
@@ -492,8 +492,8 @@ int OnlineSession::run(istream &in, bool interactive)
                 getout() << "Loading Time Series Set from file '" << sarg1 << "' with N=" << iarg1 << ", L=" << iarg2 << ", and D=" << iarg3 << "." << endl;
 
                 res = loadolddb(sarg1.c_str(), iarg1, iarg2, iarg3);
-                if (res == 0) {
-                    getout() << "Dataset successfully loaded. Index: " << datasets.size()-1 << endl;
+                if (res != -1) {
+                    getout() << "Dataset successfully loaded. Index: " << res << endl;
                 } else {
                     getout() << "Failed to load dataset." << endl;
                 }
