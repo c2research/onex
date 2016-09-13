@@ -6,14 +6,16 @@ var resizeId;
 
 /**
  * This is for the start and end
+ * TODO: implement
  */
 var InsightQueryOptions = React.createClass({
    render: function() {
-     var range = this.props.dsCurrentLength;
+     var rangeSliderJSX = this.props.dsCurrentLength != null && this.props.dsCurrentLength > 0 ?
+     <div>Start and End</div> : null;
+
      //a slider with two dots, one green one red
      //start and end
-
-     return <div>Start and End</div>
+     return rangeSliderJSX;
    },
    _eventListenerStart: function(e){
     clearTimeout(resizeId);
@@ -24,7 +26,7 @@ var InsightQueryOptions = React.createClass({
     */
    _onResizeStartAction: function(e){
      var data = 5; //TODO: get the data
-     InsightActions.setStartQ();
+     InsightActions.setStartQ(e.target.value);
    },
    _eventListenerEnd: function(e){
     clearTimeout(resizeId);
@@ -35,7 +37,7 @@ var InsightQueryOptions = React.createClass({
     */
    _onResizeEndAction: function(e){
      var data = 5; //TODO: get the data
-     InsightActions.setEndQ();
+     InsightActions.setEndQ(e.target.value);
    }
 });
 

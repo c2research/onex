@@ -35,7 +35,7 @@ var InsightActions = {
    */
   selectDSIndex: function(index) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SELECT_DATASET_INDEX,
+      actionType: InsightConstants.SELECT_DS_INDEX,
       id: index
     });
   },

@@ -292,12 +292,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			success: function(response) {
 				var endlist = [];
-				for (var i = 0; i < response.size(); i++) {
+				for (var i = 0; i < response.datasets.length; i++) {
 					//format for dropdown
-					endlist.push({value: i, label: response[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+					endlist.push({value: i, label: response.datasets[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 				}
-				data.datasetList = endlist; //doing this so datasets can be labeled
-				this.emitChange();
+				console.log(response, endlist);
+				data.dsCollectionList = endlist; //doing this so datasets can be labeled
+				InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				console.log("error requesting dataset list");
@@ -310,6 +311,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * a dataset
 	 */
 	requestDatasetInit: function() {
+		if ((data.dsCollectionIndex == null) || (data.thresholdCurrent == null) ){
+			console.log("index null, no need to req");
+			return;
+		}
+
 		$.ajax({
 			url: '/dataset/init',
 			data: {
@@ -318,9 +324,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-				data.dsIndex = response.dsIndex;
+				data.dsCollectionIndex = response.dsCollectionIndex;
 				data.dsCurrentLength = response.dsLength;
-				this.emitChange();
+				InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -333,16 +339,22 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * requests server for a query within the dataset
 	 */
 	requestQueryFromDataset: function() {
+		if ((data.dsCollectionIndex == null) || (data.qSeq == null) ||
+	 			(data.dsCollectionIndex < 0) || (data.qSeq < 0)){
+			console.log("dsCollectionIndex or qseq null, no need to req");
+			return;
+		}
+
 		$.ajax({
 			url: '/query/fromdataset',
 			data: {
-				dsIndex : data.dsIndex, //the index of the ds in memory on the server
+				dsIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
 				qSeq : data.qSeq //the index of the query in the list
 			},
 			dataType: 'json',
 			success: function(response) {
 				data.qValues = response.query;
-				this.emitChange();
+				InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -355,15 +367,27 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * requests server to find the answer
 	 */
 	requestFindMatch: function() {
-		//TODO: validate question
 
+		if ((data.dsCollectionIndex == null) || (data.qSeq == null) ||
+				(data.dsCollectionIndex < 0) || (data.qSeq < 0)){
+			console.log("dsCollectionIndex or qseq null, no need to req");
+			return;
+		}
 
+		if ((data.qStart == null) || (data.qEnd == null) ||
+				(data.qStart < 0) || (data.qEnd < 0)
+			  (data.qStart >= data.qEnd) || (data.qEnd > data.qValues.length)){
+			console.log("setting defaults for qStart and end ");
+
+			 data.qStart = 0;
+			 data.qEnd = data.qValues.length;
+		}
 
 		$.ajax({
 			url: '/query/find',
 			data: {
-				dsIndex: data.dsIndex, //the index of the ds in memory on the server we querying
-				qIndex: data.dsIndex, //the index of from which the qIndex belongs
+				dsIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
+				qIndex: data.dsCollectionIndex, //the index of from which the qIndex belongs
 				qSeq: data.qSeq, //the index of q in its ds
 				qStart: data.qStart,
 				qEnd: data.qEnd
@@ -371,7 +395,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			success: function(response) {
 				data.result = response.result;
-				this.emitChange();
+				InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -468,7 +492,8 @@ AppDispatcher.register(function(action) {
 			break;
 		case InsightConstants.SELECT_DS_INDEX:
 			InsightStore.setDSCollectionIndex(action.id)
-			InsightStore.requestDatasetInit();
+			InsightStore.emitChange();//we want the list to update
+			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
 		case InsightConstants.SELECT_QUERY:
 			InsightStore.setQSeq(action.id)
