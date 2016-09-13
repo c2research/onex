@@ -32,7 +32,6 @@ public:
 
     // Database and group oriented commands.
     int randdb(int range, int seqCount, int seqLength);
-    int copydb(int index);
     int killdb(int index);
 
     int loaddb(const char *path);
@@ -80,6 +79,10 @@ public:
     ostream &geterr(void);
 
     int run(istream &in, bool interactive=true);
+
+private:
+    int _insertDataset(GroupableTimeSeriesSet* db);
+    int _datasetCount;
 };
 
 #endif // ONLINESESSION_H
