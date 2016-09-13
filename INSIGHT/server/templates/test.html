@@ -1,0 +1,14 @@
+<html>
+<head>
+  <title>INSIGHT</title>
+  <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+  <script src="{{ url_for('static', filename='js/test.js') }}"></script>
+</head>
+<body>
+  <button onclick="getDatasetList()">Get datasets</button>
+  <button onclick="loadAndGroupDataset()">Load and Group datasets</button>
+  <button onclick="sampleAQuery()">Sample a query</button>
+  <div id="output"></div>
+</body>
+</html>
+
