@@ -296,7 +296,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 					//format for dropdown
 					endlist.push({value: i, label: response.datasets[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 				}
-				console.log(response, endlist);
 				data.dsCollectionList = endlist; //doing this so datasets can be labeled
 				InsightStore.emitChange();
 			},
@@ -324,8 +323,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-				data.dsCollectionIndex = response.dsCollectionIndex;
+				console.log(response)
+				//data.dsCollectionIndex = response.dsCollectionIndex;
 				data.dsCurrentLength = response.dsLength;
+
+				console.log("dataset/init", data.dsCollectionIndex, data.dsCurrentLength);
+
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {

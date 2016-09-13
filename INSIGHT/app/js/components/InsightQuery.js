@@ -1,5 +1,5 @@
 var React = require('react');
-var InsightQuerySlider = require('./InsightQueryDropdown');
+var InsightQuerySlider = require('./InsightQuerySlider');
 var InsightQueryOptions = require('./InsightQueryOptions');
 
 /**

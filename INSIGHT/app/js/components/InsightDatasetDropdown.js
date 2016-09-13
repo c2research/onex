@@ -36,7 +36,7 @@ var InsightDatasetDropdown = React.createClass({
      if (val == null){
        InsightActions.selectDSIndex(null);
      } else {
-       InsightActions.selectDSIndex(val)
+       InsightActions.selectDSIndex(val.value)
      }
    }
 });
