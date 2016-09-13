@@ -33,7 +33,7 @@ var InsightActions = {
   /**
    * initiates function seq to get a new random query
    */
-  selectDataset: function(index) {
+  selectDSIndex: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_DATASET_INDEX,
       id: index
@@ -42,10 +42,10 @@ var InsightActions = {
   /**
    * initiates function seq to get a new random query
    */
-  selectQuery: function(indexPair) {
+  selectQuery: function(index) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SELECT_DATASET_INDEX,
-      id: indexPair
+      actionType: InsightConstants.SELECT_QUERY,
+      id: index
     });
   },
   /**
@@ -74,7 +74,17 @@ var InsightActions = {
       actionType: mode,
       id: 0
     });
+  },
+ /*
+  * initiates funciton seq to find similarity match
+  */
+  findMatch: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.FIND_MATCH,
+      id: 0
+    });
   }
+
 };
 
 module.exports = InsightActions;

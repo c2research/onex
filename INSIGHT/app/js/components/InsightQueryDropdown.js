@@ -9,36 +9,30 @@ var InsightQueryDropdown = React.createClass({
      return {};
    },
    render: function() {
-     //var divStyle = {width: this.props.width};
-
-     //var datasetList=this.props.datasetList;
-     //var datasetCurrentIndex=this.props.datasetCurrentIndex;
-
-     var options = [
-         { value: 'one', label: 'One' },
-         { value: 'two', label: 'Two' }
-     ];
-
      var placeholder = "choose from the dataset";
 
-     var panelJSX =
-     <Select
-            width="215px"
-            placeholder={placeholder}
-            name="form-field-name"
-            options={options}
-            value={this.state.value}
-            onChange={this._onSelect}
-      />;
+     var panelJSX = this.props.dsCurrentLength > 0 ?
+     <div>
+       <input
+          id="slider1"
+          type="range"
+          width="140px"
+          max={this.props.dsCurrentLength - 1}
+          min={0}
+          step={1}
+          value={this.props.qSeq}
+          onChange={this._eventListenerQuery}/>
+        <output id="range1">{this.props.qSeq}</output>
+      </div> : null;
 
-     return <div> {panelJSX} </div>;
+     return panelJSX;
    },
-   _onSelect(val) {
-     if (val == null){
-       this.setState({value: null});
-     } else {
-       this.setState({value: val.value});
-     }
+   _eventListenerQuery: function(e){
+    clearTimeout(resizeId);
+    resizeId = setTimeout(this._handleQueryChange(e), 100);
+   },
+   _handleQueryChange: function( e ) {
+     InsightActions.selectQuery(e.target.value);
    }
 });
 

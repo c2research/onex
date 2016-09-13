@@ -16,18 +16,26 @@ var resizeId;
  */
 function getState() {
   return {
+    dsCollectionList: InsightStore.getDSCollectionList(),
+    dsCollectionIndex: InsightStore.getDSCollectionIndex(),
+    dsCurrentLength: InsightStore.getDSCurrentLength(),
+    qValues: InsightStore.getQValues(),
+    qSeq: InsightStore.getQSeq(),
+    result: InsightStore.getResult(),
+
+    //meta (will add sizing stuff)
     controlPanelVisible: InsightStore.getControlPanelVisible(),
-    datasetList: InsightStore.getDatasetList(),
-    datasetCurrentSet: InsightStore.getDatasetCurrentSet(),
-    datasetCurrentIndex: InsightStore.getDatasetCurrentIndex(),
-    queryList: InsightStore.getQueryList(),
-    queryCurrentIndex: InsightStore.getQueryCurrentIndex(),
-    distanceList: InsightStore.getDistanceList(),
-    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
+    viewMode: InsightStore.getViewMode(),
+    sizing: InsightStore.getSizing(),
+
+    //threshold
     thresholdRange: InsightStore.getThresholdRange(),
     thresholdCurrent: InsightStore.getThresholdCurrent(),
     thresholdStep: InsightStore.getThresholdStep(),
-    viewMode: InsightStore.getViewMode()
+
+    //future
+    distanceList: InsightStore.getDistanceList(),
+    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex()
   };
 }
 
@@ -52,6 +60,7 @@ var InsightPlatform = React.createClass({
    },
    componentWillMount: function() {
      //set initial state values
+     InsightStore.init();
      this.setState(getState());
    },
    componentDidMount: function() {
@@ -69,23 +78,30 @@ var InsightPlatform = React.createClass({
      InsightStore.removeChangeListener(this._onChange);
    },
    render: function() {
-     var width = 275;
-
      return (
        <div className="insightPlatform">
          <InsightBanner baseTitle="insight" />
          <InsightControlPanel visible={this.state.controlPanelVisible}
-                              width={width}
-                              datasetList={this.state.datasetList}
-                              datasetCurrentIndex={this.state.datasetCurrentIndex}
-                              queryList={this.state.queryList}
-                              queryCurrentIndex={this.state.queryCurrentIndex}
-                              distanceList={this.state.distanceList}
-                              distanceCurrentIndex={this.state.distanceCurrentIndex}
+                              width={this.state.sizing.controlPanelWidth}
+                              dsCollectionList={this.state.dsCollectionList}
+                              dsCollectionIndex={this.state.dsCollectionIndex}
+                              dsCurrentLength={this.state.dsCurrentLength}
+                              qSeq={this.state.qSeq}
+                              qValues={this.state.qValues}
                               thresholdRange={this.state.thresholdRange}
                               thresholdCurrent={this.state.thresholdCurrent}
                               thresholdStep={this.state.thresholdStep}
-                              viewMode={this.state.viewMode} />
+                              viewMode={this.state.viewMode}
+
+                              distanceList={this.state.distanceList}
+                              distanceCurrentIndex={this.state.distanceCurrentIndex}
+                            />
+          <InsightView width={this.state.sizing.displayWidth}
+                       height={this.state.sizing.displayHeight}
+                       qValues={this.state.qValues}
+                       qSeq={this.state.qSeq}
+                       result={this.state.result}
+                       />
        </div>
      );
    },

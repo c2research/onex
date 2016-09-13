@@ -1,23 +1,14 @@
 var React = require('react');
 var Select = require('react-select');
 
+var InsightThresholdSlider = require('./InsightThresholdSlider');
+
 /**
  * This dropdown will have all the datasets
  */
 var InsightDatasetDropdown = React.createClass({
-   getInitialState () {
-     return {};
-   },
    render: function() {
      var divStyle = {width: this.props.width};
-
-     var datasetList=this.props.datasetList;
-     var datasetCurrentIndex=this.props.datasetCurrentIndex;
-
-     var options = [
-         { value: 'one', label: 'One' },
-         { value: 'two', label: 'Two' }
-     ];
 
      var placeholder = "choose a dataset";
 
@@ -27,19 +18,24 @@ var InsightDatasetDropdown = React.createClass({
         <Select
             placeholder={placeholder}
             name="form-field-name"
-            options={options}
-            value={this.state.value}
+            options={this.props.dsCollectionList}
+            value={this.props.dsCollectionIndex}
             onChange={this._onSelect}
         />
+        <InsightThresholdSlider  thresholdRange={this.props.thresholdRange}
+                                 thresholdCurrent={this.props.thresholdCurrent}
+                                 thresholdStep={this.props.thresholdStep}/>
      </div>;
-
-     return <div> {panelJSX} </div>;
+     return panelJSX;
    },
    _onSelect(val) {
+     //I would greedily set the value, then send into flux!
+     //but, we want to be able to clear the values on a DS change,
+     //and have it represented here clearly
      if (val == null){
-       this.setState({value: null});
+       InsightActions.selectDSIndex(null);
      } else {
-       this.setState({value: val.value});
+       InsightActions.selectDSIndex(val)
      }
    }
 });

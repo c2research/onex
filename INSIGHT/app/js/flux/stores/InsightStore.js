@@ -11,33 +11,39 @@ var CHANGE_EVENT = 'change';
 var MAX_RANDOM_QUERIES = 5;//recycle after 5
 
 var data = {
-	controlPanelVisible: true,
-	datasetList: [],
-	datasetCurrentSet: [],
-	datasetCurrentIndex: -1,
-	queryList: [],
-	queryCurrentIndex: -1,
-	distanceList: [],
-	distanceCurrentIndex: 0,
+
+	//the information on all the datasets
+	dsCollectionList: [],
+	dsCollectionIndex: null,
+
+	//current dataset information
+	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
+
+	//query information
+	qIndex: -1, //use this later for q from diff sets
+	qSeq: null,
+	qStart: 0,
+	qEnd: -1,
+	qValues: [],
+
+  //threshold:
 	thresholdRange: [0.00, 1.00],
 	thresholdCurrent: 0.01,
 	thresholdStep: 0.001,
-	viewMode: InsightConstants.VIEW_MODE_SIMILARITY
+
+	//the view mode [similarity/seasonal/clustering]
+	viewMode: InsightConstants.VIEW_MODE_SIMILARITY,
+	sizing: {},
+
+	//result
+	result: [],
+
+	//may not use:
+	controlPanelVisible: true,
+	distanceList: [],
+	distanceCurrentIndex: 0
 };
 
-/**
- * Notes:
- * The query list will consist of:
- 		* All time series from set
-		* All sample queries for a dataset
-		* All random queries
-		queryCurrentIndex = 0-2, index
-		QueryList = {
-		  sampleList = [[{}...]... ],
-			randomList = [[{}]...],
-			//the current list is derived from the current dataset
-	  }
- */
 
 var InsightStore = assign({}, EventEmitter.prototype, {
 	/**
@@ -62,6 +68,50 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * call this while app is loading
+	 */
+	init: function() {
+		this.calculateDimensions();
+		this.requestDatasetList();
+	},
+
+	/**
+	 * Calculate how big things are so its easy to keep
+	 * track, and format.
+	 */
+	calculateDimensions: function(){
+		var body = document.body,
+		    html = document.documentElement;
+
+		var h = Math.max( body.scrollHeight, body.offsetHeight,
+		                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+	  var w = Math.max( body.scrollWidth, body.offsetWidth,
+		                       html.clientWidth, html.scrollWidth, html.offsetWidth );
+
+		var controlPanelWidth = data.controlPanelVisible ? 275 : 5;//we will change this later when
+		 	      //we can resize this etc
+		var bannerHeight = 127; //hard code for now, get it later.
+
+		//this sizing scheme puts the table of values inside the view
+		var sizing = {
+			controlPanelWidth: controlPanelWidth,
+			bannerHeight: bannerHeight,
+			displayHeight: h - bannerHeight,
+			displayWidth: w - controlPanelWidth
+		};
+
+		data.sizing = sizing;
+	},
+
+	/**
+	 * @param {Object} - dimensions for the app
+	 * refer to function @calculateDimensions for attributes
+	 */
+	getSizing: function() {
+		return data.sizing;
+	},
+
+	/**
 	 * @param {Object} - the current representation of state data
 	 */
 	getStateData: function() {
@@ -78,50 +128,39 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	/**
 	 * @return {Object} - return the list of datasets [{string, boolean}], name, preprocessed
 	 */
-	getDatasetList: function() {
-		return data.datasetList;
+	getDSCollectionList: function() {
+		return data.dsCollectionList;
 	},
 
 	/**
 	 * @return {Number} - the index of the current dataset
 	 */
-	getDatasetCurrentIndex: function() {
-		return data.datasetCurrentIndex;
+	getDSCollectionIndex: function() {
+		return data.dsCollectionIndex;
 	},
 
 	/**
-	 * @return {Object} - the actual current dataset
+	 * @return {Object} - the length of the dataset for how many different queries are possible
 	 */
-	getDatasetCurrentSet: function() {
-		return data.datasetCurrentSet;
+	getDSCurrentLength: function() {
+		return data.dsCurrentLength;
 	},
 
 	/**
-	 * @return {Number} - the index of the current query
+	 * @return {Object} - the values of the current query
 	 */
-	getQueryCurrentIndex: function() {
-		return data.queryCurrentIndex;
+	getQValues: function() {
+		return data.qValues;
 	},
 
 	/**
-	 * @return {Object} - the index of the current query
+	 * @return {int} - the index of the query (of the ds)
+	 * [NOTE: we'll have to define this clearly once we start creating queries]
+	 * perhaps files will be ds,
+	 * add custom will be another ds
 	 */
-	getQueryList: function() {
-		return data.queryList;
-	},
-
-	/**
-	 * @return {Object} - the list of the distance
-	 */
-	getDistanceList: function() {
-		return data.queryCurrentIndex;
-	},
-
-	/**
-	 * @return {Number} - the index of the current index
-	 */
-	getDistanceCurrentIndex: function() {
-		return data.queryCurrentIndex;
+	getQSeq: function() {
+		return data.qValues;
 	},
 
 	/**
@@ -153,40 +192,74 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
-	 * @param {boolean} value - if app should render the control panel
+	 * @return {Object} - the current answer
 	 */
-	setControlPanelVisible: function(value) {
-		data.controlPanelVisible = value;
+	getResult: function() {
+		return data.result;
 	},
 
 	/**
-	 * @param {Number} - the new index of the current dataset
+	 * @param {Int} - list of DS
 	 */
-	setDatasetCurrentIndex: function(index) {
-	  data.datasetCurrentIndex = index;
-		data.queryList[0] = data.datasetCurrentSet;
+	setDSCollectionList: function(dsCollectionList) {
+		data.dsCollectionList = dsCollectionList;
 	},
 
 	/**
-	 * @param {Number} - the new index of the current query
+	 * @param {Int} - the index of the ds (file order)
 	 */
-	setQueryCurrentIndex: function(v) {
-		data.queryCurrentIndex = v;
+	setDSCollectionIndex: function(dsCollectionIndex) {
+		data.dsCollectionIndex = dsCollectionIndex;
+		//TODO: consider this choice:
+		data.qIndex = null;
 	},
 
 	/**
-	 * @param {Number} - the new current threshold
+	 * @param {Int} - the current length of the DS
 	 */
-	setThresholdCurrent: function(v) {
-		data.thresholdCurrent = v;
+	setDSCurrentLength: function(dsCurrentLength) {
+		data.dsCurrentLength = dsCurrentLength;
 	},
 
 	/**
-	 * @param {Number} - the new index of the current index
+	 * @param {Int} - NOTE: currently unused
+	 * \ consider this in light of the single index
 	 */
-	setDistanceCurrentIndex: function(v) {
-		data.queryCurrentIndex = v;
+	setQIndex: function(qIndex) {
+		data.qIndex = qIndex;
 	},
+
+	/**
+	 * @param {Int} - the index of the query in the LIST IT BELONGS TO
+	 */
+	setQSeq: function(qSeq) {
+		data.qSeq = qSeq;
+		//TODO: consider what values to set
+	},
+
+	/**
+	 * @param {Int} - the ending index of a query
+	 */
+	setQStart: function(qStart) {
+		data.qStart = qStart;
+	},
+
+	/**
+	 * @param {Int} - the ending index of a query
+	 */
+	setQEnd: function(qEnd) {
+		data.qEnd = qEnd;
+	},
+
+	/**
+	 * @param {Object} - the values of the current query
+	 */
+	setQValues: function(qValues) {
+		data.qValues = qValues;
+		data.qStart = 0;
+		data.qEnd = qValues.length - 1;
+	},
+
 	/**
 	 * @param {InsightConstant} - the view mode to switch to
 	 */
@@ -197,62 +270,146 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * @param {Number} - the new current threshold
+	 */
+	setThresholdCurrent: function(v) {
+		data.thresholdCurrent = v;
+	},
+
+	/**
+	 * @param {Number} - the new result (answer)
+	 */
+	setResult: function(r) {
+		data.result = result;
+	},
+
+	/**
 	 * requests server to popluate datalist
 	 */
 	requestDatasetList: function() {
 		$.ajax({
-			url: '/_datasetlist',
+			url: '/dataset/list',
 			dataType: 'json',
 			success: function(response) {
 				var endlist = [];
 				for (var i = 0; i < response.size(); i++) {
 					//format for dropdown
-					endlist.push({value: i, label: response[i]});
+					endlist.push({value: i, label: response[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 				}
-				data.datasetList = endlist;
+				data.datasetList = endlist; //doing this so datasets can be labeled
 				this.emitChange();
 			},
 			error: function(xhr) {
-				console.log("error in outlierUpdateChart");
+				console.log("error requesting dataset list");
 			}
 		});
 	},
 
 	/**
-	 * requests server to popluate current dataset
+	 * initial request to the server for information on
+	 * a dataset
 	 */
-	requestDatasetCurrentSet: function(index) {
+	requestDatasetInit: function() {
 		$.ajax({
-			url: '/_datasetlist',
-			data: index,
+			url: '/dataset/init',
+			data: {
+				dsCollectionIndex : data.dsCollectionIndex,
+				st : data.thresholdCurrent
+			},
 			dataType: 'json',
 			success: function(response) {
-				data.selectedDataset = index;
-				data.datasetCurrentSet = response;
+				data.dsIndex = response.dsIndex;
+				data.dsCurrentLength = response.dsLength;
 				this.emitChange();
 			},
 			error: function(xhr) {
-				console.log("error in outlierUpdateChart");
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error requesting dataset init");
 			}
 		});
 	},
 
 	/**
-	 * requests server to popluate current distance function list
+	 * requests server for a query within the dataset
 	 */
-	requestDistanceList: function() {
+	requestQueryFromDataset: function() {
 		$.ajax({
-			url: '/_distanceList',
-			data: index,
+			url: '/query/fromdataset',
+			data: {
+				dsIndex : data.dsIndex, //the index of the ds in memory on the server
+				qSeq : data.qSeq //the index of the query in the list
+			},
 			dataType: 'json',
 			success: function(response) {
-				data.distanceList = response;
+				data.qValues = response.query;
 				this.emitChange();
 			},
 			error: function(xhr) {
-				console.log("error in distance");
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error in requesting query values");
 			}
 		});
+	},
+
+	/**
+	 * requests server to find the answer
+	 */
+	requestFindMatch: function() {
+		//TODO: validate question
+
+
+
+		$.ajax({
+			url: '/query/find',
+			data: {
+				dsIndex: data.dsIndex, //the index of the ds in memory on the server we querying
+				qIndex: data.dsIndex, //the index of from which the qIndex belongs
+				qSeq: data.qSeq, //the index of q in its ds
+				qStart: data.qStart,
+				qEnd: data.qEnd
+			},
+			dataType: 'json',
+			success: function(response) {
+				data.result = response.result;
+				this.emitChange();
+			},
+			error: function(xhr) {
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error in finding answer");
+			}
+		});
+	},
+
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~  NOTE: not currently used ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+
+	/**
+	 * @return {Object} - the list of the distance |
+	 */
+	getDistanceList: function() {
+		return data.queryCurrentIndex;
+	},
+
+	/**
+	 * @return {Number} - the index of the current index
+	 */
+	getDistanceCurrentIndex: function() {
+		return data.queryCurrentIndex;
+	},
+
+	/**
+	 * @param {boolean} value - if app should render the control panel
+	 */
+	setControlPanelVisible: function(value) {
+		data.controlPanelVisible = value;
+	},
+
+	/**
+	 * @param {Number} - the new index of the current index
+	 */
+	setDistanceCurrentIndex: function(v) {
+		data.queryCurrentIndex = v;
 	},
 
 	/**
@@ -293,38 +450,29 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			}
 		});
 	}
-
-
-
-
 });
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
 
 	switch(action.actionType) {
-		case InsightConstants.DISPLAY_TS:
-			//doStuff()
-			//InsightStore.emitChange();
-			break;
 		case InsightConstants.RESIZE_APP:
-			//calculateDimensions()
-			//InsightStore.emitChange();
+			InsightStore.calculateDimensions()
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.FIND_MATCH:
+			InsightStore.requestFindMatch();
 			break;
 		case InsightConstants.CONTROL_PANEL_VISIBLE:
 			//if(InsightStore.emitChange();
 			break;
-		case InsightConstants.REQUEST_RANDOM:
-			//if(InsightStore.emitChange();
-			break;
-		case InsightConstants.SELECT_DATASET_INDEX:
-			//if(InsightStore.emitChange();
+		case InsightConstants.SELECT_DS_INDEX:
+			InsightStore.setDSCollectionIndex(action.id)
+			InsightStore.requestDatasetInit();
 			break;
 		case InsightConstants.SELECT_QUERY:
-			//if(InsightStore.emitChange();
-			//[0, index] -> from set
-			//[1, index] -> from sample
-			//[2, index] -> from random
+			InsightStore.setQSeq(action.id)
+			InsightStore.requestQueryFromDataset();
 			break;
 		case InsightConstants.SELECT_DISTANCE:
 			break;
@@ -344,8 +492,6 @@ AppDispatcher.register(function(action) {
 			InsightStore.setViewMode(action.actionType);
 			InsightStore.emitChange();
 			break;
-
-
 		default:
 		  // no op
 		}

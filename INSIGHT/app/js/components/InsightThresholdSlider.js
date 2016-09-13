@@ -1,6 +1,8 @@
 var React = require('react');
 var InsightActions = require('./../flux/actions/InsightActions');
 
+var resizeId;
+
 /**
  * This dropdown will have all the datasets
  */
@@ -12,6 +14,15 @@ var InsightThresholdSlider = React.createClass({
      var thresholdCurrent = this.props.thresholdCurrent;
      var thresholdStep = this.props.thresholdStep;
 
+/*
+<InputRange
+  maxValue={this.props.thresholdRange[1]}
+  minValue={this.props.thresholdRange[0]}
+  step={this.props.thresholdStep}
+  value={this.props.thresholdCurrent}
+  onChange={this._eventListenerThreshold}
+/>
+*/
 
      var panelJSX =
      <div className="section sliderDiv">
@@ -24,11 +35,15 @@ var InsightThresholdSlider = React.createClass({
            min={this.props.thresholdRange[0]}
            step={this.props.thresholdStep}
            value={this.props.thresholdCurrent}
-           onChange={this._handleThresholdChange} />
+           onChange={this._eventListenerThreshold} />
          <output id="range1">{this.props.thresholdCurrent}</output>
      </div>;
 
      return <div> {panelJSX} </div>;
+   },
+   _eventListenerThreshold: function(e){
+    clearTimeout(resizeId);
+    resizeId = setTimeout(this._handleThresholdChange(e), 100);
    },
    _handleThresholdChange: function( e ) {
      InsightActions.selectThreshold(e.target.value);

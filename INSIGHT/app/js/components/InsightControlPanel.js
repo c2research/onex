@@ -1,11 +1,10 @@
 var React = require('react');
 
 var InsightDatasetDropdown = require('./InsightDatasetDropdown');
-var InsightQueryDropdown   = require('./InsightQuery');
-var InsightDistanceDropdown = require('./InsightDistanceDropdown');
-var InsightThresholdSlider = require('./InsightThresholdSlider');
+var InsightQuery = require('./InsightQuery');
 var InsightRandomQueryButton = require('./InsightRandomDatasetButton');
 var InsightTab = require('./InsightTab');
+var InsightFind = require('./InsightFind');
 
 var InsightConstants = require('./../flux/constants/InsightConstants');
 
@@ -18,7 +17,10 @@ var InsightControlPanel = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
-     var modeList = [InsightConstants.VIEW_MODE_SIMILARITY, InsightConstants.VIEW_MODE_SEASONAL, InsightConstants.VIEW_MODE_CLUSTER];
+     //TODO: generalize this (probably)
+     var modeList = [InsightConstants.VIEW_MODE_SIMILARITY,
+                     InsightConstants.VIEW_MODE_SEASONAL,
+                     InsightConstants.VIEW_MODE_CLUSTER];
 
      var that = this;
      var tabList = modeList.map(function(mode) {
@@ -31,38 +33,35 @@ var InsightControlPanel = React.createClass({
          {tabList}
        </div> : null;
 
-    //view modes
-
-
     //show regardless
     var datasetJSX =
-    <InsightDatasetDropdown datasetList={this.props.datasetList}
-                            datasetCurrentSet={this.props.datasetCurrentSet}
-                            datasetCurrentIndex={this.props.datasetCurrentIndex}/>;
-    var distanceJSX = this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY || this.props.viewMode == InsightConstants.VIEW_MODE_SEASONAL ?
-    <InsightDistanceDropdown distanceList={this.props.distanceList}
-                             distanceCurrentIndex={this.props.distanceCurrentIndex}/> : null;
+    <InsightDatasetDropdown dsCollectionList={this.props.dsCollectionList}
+                            dsCollectionIndex={this.props.dsCollectionIndex}
+                            thresholdRange={this.props.thresholdRange}
+                            thresholdCurrent={this.props.thresholdCurrent}
+                            thresholdStep={this.props.thresholdStep}/>;
 
-    var optionsJSX = this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY ?
-    <InsightQueryDropdown viewMode={this.props.viewMode}/> : null;
+
+    var queryJSX = this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY ?
+    <InsightQuery viewMode={this.props.viewMode}
+                  dsCurrentLength={this.props.dsCurrentLength}
+                  qSeq={this.props.qSeq}/> : null;
+
+    var findJSX = this.props.viewMode != InsightConstants.VIEW_MODE_CLUSTER ?
+                  <InsightFind /> : null;
+
 
     var panelJSX = this.props.visible ?
-       <div className="controlPanel"
-            style={divStyle} >
-         {tabsJSX}
-         {datasetJSX}
-         {optionsJSX}
-         {distanceJSX}
-         <InsightThresholdSlider  thresholdRange={this.props.thresholdRange}
-                                  thresholdCurrent={this.props.thresholdCurrent}
-                                  thresholdStep={this.props.thresholdStep}/>
-       </div>
-       : null;
+    <div className="controlPanel"
+         style={divStyle} >
+      {tabsJSX}
+      {datasetJSX}
+      {queryJSX}
 
+      {findJSX}
+    </div> : null;
 
-
-
-     return <div> {panelJSX} </div>;
+    return panelJSX;
    }
 });
 
