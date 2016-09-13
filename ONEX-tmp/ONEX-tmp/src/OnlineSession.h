@@ -54,6 +54,7 @@ public:
     int printdb(int index);
     int descdb(int index);
     int printint(int index, int seq, TimeInterval interval);
+    TimeSeriesInterval getinterval(int index, int seq, TimeInterval interval);
 
     // Distance metric and search related commands.
     int printdists(void);

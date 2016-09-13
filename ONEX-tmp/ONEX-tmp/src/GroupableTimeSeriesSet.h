@@ -148,6 +148,7 @@ public:
     void printdb(void);
     void descdb(void);
     void printint(int seq, TimeInterval interval);
+    TimeSeriesInterval getinterval(int seq, TimeInterval interval);
     const char *getName(void);
 };
 

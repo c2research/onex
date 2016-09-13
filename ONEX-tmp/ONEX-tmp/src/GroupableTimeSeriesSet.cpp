@@ -237,6 +237,11 @@ void GroupableTimeSeriesSet::printint(int seq, TimeInterval interval)
     dataset->printInterval(cout, seq, interval);
 }
 
+TimeSeriesInterval GroupableTimeSeriesSet::getinterval(int seq, TimeInterval interval)
+{
+    return dataset->getInterval(seq, interval);
+}
+
 const char *GroupableTimeSeriesSet::getName(void)
 {
     if (!valid()) {
