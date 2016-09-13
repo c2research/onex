@@ -68,7 +68,7 @@ int groupDataset(int index, double ST)
   *                  ELOWER_HIGHER = 2
   *                  EBOTTOM_TOP   = 3
   *                  ETOP_BOTTOM   = 4
-  *
+  * \param qWarp ...
   * \return a Python tuple containing information of the best match: 
   *         (dist, seq, start, end) 
   *             dist  - distance from the query to the match 
@@ -78,10 +78,9 @@ int groupDataset(int index, double ST)
   *             end   - ending position of the result in the sequence.
   */
 py::tuple findSimilar(int dbIndex, int qIndex, int qSeq, 
-                      int qStart, int qEnd, int strat) //, int warp); 
+                      int qStart, int qEnd, int strat, int warp)
 {
-  //TODO(Cuong) hard-code warp parameter or let user put it in?
-  kBest best = os.similar(dbIndex, qIndex, qSeq, TimeInterval(qStart, qEnd), strat, 50);
+  kBest best = os.similar(dbIndex, qIndex, qSeq, TimeInterval(qStart, qEnd), strat, warp);
   return py::make_tuple(best.dist, best.seq, best.interval.start, best.interval.end);
 }
 
