@@ -140,6 +140,16 @@ int OnlineSession::getdbcount(void)
     return _datasetCount;
 }
 
+int OnlineSession::getdbseqcount(int index)
+{
+    return datasets[index]->getSeqCount();
+}
+
+int OnlineSession::getdbseqlength(int index)
+{
+    return datasets[index]->getSeqLength();
+}
+
 GroupableTimeSeriesSet *OnlineSession::getdb(int index)
 {
     return datasets[index];

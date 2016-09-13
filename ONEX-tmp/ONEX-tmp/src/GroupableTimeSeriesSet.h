@@ -26,6 +26,9 @@ public:
     GroupableTimeSeriesSet(const GroupableTimeSeriesSet &other);
     ~GroupableTimeSeriesSet();
 
+    int getSeqCount(void);
+    int getSeqLength(void);
+
     /**
      * Clear all group and data in the dataset
      */

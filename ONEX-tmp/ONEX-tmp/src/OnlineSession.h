@@ -46,6 +46,8 @@ public:
     int loaddbgroups(int index, const char *path);
 
     int getdbcount(void);
+    int getdbseqcount(int index);
+    int getdbseqlength(int index);
     GroupableTimeSeriesSet *getdb(int index);
     void checkIndex(int index);
 
