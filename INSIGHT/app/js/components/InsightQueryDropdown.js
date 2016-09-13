@@ -4,7 +4,7 @@ var Select = require('react-select');
 /**
  * This dropdown will have all the datasets
  */
-var InsightQueryDropdown = React.createClass({
+var InsightQuerySlider = React.createClass({
    getInitialState () {
      return {};
    },
@@ -37,4 +37,4 @@ var InsightQueryDropdown = React.createClass({
 });
 
 
-module.exports = InsightQueryDropdown;
+module.exports = InsightQuerySlider;

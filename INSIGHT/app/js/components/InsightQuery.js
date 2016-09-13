@@ -1,5 +1,5 @@
 var React = require('react');
-var InsightQueryDropdown = require('./InsightQueryDropdown');
+var InsightQuerySlider = require('./InsightQueryDropdown');
 var InsightQueryOptions = require('./InsightQueryOptions');
 
 /**
@@ -35,7 +35,7 @@ var InsightQuery = React.createClass({
           <div className="iconWrapper"> <i className="fa fa-database" aria-hidden="false"></i></div>
           <h3 className="options"> From current Dataset  </h3>
           <div className="options">
-            <InsightQueryDropdown qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
+            <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
             <InsightQueryOptions qSeq={this.props.qSeq} qValues={this.props.qValues} />
           </div>
         </div>
