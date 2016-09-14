@@ -140,8 +140,9 @@ input {
   background-image: -webkit-linear-gradient(top, #c2c2d6, #a9a9a9);
 }
 
+/* ---------->>> CHARTS <<<-----------*/
 
-.chart {
+.containerD3 {
   position: absolute;
   right: 0;
   bottom: 0;

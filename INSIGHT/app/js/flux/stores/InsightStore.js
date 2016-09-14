@@ -160,7 +160,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * add custom will be another ds
 	 */
 	getQSeq: function() {
-		return data.qValues;
+		return data.qSeq;
 	},
 
 	/**
@@ -325,7 +325,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			success: function(response) {
 				console.log(response)
 				//data.dsCollectionIndex = response.dsCollectionIndex;
-				data.dsCurrentLength = 5;//TODO:attention, fake data here. response.dsLength;
+				data.dsCurrentLength = response.dsLength;
 
 				console.log("dataset/init", data.dsCollectionIndex, data.dsCurrentLength);
 
@@ -356,7 +356,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-				data.qValues = response.query;
+				var endlist = [];
+				for (var i = 0; i < response.query.length; i++) {
+					//format for dropdown
+					endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+				}
+				data.qValues = endlist;
+				console.log("qValues", data.qValues);
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -378,12 +384,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		}
 
 		if ((data.qStart == null) || (data.qEnd == null) ||
-				(data.qStart < 0) || (data.qEnd < 0)
+				(data.qStart < 0) || (data.qEnd < 0) ||
 			  (data.qStart >= data.qEnd) || (data.qEnd > data.qValues.length)){
 			console.log("setting defaults for qStart and end ");
 
 			 data.qStart = 0;
-			 data.qEnd = data.qValues.length;
+			 data.qEnd = data.qValues.length - 1;
 		}
 
 		$.ajax({

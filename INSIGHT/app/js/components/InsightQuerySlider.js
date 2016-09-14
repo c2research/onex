@@ -24,15 +24,11 @@ var InsightQuerySlider = React.createClass({
           min={0}
           step={1}
           value={this.props.qSeq}
-          onChange={this._eventListenerQuery}/>
+          onChange={this._handleQueryChange}/>
         <output id="range1">{this.props.qSeq}</output>
       </div> : null;
 
      return panelJSX;
-   },
-   _eventListenerQuery: function(e){
-    clearTimeout(resizeId);
-    resizeId = setTimeout(this._handleQueryChange(e), 100);
    },
    _handleQueryChange: function( e ) {
      InsightActions.selectQuery(e.target.value);

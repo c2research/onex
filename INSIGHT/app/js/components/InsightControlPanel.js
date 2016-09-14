@@ -45,6 +45,7 @@ var InsightControlPanel = React.createClass({
     var queryJSX = this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY ?
     <InsightQuery viewMode={this.props.viewMode}
                   dsCurrentLength={this.props.dsCurrentLength}
+                  qValues={this.props.qValues}
                   qSeq={this.props.qSeq}/> : null;
 
     var findJSX = this.props.viewMode != InsightConstants.VIEW_MODE_CLUSTER ?
