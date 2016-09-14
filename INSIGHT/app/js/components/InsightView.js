@@ -59,15 +59,24 @@ var InsightView = React.createClass({
         offset = '200'
       />;
 
-     var d3JSX = <LineChart
+    var
+       xLabel = "Data",
+       yLabel = "Time",
+       yTicks = [0.1],
+       yDomain = [0, 1.0];
+
+     console.log("length: ", chartData.length, this.props.width);
+
+     var d3JSX = chartData != null ? <LineChart
        margins={margins}
        title={title}
-       width= {this.props.width}
+       yDomain={yDomain}
+       width= {this.props.width - 100}
        height= {this.props.height}
        data= {chartData}
        chartSeries= {chartSeries}
        x= {x}
-     />;
+     /> : null;
 
 
      return <div className="containerD3">{d3JSX}</div>
