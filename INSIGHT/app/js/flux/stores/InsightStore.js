@@ -325,7 +325,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			success: function(response) {
 				console.log(response)
 				//data.dsCollectionIndex = response.dsCollectionIndex;
-				data.dsCurrentLength = response.dsLength;
+				data.dsCurrentLength = 5;//TODO:attention, fake data here. response.dsLength;
 
 				console.log("dataset/init", data.dsCollectionIndex, data.dsCurrentLength);
 

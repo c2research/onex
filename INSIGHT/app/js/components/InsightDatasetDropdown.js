@@ -2,6 +2,8 @@ var React = require('react');
 var Select = require('react-select');
 var InsightActions = require('./../flux/actions/InsightActions');
 
+var resizeId;
+
 var InsightThresholdSlider = require('./InsightThresholdSlider');
 
 /**

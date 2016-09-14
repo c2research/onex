@@ -1,5 +1,8 @@
 var React = require('react');
 var Select = require('react-select');
+var InsightActions = require('./../flux/actions/InsightActions');
+
+var resizeId;
 
 /**
  * This dropdown will have all the datasets
