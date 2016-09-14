@@ -104,6 +104,28 @@ py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
   return result;
 }
 
+/**
+ * Get the number of sequence in a dataset.
+ * 
+ * \param dbIndex index of a dataset.
+ * \return number of sequence in the dataset.
+ */
+int getDatasetSeqCount(int dbIndex)
+{
+  return os.getdbseqcount(dbIndex);
+}
+
+/**
+ * Get the length of each sequence in a dataset.
+ * 
+ * \param dbIndex index of a dataset.
+ * \return length of each sequence in the dataset.
+ */
+int getDatasetSeqLength(int dbIndex)
+{
+  return os.getdbseqlength(dbIndex);
+}
+
 BOOST_PYTHON_MODULE(ONEXBindings)
 {
   py::def("loadDataset", loadDataset);
@@ -112,6 +134,8 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("groupDataset", groupDataset);
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
+  py::def("getDatasetSeqCount", getDatasetSeqCount);
+  py::def("getDatasetSeqLength", getDatasetSeqLength);
 }
 
 

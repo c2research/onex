@@ -19,10 +19,12 @@ datasets = []
 with open('datasets.json') as datasets_file:
   datasets = json.load(datasets_file)
 
-dataset_index_in_memory = [-1] * len(datasets)
+current_collection_index = -1
+current_in_memory_index = -1
 
 ###############################################
 
+# TODO(Cuong) Add logging 
 
 @app.route('/test')
 def test():
@@ -40,7 +42,7 @@ def api_dataset_load():
   global datasets
 
   with lock:
-    datasets_list = [ds['name'] for ds in datasets] 
+    datasets_list = [ds['name'] for ds in datasets]
   return jsonify(datasets=datasets_list)
 
 
@@ -48,45 +50,57 @@ def api_dataset_load():
 def api_dataset_init():
   global lock
   global datasets
+  global current_collection_index
+  global current_in_memory_index
 
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st = request.args.get('st', 0.2, type=float) 
 
-  print "ds_collection_index = {}".format(ds_collection_index)
-
   with lock: 
-    if ds_collection_index != -1 and ds_collection_index < len(datasets):
-      ds_path = None
-      ds_path = str(datasets[ds_collection_index]['path'])
+    # TODO(Cuong) check validity and duplicity of parameters
+    current_collection_index = ds_collection_index
+ 
+    # Unload the current dataset in memory
+    if current_in_memory_index != -1:
+      onex.unloadDataset(current_in_memory_index)
 
-      index_in_memory = onex.loadDataset(ds_path)
-      onex.groupDataset(index_in_memory, st)
+    # Load the new dataset
+    ds_path = str(datasets[current_collection_index]['path'])
+    ds_index = onex.loadDataset(ds_path)
+    current_in_memory_index = ds_index
+    
+    # Group the new dataset
+    onex.groupDataset(ds_index, st)
+    ds_length = onex.getDatasetSeqCount(ds_index);
 
-      dataset_index_in_memory[ds_collection_index] = index_in_memory 
-
-      return jsonify(dsLength=0)
-    else:
-      # TODO(Cuong) add more meaningful message
-      abort(400)
-
-
-@app.route('/query/sample/')
-def api_sample_query():
-  dataset_id = request.args.get('dataset', None)
-  # TODO(Cuong) other parameters (start, length, ...)
-  if dataset_id: 
-    # TODO(Cuong) pick the specified query 
-    pass
-  else:
-    # TODO(Cuong) response with error
-    pass
+    return jsonify(dsLength=ds_length)
 
 
-@app.route('/find')
+@app.route('/query/fromdataset/')
+def api_query_from_dataset():
+  ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
+  q_seq = request.args.get('qSeq', -1, type=int)
+  with lock: 
+    # TODO(Cuong) Check validity of parameters 
+    # TODO(Cuong) Check if ds_collection_index matches current_collection_index
+    seq_length = onex.getDatasetSeqLength(current_in_memory_index);
+    query = onex.getSubsequence(current_in_memory_index, q_seq, 0, seq_length - 1);
+
+    # Return the length of the dataset here
+    return jsonify(query=query)
+
+
+@app.route('/query/find')
 def api_find_best_match():
-  dataset_id = request.args.get('dataset', None)
+  ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
+  q_index = request.args.get('qIndex', -1, type=int)
+  q_seq = request.args.get('qSeq', -1, type=int)
+  q_start = request.args.get('qStart', -1, type=int)
+  q_end = request.args.get('qEnd', -2, type=int)
   if dataset_id:
-    pass
+    # TODO(Cuong) arguments for strat and warp are hardcoded for now
+    r_dist, r_seq, r_start, r_end = \
+      onex.findSimilar(ds_index, q_index, q_seq, q_start, q_end, 0, 50)
   else:
     pass
 

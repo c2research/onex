@@ -22,6 +22,7 @@ OnlineSession::OnlineSession(double defaultST, int defaultR, ostream *out, ostre
 
     this->out = out;
     this->err = err;
+    _datasetCount = 0;
 }
 
 OnlineSession::~OnlineSession(void)
@@ -33,25 +34,36 @@ OnlineSession::~OnlineSession(void)
     datasets.clear();
 }
 
+int OnlineSession::_insertDataset(GroupableTimeSeriesSet* db) 
+{
+    int index = -1;
+    _datasetCount++;
+    for (unsigned int i = 0; i < datasets.size(); i++) {
+        if (datasets[i] == NULL) {
+            datasets[i] = db;
+            index = i;
+        }
+    }
+    if (index == -1) {
+        datasets.push_back(db);
+        index = datasets.size() - 1;
+    }
+    return index; 
+}
+
 int OnlineSession::randdb(int range, int seqCount, int seqLength)
 {
     TimeSeriesSet *dataset = &TimeSeriesSet::randomSet(seqCount, seqLength, range);
-    datasets.push_back(new GroupableTimeSeriesSet(dataset));
+    int index = _insertDataset(new GroupableTimeSeriesSet(dataset));
 
-    return 0;
-}
-
-int OnlineSession::copydb(int index)
-{
-    datasets.push_back(new GroupableTimeSeriesSet(*datasets[index]));
-
-    return 0;
+    return index;
 }
 
 int OnlineSession::killdb(int index)
 {
     delete datasets[index];
-    datasets.erase(datasets.begin() + index);
+    datasets[index] = NULL;
+    _datasetCount--;
 
     return 0;
 }
@@ -62,8 +74,8 @@ int OnlineSession::loaddb(const char *path)
 
     int ret = db->dbFromFile(path);
     if (ret == 0) {
-        datasets.push_back(db);
-        return datasets.size() - 1;
+        int index = _insertDataset(db);
+        return index;
     } else {
         delete db;
         return -1;
@@ -82,8 +94,8 @@ int OnlineSession::loadolddb(const char *path, int seqCount, int seqLength, int 
     int ret = db->odbFromFile(path, seqCount, seqLength, newlineDrop);
 
     if (ret == 0) {
-        datasets.push_back(db);
-        return datasets.size() - 1;
+        int index = _insertDataset(db);
+        return index;
     } else {
         delete db;
         return -1;
@@ -125,7 +137,17 @@ int OnlineSession::loaddbgroups(int index, const char *path)
 
 int OnlineSession::getdbcount(void)
 {
-    return datasets.size();
+    return _datasetCount;
+}
+
+int OnlineSession::getdbseqcount(int index)
+{
+    return datasets[index]->getSeqCount();
+}
+
+int OnlineSession::getdbseqlength(int index)
+{
+    return datasets[index]->getSeqLength();
 }
 
 GroupableTimeSeriesSet *OnlineSession::getdb(int index)
@@ -137,8 +159,10 @@ int OnlineSession::printdbs(void)
 {
     *out << "Available data sets:" << endl;
     for (unsigned int i = 0; i < datasets.size(); i++) {
-        *out << "[" << i << "] " << ((!datasets[i]->validGrouping())? "UNGROUPED " : "  GROUPED ");
-        *out << datasets[i]->getName() << "." << endl;
+        if (datasets[i] != NULL) {
+          *out << "[" << i << "] " << ((!datasets[i]->validGrouping())? "UNGROUPED " : "  GROUPED ");
+          *out << datasets[i]->getName() << "." << endl;
+        }
     }
 
     return 0;
@@ -249,7 +273,7 @@ ostream &OnlineSession::geterr(void)
 
 void OnlineSession::checkIndex(int index)
 {
-    if ((unsigned) index >= datasets.size())
+    if ((unsigned) index >= datasets.size() || datasets[index] == NULL)
         throw out_of_range("No dataset with that index.");
 }
 
@@ -539,8 +563,8 @@ int OnlineSession::run(istream &in, bool interactive)
                 getout() << "Generating random Time Series Set with N=" << iarg1 << ", L=" << iarg2 << ", and range=" << iarg3 << "." << endl;
 
                 res = randdb(iarg3, iarg1, iarg2);
-                if (res == 0)
-                    getout() << "Dataset successfully loaded. Index: " << datasets.size()-1 << endl;
+                if (res != -1)
+                    getout() << "Dataset successfully loaded. Index: " << res << endl;
                 else
                     getout() << "Failed to load dataset." << endl;
 

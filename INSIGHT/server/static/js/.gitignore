@@ -1,4 +1,2 @@
 # this is a dumb fix to force git to add server/static/js so npm run build compiles
 # on a fresh clone
-*
-!.gitignore
