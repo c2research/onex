@@ -1,29 +1,21 @@
 # INSIGHT: Interactive Time Series Analytics System
 
-INSIGHT is a visual analytics system for interactive time series mining built on top of the Online Exploration of Time Series Data (ONEX).
+## Server API specification
 
-## Install dependencies
-
-Open your favorite Terminal and run the following command.
+### Get a list of datasets
 
 ```
-$ pip install -r requirements.txt
+GET /dataset/list/
 ```
 
-This will install neccessary dependencies for the server. You can also install in a virtualenv.
+Get a list of available datasets.
 
-## Run the server
+**Success Response**
 
-Run the following command to start the server.
-
+*Code* 200
+*Content* 
 ```
-$ python run.py
+{ 
+  dataset: ['ECG', 'ItalyPower', ...]
+}
 ```
-
-## To build application 
-
-Builds and bundles react app into plain js
-```
-$ npm run build
-```
-
