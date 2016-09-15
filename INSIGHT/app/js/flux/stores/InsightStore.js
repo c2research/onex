@@ -21,15 +21,15 @@ var data = {
 
 	//query information
 	qIndex: -1, //use this later for q from diff sets
-	qSeq: null,
+	qSeq: "",
 	qStart: 0,
 	qEnd: -1,
 	qValues: [],
 
   //threshold:
-	thresholdRange: [0.00, 1.00],
-	thresholdCurrent: 0.01,
-	thresholdStep: 0.001,
+	thresholdRange: [0.0, 1.0],
+	thresholdCurrent: 0.3,
+	thresholdStep: 0.1,
 
 	//the view mode [similarity/seasonal/clustering]
 	viewMode: InsightConstants.VIEW_MODE_SIMILARITY,
@@ -323,12 +323,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-				console.log(response)
-				//data.dsCollectionIndex = response.dsCollectionIndex;
 				data.dsCurrentLength = response.dsLength;
-
-				console.log("dataset/init", data.dsCollectionIndex, data.dsCurrentLength);
-
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -362,7 +357,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 					endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 				}
 				data.qValues = endlist;
-				console.log("qValues", data.qValues);
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {

@@ -65,13 +65,11 @@ var InsightView = React.createClass({
        yTicks = [0.1],
        yDomain = [0, 1.0];
 
-     console.log("length: ", chartData.length, this.props.width);
-
      var d3JSX = chartData != null ? <LineChart
        margins={margins}
        title={title}
        yDomain={yDomain}
-       width= {this.props.width - 100}
+       width= {this.props.width}
        height= {this.props.height}
        data= {chartData}
        chartSeries= {chartSeries}
