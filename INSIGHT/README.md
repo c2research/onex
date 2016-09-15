@@ -49,7 +49,7 @@ Perform loading and grouping on a dataset.
 + Content:
 ```
 { 
-  dsLength: <int> # Length of the dataset
+  dsLength: <int>  # Length of the dataset
   requestID: <int> # The requestID sent with the request
 }
 ```
@@ -131,7 +131,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 + Content:
 ```
 { 
-  dist: <double>   # Distance between the query and the result
+  dist: <double>     # Distance between the query and the result
   result: [<double>] # The result sequence
   requestID: <int>   # The requestID sent with the request
 }
