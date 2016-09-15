@@ -7,12 +7,12 @@ var Chart = require('react-d3-core').Chart;
 // require `react-d3-basic` for Line chart component.
 var LineChart = require('react-d3-basic').LineChart;
 
-var Legend = require('react-d3-core').Legend;
-var Xaxis = require('react-d3-core').Xaxis;
-var Yaxis = require('react-d3-core').Yaxis;
-var Line = require('react-d3-basic').Line;
-var Xgrid = require('react-d3-core').Xgrid;
-var Ygrid = require('react-d3-core').Ygrid;
+// var Legend = require('react-d3-core').Legend;
+// var Xaxis = require('react-d3-core').Xaxis;
+// var Yaxis = require('react-d3-core').Yaxis;
+// var Line = require('react-d3-basic').Line;
+// var Xgrid = require('react-d3-core').Xgrid;
+// var Ygrid = require('react-d3-core').Ygrid;
 
 
 /**
@@ -50,14 +50,14 @@ var InsightView = React.createClass({
          }
         }
       ];
-
-    var legendJSX = <Legend
-        width= {this.props.width}
-        chartSeries = {chartSeries}
-        swatchShape= 'circle'
-        legendPosition = 'right'
-        offset = '200'
-      />;
+    // 
+    // var legendJSX = <Legend
+    //     width= {this.props.width}
+    //     chartSeries = {chartSeries}
+    //     swatchShape= 'circle'
+    //     legendPosition = 'right'
+    //     offset = '200'
+    //   />;
 
     var
        xLabel = "Data",
