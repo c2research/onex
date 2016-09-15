@@ -53,6 +53,7 @@ def api_dataset_init():
   global current_collection_index
   global current_in_memory_index
 
+  request_id = request.args.get('requestID', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st = request.args.get('st', 0.2, type=float) 
 
@@ -73,35 +74,38 @@ def api_dataset_init():
     onex.groupDataset(ds_index, st)
     ds_length = onex.getDatasetSeqCount(ds_index);
 
-    return jsonify(dsLength=ds_length)
+    return jsonify(dsLength=ds_length, requestID=request_id)
 
 
 @app.route('/query/fromdataset/')
 def api_query_from_dataset():
+  request_id = request.args.get('requestID', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
   with lock: 
     # TODO(Cuong) Check validity of parameters 
     # TODO(Cuong) Check if ds_collection_index matches current_collection_index
     seq_length = onex.getDatasetSeqLength(current_in_memory_index);
-    query = onex.getSubsequence(current_in_memory_index, q_seq, 0, seq_length - 1);
+    query = onex.getSubsequence(current_in_memory_index, q_seq, 0, seq_length - 1)
 
     # Return the length of the dataset here
-    return jsonify(query=query)
+    return jsonify(query=query, requestID=request_id)
 
 
-@app.route('/query/find')
+@app.route('/query/find/')
 def api_find_best_match():
+  request_id = request.args.get('requestID', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_index = request.args.get('qIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
   q_start = request.args.get('qStart', -1, type=int)
   q_end = request.args.get('qEnd', -2, type=int)
-  if dataset_id:
-    # TODO(Cuong) arguments for strat and warp are hardcoded for now
+  with lock:
+    # TODO(Cuong) Check validity of parameters 
+    # TODO(Cuong) Check if ds_collection_index matches current_collection_index
     r_dist, r_seq, r_start, r_end = \
-      onex.findSimilar(ds_index, q_index, q_seq, q_start, q_end, 0, 50)
-  else:
-    pass
+      onex.findSimilar(current_in_memory_index, q_index, q_seq, q_start, q_end, 0, -1)
+    result = onex.getSubsequence(current_in_memory_index, r_seq, r_start, r_end)
+    return jsonify(result=result, dist=r_dist, requestID=request_id)
 
 

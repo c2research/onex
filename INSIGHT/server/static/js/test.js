@@ -4,7 +4,7 @@ var appendOutput = function(output) {
 
 var getDatasetList = function() {
   $.ajax({
-    url: '/dataset/list',
+    url: '/dataset/list/',
     success: function(res) {
       for (ds in res['datasets']) {
         appendOutput(res['datasets'][ds]);
@@ -17,8 +17,9 @@ var currentDS = 0;
 
 var loadAndGroupDataset = function() {
   $.ajax({ 
-    url: '/dataset/init',
+    url: '/dataset/init/',
     data: {
+      requestId: 0,
       dsCollectionIndex: currentDS,
       st: 0.3
     },
@@ -40,6 +41,26 @@ var sampleAQuery = function() {
     },
     success: function(res) {
       appendOutput(res['query']);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+     appendOutput(textStatus);
+    }
+  });
+}
+
+var findMatch = function() {
+  $.ajax({ 
+    url: '/query/find/',
+    data: {
+      requestId: 0,
+      dsCollectionIndex: currentDS,
+      qIndex: currentDS,
+      qSeq: 0,
+      qStart: 0,
+      qEnd: 50
+    },
+    success: function(res) {
+      appendOutput(res['result']);
     },
     error: function(jqXHR, textStatus, errorThrown) {
      appendOutput(textStatus);
