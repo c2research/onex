@@ -44,6 +44,11 @@ var data = {
 	distanceCurrentIndex: 0
 };
 
+var requestId = {
+	fromDataset: 0,
+	queryFind: 0,
+	datsetInit: 0
+}
 
 var InsightStore = assign({}, EventEmitter.prototype, {
 	/**
@@ -297,6 +302,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 					endlist.push({value: i, label: response.datasets[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 				}
 				data.dsCollectionList = endlist; //doing this so datasets can be labeled
+
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -315,14 +321,20 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			return;
 		}
 
+		requestID.datasetInit += 1;
+
 		$.ajax({
 			url: '/dataset/init',
 			data: {
 				dsCollectionIndex : data.dsCollectionIndex,
-				st : data.thresholdCurrent
+				st : data.thresholdCurrent,
+				requestID: requestID.datasetInit
 			},
 			dataType: 'json',
 			success: function(response) {
+				if (response.requestID != requestID.datasetInit) {
+				  return;
+				}
 				data.dsCurrentLength = response.dsLength;
 				InsightStore.emitChange();
 			},
