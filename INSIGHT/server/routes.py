@@ -1,6 +1,7 @@
 import random
 import json
 import threading
+import logging
 import ONEXBindings as onex
 
 from server import app
@@ -22,9 +23,8 @@ with open('datasets.json') as datasets_file:
 current_collection_index = -1
 current_in_memory_index = -1
 
+logger = logging.getLogger(__name__)
 ###############################################
-
-# TODO(Cuong) Add logging 
 
 @app.route('/test')
 def test():
@@ -38,7 +38,6 @@ def index():
 
 @app.route('/dataset/list/')
 def api_dataset_load():
-  global lock
   global datasets
 
   with lock:
@@ -48,10 +47,7 @@ def api_dataset_load():
 
 @app.route('/dataset/init/')
 def api_dataset_init():
-  global lock
-  global datasets
-  global current_collection_index
-  global current_in_memory_index
+  global current_collection_index, current_in_memory_index
 
   request_id = request.args.get('requestID', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
@@ -79,6 +75,7 @@ def api_dataset_init():
 
 @app.route('/query/fromdataset/')
 def api_query_from_dataset():
+  global current_in_memory_index
   request_id = request.args.get('requestID', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)

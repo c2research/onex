@@ -28,9 +28,37 @@ $ npm run build
 
 ### Run the server
 
-Run the following command to start the server.
+Run the following command to start the server
 
 ```
 # Still in the INSIGHT folder
 $ python run.py
+```
+
+Or set execution permission for run.py using 
+
+```
+$ sudo chmod u+x run.py
+```
+
+Then simply run the server with
+
+```
+$ ./run.py
+```
+
+The run server command also accepts some arguments
+
+```
+$ ./run.py -h
+Usage: run.py [-h] [-H HOST] [-p PORT] [-l {DEBUG,INFO,WARN,ERROR}]
+
+INSIGHT server
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -H HOST, --host HOST  hostname of the server [default 127.0.0.1]
+  -p PORT, --port PORT  port for the server [default 5000]
+  -l {DEBUG,INFO,WARN,ERROR}, --log {DEBUG,INFO,WARN,ERROR}
+                        logging level [default INFO]
 ```
