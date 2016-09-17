@@ -47,7 +47,7 @@ Then simply run the server with
 $ ./run.py
 ```
 
-The run server command also accepts some arguments
+The run server command also accepts some optional arguments
 
 ```
 $ ./run.py -h
@@ -61,4 +61,9 @@ optional arguments:
   -p PORT, --port PORT  port for the server [default 5000]
   -l {DEBUG,INFO,WARN,ERROR}, --log {DEBUG,INFO,WARN,ERROR}
                         logging level [default INFO]
+
+# For example, to make the server externally visible in its network 
+# at port with WARN logging level: 
+# $ ./run.py -host 0.0.0.0 -p 5000 -l ERROR 
 ```
+
