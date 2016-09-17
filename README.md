@@ -63,9 +63,9 @@ optional arguments:
                         logging level [default INFO]
 ```
 
-For example, to make the server externally visible in its network at port with WARN logging level, run:
+For example, to make the server externally visible in its network at port 5000 with WARN logging level, run:
 
 ```
-$ ./run.py -H 0.0.0.0 -p 5000 -l ERROR 
+$ ./run.py -H 0.0.0.0 -p 5000 -l WARN 
 ```
 
