@@ -22,7 +22,7 @@ parser.add_argument('-p', '--port',
 parser.add_argument('-d', '--debug',
                     help='turn on debug mode',
                     action='store_true')
-parser.add_argument('-l', '--log', 
+parser.add_argument('-l', '--log',
                     help='logging level [default %s]' % DEFAULT_LOG_LEVEL,
                     choices=['DEBUG', 'INFO', 'WARN', 'ERROR'],
                     default=DEFAULT_LOG_LEVEL)

@@ -49,7 +49,7 @@ def api_dataset_init():
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st = request.args.get('st', 0.2, type=float)
 
-  with lock
+  with lock:
     # TODO(Cuong) check validity and duplicity of parameters
     current_collection_index = ds_collection_index
 
