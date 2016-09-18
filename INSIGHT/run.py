@@ -7,7 +7,7 @@ from server import app
 
 DEFAULT_HOST = '127.0.0.1'
 DEFAULT_PORT = 5000
-DEFAULT_LOG_LEVEL = 'DEBUG'
+DEFAULT_LOG_LEVEL = 'INFO'
 
 parser = argparse.ArgumentParser(description='INSIGHT server')
 parser.add_argument('-H', '--host',
