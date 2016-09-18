@@ -45,7 +45,7 @@ def api_dataset_load():
 def api_dataset_init():
   global current_collection_index, current_ds_index
 
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st = request.args.get('st', 0.2, type=float)
 
@@ -77,7 +77,7 @@ def api_dataset_init():
 @app.route('/query/fromdataset/')
 def api_query_from_dataset():
   global current_ds_index
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
   with lock:
@@ -95,7 +95,7 @@ def api_query_from_dataset():
 
 @app.route('/query/find/')
 def api_find_best_match():
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_index = request.args.get('qIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)

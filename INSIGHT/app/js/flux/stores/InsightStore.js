@@ -47,7 +47,7 @@ var data = {
 var requestID = {
 	fromDataset: 0,
 	findMatch: 0,
-	datsetInit: 0
+	datasetInit: 0
 }
 
 var InsightStore = assign({}, EventEmitter.prototype, {
@@ -326,13 +326,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/dataset/init',
 			data: {
-				dsCollectionIndex : data.dsCollectionIndex,
+			    dsCollectionIndex : data.dsCollectionIndex,
 				st : data.thresholdCurrent,
 				requestID: requestID.datasetInit
 			},
 			dataType: 'json',
 			success: function(response) {
 				if (response.requestID != requestID.datasetInit) {
+				    console.log(requestID, response.requestID)
 				  return;
 				}
 				data.dsCurrentLength = response.dsLength;
@@ -362,11 +363,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			data: {
 				dsIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
 				qSeq : data.qSeq, //the index of the query in the list
-				requestId : requestID.fromDataset
+				requestID : requestID.fromDataset
 			},
 			dataType: 'json',
 			success: function(response) {
-			    if (response.requestId != request.fromDataset) {
+			    if (response.requestID != requestID.fromDataset) {
+				console.log(requestID, response.requestID)
 				return; 
 			    }
 			    var endlist = [];
@@ -403,8 +405,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			 data.qStart = 0;
 			 data.qEnd = data.qValues.length - 1;
 		}
-
-		requestID.findMatch += 1
+		
+		console.log(requestID);
+		requestID.findMatch += 1;
 
 		$.ajax({
 			url: '/query/find',
@@ -418,6 +421,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
+			    console.log(response, requestID);
 			    if (reponse.requestID != requestID.findMatch){
 				return;
 			    }
