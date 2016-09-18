@@ -71,7 +71,7 @@ def api_dataset_init():
 
     ds_length = onex.getDatasetSeqCount(current_ds_index);
 
-    return jsonify(dsLength=ds_length, numGroups=num_groups, requestId=request_id)
+    return jsonify(dsLength=ds_length, numGroups=num_groups, requestID=request_id)
 
 
 @app.route('/query/fromdataset/')
@@ -90,7 +90,7 @@ def api_query_from_dataset():
     query = onex.getSubsequence(current_ds_index, q_seq, 0, seq_length - 1)
 
     # Return the length of the dataset here
-    return jsonify(query=query, requestId=request_id)
+    return jsonify(query=query, requestID=request_id)
 
 
 @app.route('/query/find/')
@@ -109,6 +109,6 @@ def api_find_best_match():
     app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
                      q_seq, q_start, q_end, current_ds_index)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
-    return jsonify(result=result, dist=r_dist, requestId=request_id)
+    return jsonify(result=result, dist=r_dist, requestID=request_id)
 
 
