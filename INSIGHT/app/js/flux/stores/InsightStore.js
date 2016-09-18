@@ -321,18 +321,18 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			return;
 		}
 
-		requestID.datasetInit += 1;
+		requestId.datasetInit += 1;
 
 		$.ajax({
 			url: '/dataset/init',
 			data: {
 				dsCollectionIndex : data.dsCollectionIndex,
 				st : data.thresholdCurrent,
-				requestID: requestID.datasetInit
+				requestId: requestId.datasetInit
 			},
 			dataType: 'json',
 			success: function(response) {
-				if (response.requestID != requestID.datasetInit) {
+				if (response.requestId != requestId.datasetInit) {
 				  return;
 				}
 				data.dsCurrentLength = response.dsLength;
