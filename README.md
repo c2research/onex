@@ -61,7 +61,7 @@ optional arguments:
   -p PORT, --port PORT  port for the server [default 5000]
   -d, --debug           turn on debug mode
   -l {DEBUG,INFO,WARN,ERROR}, --log {DEBUG,INFO,WARN,ERROR}
-                        logging level [default DEBUG]
+                        logging level [default INFO]
 ```
 
 For example, to make the server externally visible in its network at port 5000, run:

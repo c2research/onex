@@ -113,9 +113,8 @@ int OnlineSession::initdbgroups(int index, seqitem_t ST)
     if (ST == -1)
         ST = defaultST;
 
-    datasets[index]->genGrouping(ST);
+    return datasets[index]->genGrouping(ST);
 
-    return 0;
 }
 
 int OnlineSession::killdbgroups(int index)
@@ -644,6 +643,7 @@ int OnlineSession::run(istream &in, bool interactive)
                 //     << iarg1 << ":" << t->getName() << " with ST " << defaultST << "." << endl;
 
                 res = initdbgroups(iarg1, defaultST);
+                printf("Needed %d groups in total.\n", res);
 
                 break;
 

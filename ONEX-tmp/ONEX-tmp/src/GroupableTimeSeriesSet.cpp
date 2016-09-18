@@ -144,18 +144,19 @@ void GroupableTimeSeriesSet::normalize(void)
     dataset->normalize();
 }
 
-void GroupableTimeSeriesSet::genGrouping(seqitem_t ST)
+int GroupableTimeSeriesSet::genGrouping(seqitem_t ST)
 {
     if (!valid()) {
         cerr << "Warning: Attempted to group invalid dataset." << endl;
-        return;
+        return -1;
     }
 
     resetGrouping();
 
     grouping = new TimeSeriesSetGrouping(dataset, ST);
-    grouping->group();
+    int cntGroups = grouping->group();
     grouping->genEnvelopes();
+    return cntGroups;
 }
 
 void GroupableTimeSeriesSet::resetGrouping(void)

@@ -47,6 +47,8 @@ int unloadDataset(int index)
 
 /**
  * Perform grouping on dataset given its index and ST.
+ * 
+ * \return number of groups.
  */
 int groupDataset(int index, double ST) 
 {

@@ -208,7 +208,7 @@ public:
     seqitem_t getST(void);
     void setST(seqitem_t ST);
 
-    void group(void);
+    int group(void);
     void genEnvelopes(void);
 
     kBest getBestInterval(int len, seqitem_t *data, SearchStrategy strat=EHIGHER_LOWER, int warps=-1);
