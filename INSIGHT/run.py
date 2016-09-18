@@ -3,9 +3,11 @@
 import argparse
 import logging
 
+from server import app
+
 DEFAULT_HOST = '127.0.0.1'
 DEFAULT_PORT = 5000
-DEFAULT_LOG_LEVEL = 'INFO'
+DEFAULT_LOG_LEVEL = 'DEBUG'
 
 parser = argparse.ArgumentParser(description='INSIGHT server')
 parser.add_argument('-H', '--host',
@@ -17,21 +19,20 @@ parser.add_argument('-p', '--port',
                          '[default %s]' % DEFAULT_PORT,
                     type=int,
                     default=DEFAULT_PORT)
-parser.add_argument('-l', '--log', 
+parser.add_argument('-d', '--debug',
+                    help='turn on debug mode',
+                    action='store_true')
+parser.add_argument('-l', '--log',
                     help='logging level [default %s]' % DEFAULT_LOG_LEVEL,
                     choices=['DEBUG', 'INFO', 'WARN', 'ERROR'],
                     default=DEFAULT_LOG_LEVEL)
 
 args = parser.parse_args()
 
-# Set logging level for the root logger
+# Set logging level for the server logger
 logging_level = getattr(logging, args.log.upper(), None)
-root_logger = logging.getLogger()
-root_logger.setLevel(logging_level)
-root_logger.addHandler(logging.StreamHandler())
-
-# App should be imported here for the root logging config to take effect
-from server import app
+app.logger.setLevel(logging_level)
 
 # Run the server
-app.run(host=args.host, port=args.port, debug=True)
+app.run(host=args.host, port=args.port, debug=args.debug)
+

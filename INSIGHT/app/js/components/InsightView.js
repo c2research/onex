@@ -40,7 +40,7 @@ var InsightView = React.createClass({
          colors: "#aa32f1"
        }
 	    ];
-
+        
      var margins = {left: 45, right: 25, top: 35, bottom: 35};
      var title = this.props.qSeq != null ? "Query" + this.props.qSeq : "No Query Chosen";
 

@@ -377,6 +377,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 			    data.qValues = endlist;
 					data.result = []
+
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -405,6 +406,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			 data.qStart = 0;
 			 data.qEnd = data.qValues.length - 1;
 		}
+
+		requestID.findMatch += 1;
 
 		requestID.findMatch += 1;
 

@@ -51,7 +51,7 @@ The run server command also accepts some optional arguments
 
 ```
 $ ./run.py -h
-Usage: run.py [-h] [-H HOST] [-p PORT] [-l {DEBUG,INFO,WARN,ERROR}]
+usage: run.py [-h] [-H HOST] [-p PORT] [-d] [-l {DEBUG,INFO,WARN,ERROR}]
 
 INSIGHT server
 
@@ -59,13 +59,14 @@ optional arguments:
   -h, --help            show this help message and exit
   -H HOST, --host HOST  hostname of the server [default 127.0.0.1]
   -p PORT, --port PORT  port for the server [default 5000]
+  -d, --debug           turn on debug mode
   -l {DEBUG,INFO,WARN,ERROR}, --log {DEBUG,INFO,WARN,ERROR}
-                        logging level [default INFO]
+                        logging level [default DEBUG]
 ```
 
-For example, to make the server externally visible in its network at port 5000 with WARN logging level, run:
+For example, to make the server externally visible in its network at port 5000, run:
 
 ```
-$ ./run.py -H 0.0.0.0 -p 5000 -l WARN 
+$ ./run.py -H 0.0.0.0 -p 5000
 ```
 
