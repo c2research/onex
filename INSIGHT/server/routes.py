@@ -45,39 +45,40 @@ def api_dataset_load():
 def api_dataset_init():
   global current_collection_index, current_ds_index
 
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestId', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st = request.args.get('st', 0.2, type=float)
-
   with lock:
     # TODO(Cuong) check validity and duplicity of parameters
-    current_collection_index = ds_collection_index
 
     # Unload the current dataset in memory
     if current_ds_index != -1:
       onex.unloadDataset(current_ds_index)
-      app.logger.debug('Unloaded dataset %d', current_ds_index)
+      app.logger.debug('Unloaded dataset %d', current_collection_index)
 
     # Load the new dataset
+    current_collection_index = ds_collection_index
     ds_path = str(datasets[current_collection_index]['path'])
     ds_index = onex.loadDataset(ds_path)
     current_ds_index = ds_index
-    app.logger.debug('Loaded dataset %d', current_ds_index)
+    app.logger.debug('Loaded dataset %d', current_collection_index)
 
-    # Group the new dataset
-    app.logger.debug('Grouping dataset %d', current_ds_index)
-    onex.groupDataset(current_ds_index, st)
-    app.logger.debug('Grouped dataset %d', current_ds_index)
+    # Group the new dataset%f' % (ds_collection_index, st)
+    app.logger.debug('Grouping dataset %d with st = %f',
+                     current_collection_index, st)
+    num_groups = onex.groupDataset(current_ds_index, st)
+    app.logger.info('Grouped dataset %d with st = %f. Created %d groups',
+                     current_collection_index, st, num_groups)
 
     ds_length = onex.getDatasetSeqCount(current_ds_index);
 
-    return jsonify(dsLength=ds_length, requestID=request_id)
+    return jsonify(dsLength=ds_length, numGroups=num_groups, requestId=request_id)
 
 
 @app.route('/query/fromdataset/')
 def api_query_from_dataset():
   global current_ds_index
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestId', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
   with lock:
@@ -90,12 +91,12 @@ def api_query_from_dataset():
     query = onex.getSubsequence(current_ds_index, q_seq, 0, seq_length - 1)
 
     # Return the length of the dataset here
-    return jsonify(query=query, requestID=request_id)
+    return jsonify(query=query, requestId=request_id)
 
 
 @app.route('/query/find/')
 def api_find_best_match():
-  request_id = request.args.get('requestID', -1)
+  request_id = request.args.get('requestId', -1)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_index = request.args.get('qIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
@@ -109,6 +110,6 @@ def api_find_best_match():
     app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
                      q_seq, q_start, q_end, current_ds_index)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
-    return jsonify(result=result, dist=r_dist, requestID=request_id)
+    return jsonify(result=result, dist=r_dist, requestId=request_id)
 
 
