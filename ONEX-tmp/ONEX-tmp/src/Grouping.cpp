@@ -678,7 +678,7 @@ void TimeSeriesSetGrouping::setST(seqitem_t ST)
     this->ST = ST;
 }
 
-void TimeSeriesSetGrouping::group(void)
+int TimeSeriesSetGrouping::group(void)
 {
     reset();
     groups.resize(dataset->getSeqLength(), NULL);
@@ -699,8 +699,7 @@ void TimeSeriesSetGrouping::group(void)
 
         count += groups[i]->getCount();
     }
-
-    printf("Needed %d groups in total.\n", count);
+    return count;
 }
 
 void TimeSeriesSetGrouping::genEnvelopes(void)

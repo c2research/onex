@@ -107,8 +107,9 @@ public:
      * Group dataset using the provided Similarity Threshold.
      *
      * \param ST Similarity Threshold used in the grouping algorithm.
+     * \return number of groups.
      */
-    void genGrouping(seqitem_t ST);
+    int genGrouping(seqitem_t ST);
 
     /**
      * Clear the groups.
