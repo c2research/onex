@@ -44,9 +44,9 @@ var data = {
 	distanceCurrentIndex: 0
 };
 
-var requestId = {
+var requestID = {
 	fromDataset: 0,
-	queryFind: 0,
+	findMatch: 0,
 	datsetInit: 0
 }
 
@@ -355,21 +355,27 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			return;
 		}
 
+		requestID.fromDataset += 1;
+
 		$.ajax({
 			url: '/query/fromdataset',
 			data: {
 				dsIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
-				qSeq : data.qSeq //the index of the query in the list
+				qSeq : data.qSeq, //the index of the query in the list
+				requestId : requestID.fromDataset
 			},
 			dataType: 'json',
 			success: function(response) {
-				var endlist = [];
-				for (var i = 0; i < response.query.length; i++) {
-					//format for dropdown
-					endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
-				}
-				data.qValues = endlist;
-				InsightStore.emitChange();
+			    if (response.requestId != request.fromDataset) {
+				return; 
+			    }
+			    var endlist = [];
+			    for (var i = 0; i < response.query.length; i++) {
+				//format for dropdown
+				endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+			    }
+			    data.qValues = endlist;
+			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -398,19 +404,25 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			 data.qEnd = data.qValues.length - 1;
 		}
 
+		requestID.findMatch += 1
+
 		$.ajax({
 			url: '/query/find',
 			data: {
-				dsIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
-				qIndex: data.dsCollectionIndex, //the index of from which the qIndex belongs
-				qSeq: data.qSeq, //the index of q in its ds
-				qStart: data.qStart,
-				qEnd: data.qEnd
+			    dsIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
+			    qIndex: data.dsCollectionIndex, //the index of from which the qIndex belongs
+			    qSeq: data.qSeq, //the index of q in its ds
+			    qStart: data.qStart,
+			    qEnd: data.qEnd,
+			    requestID: requestID.findMatch
 			},
 			dataType: 'json',
 			success: function(response) {
-				data.result = response.result;
-				InsightStore.emitChange();
+			    if (reponse.requestID != requestID.findMatch){
+				return;
+			    }
+			    data.result = response.result;
+			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
