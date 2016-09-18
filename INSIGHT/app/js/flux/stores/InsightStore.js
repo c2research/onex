@@ -367,16 +367,16 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-			    if (response.requestID != requestID.fromDataset) {
-				console.log(requestID, response.requestID)
-				return; 
+			  	if (response.requestID != requestID.fromDataset) {
+						console.log(requestID, response.requestID)
+						return;
 			    }
 			    var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
-				//format for dropdown
-				endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 			    data.qValues = endlist;
+					data.result = []
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -405,8 +405,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			 data.qStart = 0;
 			 data.qEnd = data.qValues.length - 1;
 		}
-		
-		console.log(requestID);
+
 		requestID.findMatch += 1;
 
 		$.ajax({
@@ -421,11 +420,15 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			},
 			dataType: 'json',
 			success: function(response) {
-			    console.log(response, requestID);
-			    if (reponse.requestID != requestID.findMatch){
-				return;
+			    if (response.requestID != requestID.findMatch){
+						console.log(response, requestID);
+						return;
 			    }
-			    data.result = response.result;
+					var endlist = [];
+			    for (var i = 0; i < response.result.length; i++) {
+						endlist.push({index: i, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+			    }
+			    data.result = endlist;
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
