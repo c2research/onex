@@ -321,14 +321,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			return;
 		}
 
-		requestId.datasetInit += 1;
+		requestID.datasetInit += 1;
 
 		$.ajax({
 			url: '/dataset/init',
 			data: {
 			    dsCollectionIndex : data.dsCollectionIndex,
 				st : data.thresholdCurrent,
-				requestId: requestId.datasetInit
+				requestID: requestID.datasetInit
 			},
 			dataType: 'json',
 			success: function(response) {
@@ -367,7 +367,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			success: function(response) {
 			  	if (response.requestID != requestID.fromDataset) {
-						console.log(requestID, response.requestID)
+						console.log(requestID, response)
 						return;
 			    }
 			    var endlist = [];
