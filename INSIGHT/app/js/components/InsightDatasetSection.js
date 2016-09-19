@@ -1,6 +1,7 @@
 var React = require('react');
 var Select = require('react-select');
 var InsightActions = require('./../flux/actions/InsightActions');
+var InsightProcess = require('./InsightProcess');
 
 var resizeId;
 
@@ -11,8 +12,6 @@ var InsightThresholdSlider = require('./InsightThresholdSlider');
  */
 var InsightDatasetDropdown = React.createClass({
    render: function() {
-     var divStyle = {width: this.props.width};
-
      var placeholder = "choose a dataset";
 
      var panelJSX =
@@ -28,6 +27,8 @@ var InsightDatasetDropdown = React.createClass({
         <InsightThresholdSlider  thresholdRange={this.props.thresholdRange}
                                  thresholdCurrent={this.props.thresholdCurrent}
                                  thresholdStep={this.props.thresholdStep}/>
+        <InsightProcess datasetIconMode={this.props.datasetIconMode}
+                        dsCollectionIndex={this.props.dsCollectionIndex}/>
      </div>;
      return panelJSX;
    },

@@ -1,6 +1,6 @@
 var React = require('react');
 var InsightActions = require('./../flux/actions/InsightActions');
-
+var AnnotatedSlider = require('./AnnotatedSlider');
 var resizeId;
 
 /**
@@ -10,33 +10,18 @@ var InsightThresholdSlider = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
-     var thresholdRange = this.props.thresholdRange;
-     var thresholdCurrent = this.props.thresholdCurrent;
-     var thresholdStep = this.props.thresholdStep;
-
-/*
-<InputRange
-  maxValue={this.props.thresholdRange[1]}
-  minValue={this.props.thresholdRange[0]}
-  step={this.props.thresholdStep}
-  value={this.props.thresholdCurrent}
-  onChange={this._eventListenerThreshold}
-/>
-*/
-
      var panelJSX =
-     <div className="section sliderDiv">
-        <h2> Threshold </h2>
-        <input
-           id="slider1"
-           type="range"
-           width="140px"
-           max={this.props.thresholdRange[1]}
-           min={this.props.thresholdRange[0]}
-           step={this.props.thresholdStep}
-           value={this.props.thresholdCurrent}
-           onChange={this._eventListenerThreshold} />
-         <output id="range1">{this.props.thresholdCurrent}</output>
+     <div>
+        <h4> Choose a Similarity Threshold </h4>
+        <div className="options">
+          <AnnotatedSlider
+            width={200}
+            max={this.props.thresholdRange[1]}
+            min={this.props.thresholdRange[0]}
+            step={this.props.thresholdStep}
+            value={this.props.thresholdCurrent}
+            onChange={this._eventListenerThreshold} />
+        </div>
      </div>;
 
      return <div> {panelJSX} </div>;

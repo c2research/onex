@@ -58,12 +58,39 @@ var InsightActions = {
     });
   },
   /**
-   * initiates function seq to get a new random query
+   * initiates function seq to select a threshold
    */
   selectThreshold: function(val) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_THRESHOLD,
       id: val
+    });
+  },
+  /**
+   * initiates function seq to set the start range of a query
+   */
+  selectStartQ: function(val) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_START_Q,
+      id: val
+    });
+  },
+  /**
+   * initiates function seq to set the end range of a query
+   */
+  selectEndQ: function(val) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_END_Q,
+      id: val
+    });
+  },
+  /**
+   * initiates function seq to process a data set
+   */
+  requestDatasetInit: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.REQUEST_DATA_INIT,
+      id: 1
     });
   },
   /**

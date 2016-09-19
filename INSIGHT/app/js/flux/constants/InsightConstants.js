@@ -8,10 +8,16 @@ var InsightConstants = keyMirror({
 	SELECT_QUERY: null,
 	SELECT_DISTANCE: null,
 	SELECT_THRESHOLD: null,
+	SELECT_START_Q: null,
+	SELECT_END_Q: null,
+	REQUEST_DATA_INIT: null,
 	VIEW_MODE_SIMILARITY: null,
 	VIEW_MODE_SEASONAL: null,
 	VIEW_MODE_CLUSTER: null,
-	SELECT_QUERY_FROMDATASET: null
+	SELECT_QUERY_FROMDATASET: null,
+	ICON_DATASET_INIT_LOADING: null,
+	ICON_DATASET_INIT_LOADED: null,
+	ICON_DATASET_INIT_NULL: null
 });
 
 module.exports = InsightConstants;

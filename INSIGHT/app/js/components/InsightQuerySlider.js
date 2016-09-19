@@ -1,6 +1,7 @@
 var React = require('react');
 var Select = require('react-select');
 var InsightActions = require('./../flux/actions/InsightActions');
+var AnnotatedSlider = require('./AnnotatedSlider');
 
 var resizeId;
 
@@ -14,18 +15,19 @@ var InsightQuerySlider = React.createClass({
    render: function() {
      var placeholder = "choose from the dataset";
 
+
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div>
-       <input
-          id="slider1"
-          type="range"
-          width="140px"
+       <h4 className="options"> Selct a Query From Current Dataset  </h4>
+       <div className="options">
+       <AnnotatedSlider
+          width={200}
           max={this.props.dsCurrentLength - 1}
           min={0}
           step={1}
           value={this.props.qSeq}
           onChange={this._handleQueryChange}/>
-        <output id="range1">{this.props.qSeq}</output>
+        </div>
       </div> : null;
 
      return panelJSX;

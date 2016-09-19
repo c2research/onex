@@ -38,6 +38,9 @@ var data = {
 	//result
 	result: [],
 
+	//icon modes
+	datasetIconMode: InsightConstants.ICON_DATASET_INIT_NULL,
+
 	//may not use:
 	controlPanelVisible: true,
 	distanceList: [],
@@ -168,6 +171,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		return data.qSeq;
 	},
 
+	getQStart: function() {
+		return data.qStart;
+	},
+
+	getQEnd: function() {
+		return data.qEnd;
+	},
+
 	/**
 	 * @return {Object} - the range of the threshold
 	 */
@@ -201,6 +212,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	getResult: function() {
 		return data.result;
+	},
+
+	/**
+	 * @return {InsightConstant} - the current icon mode
+	 */
+	getDatasetIconMode: function() {
+		return data.datasetIconMode;
 	},
 
 	/**
@@ -289,6 +307,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * @param {InsightConstant} - sets the icon view mode (loading vs loaded)
+	 */
+	setDatasetIconMode: function(mode) {
+		data.datasetIconMode = mode;
+	},
+
+	/**
 	 * requests server to popluate datalist
 	 */
 	requestDatasetList: function() {
@@ -317,6 +342,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	requestDatasetInit: function() {
 		if ((data.dsCollectionIndex == null) || (data.thresholdCurrent == null) ){
+			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_NULL);
+			InsightStore.emitChange();
 			console.log("index null, no need to req");
 			return;
 		}
@@ -336,6 +363,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 				    console.log(requestID, response.requestID);
 				}
 				data.dsCurrentLength = response.dsLength;
+				InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -367,16 +395,17 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			success: function(response) {
 			  	if (response.requestID != requestID.fromDataset) {
-						console.log(requestID, response)
-						return;
+						//TODO: CUONG READ HERE! The app is a lot smoother without this check
+						//      and while its not gaurenteed to be in the correct order, I haven'
+					  //      seen it not be in the correct order!
+						//return;
 			    }
 			    var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
 						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
-			    data.qValues = endlist;
-					data.result = []
-
+					InsightStore.setQValues(endlist);
+			  	data.result = []
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -408,8 +437,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
 		requestID.findMatch += 1;
 
-		requestID.findMatch += 1;
-
 		$.ajax({
 			url: '/query/find',
 			data: {
@@ -428,7 +455,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					var endlist = [];
 			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push({index: i, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push({index: (i + data.qStart), value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 			    data.result = endlist;
 			    InsightStore.emitChange();
@@ -470,45 +497,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	setDistanceCurrentIndex: function(v) {
 		data.queryCurrentIndex = v;
-	},
-
-	/**
-	 * requests server to popluate current dataset
-	 */
-	requestRandomQuery: function() {
-		$.ajax({
-			url: '/query/random/',
-			data: index,
-			dataType: 'json',
-			success: function(response) {
-				if (data.queryList.randomList > MAX_RANDOM_QUERIES){
-				  data.queryList.randomList.splice(0,1);//remove the first item
-				}
-				data.queryList.randomList.push(response);
-				this.emitChange();
-			},
-			error: function(xhr) {
-				console.log("error in random q");
-			}
-		});
-	},
-
-	/**
-	 * requests server to popluate current dataset
-	 */
-	requestSampleQuery: function(index) {
-		$.ajax({
-			url: '/query/sample/',
-			data: index,
-			dataType: 'json',
-			success: function(response) {
-				data.queryList.sampleList = response;
-				this.emitChange();
-			},
-			error: function(xhr) {
-				console.log("error in sample q");
-			}
-		});
 	}
 });
 
@@ -526,10 +514,14 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.CONTROL_PANEL_VISIBLE:
 			//if(InsightStore.emitChange();
 			break;
+		case InsightConstants.REQUEST_DATA_INIT:
+			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADING);
+			InsightStore.emitChange();
+			InsightStore.requestDatasetInit();//we should add in a loading icon
+			break;
 		case InsightConstants.SELECT_DS_INDEX:
 			InsightStore.setDSCollectionIndex(action.id)
 			InsightStore.emitChange();//we want the list to update
-			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
 		case InsightConstants.SELECT_QUERY:
 			InsightStore.setQSeq(action.id)
@@ -539,6 +531,14 @@ AppDispatcher.register(function(action) {
 			break;
 		case InsightConstants.SELECT_THRESHOLD:
 			InsightStore.setThresholdCurrent(action.id);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.SELECT_END_Q:
+			InsightStore.setQEnd(action.id);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.SELECT_START_Q:
+			InsightStore.setQStart(action.id);
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.VIEW_MODE_SIMILARITY:

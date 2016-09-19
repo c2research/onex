@@ -28,18 +28,16 @@ var InsightQuery = React.createClass({
      </div>
      */
 
-     var panelJSX =
+     var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="section">
         <h2> Query </h2>
-        <div className="options">
-          <div className="iconWrapper"> <i className="fa fa-database" aria-hidden="false"></i></div>
-          <h3 className="options"> From current Dataset  </h3>
-          <div className="options">
+        <div>
+          <div>
             <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
-            <InsightQueryOptions qSeq={this.props.qSeq} qValues={this.props.qValues} />
+            <InsightQueryOptions qValues={this.props.qValues} qStart={this.props.qStart} qEnd={this.props.qEnd} />
           </div>
         </div>
-     </div>;
+     </div> : null;
 
      return <div> {panelJSX} </div>;
    }

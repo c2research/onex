@@ -4,9 +4,10 @@
   "description": "Web app for time series exploration",
   "main": "app.js",
   "scripts": {
-    "build": "browserify -t [ babelify --presets [ react ] ] app/js/app.js -o server/static/js/bundle.js"
+    "build": "browserify -t [ babelify --presets [ react ] ] app/js/app.js -o server/static/js/bundle.js",
+    "watch": "watchify -t [ babelify --presets [ react ] ] app/js/app.js -o server/static/js/bundle.js"		 
   },
-  "author": "",
+  "author": "Charles Lovering & Cuong Nguyen",
   "license": "ISC",
   "devDependencies": {
     "babel-preset-react": "^6.11.1",
@@ -15,7 +16,8 @@
     "browserify-shim": "^3.8.12",
     "react-input-autosize": "^1.1.0",
     "react-input-range": "^0.9.2",
-    "react-select": "^1.0.0-beta14"
+    "react-select": "^1.0.0-beta14",
+    "watchify": "^3.7.0"
   },
   "dependencies": {
     "d3": "^3.5.17",

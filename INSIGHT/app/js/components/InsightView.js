@@ -21,52 +21,83 @@ var InsightView = React.createClass({
    render: function() {
      if (this.props.qValues.length < 1) return null;
 
-     //TODO: incorporate answer
-     //var data =//this.props.result;
+     var preSub = this.props.qValues.slice(0, this.props.qStart + 1);
+     var postSub = this.props.qValues.slice(this.props.qEnd - 1);
+     var sub = this.props.qValues.slice(this.props.qStart - 1, this.props.qEnd + 1);
+
+     console.log(preSub, postSub, sub);
+
      var chartData = [
        {
-         name: "Query",
-         values:  this.props.qValues,
+         name: "Before Subsequence",
+         values:  preSub,
+         strokeWidth: 2,
+         strokeOpacity: 0.7,
+         strokeDashArray: "5,5"
+       },
+       {
+         name: "Selected Subsequence",
+         values:  sub,
          strokeWidth: 3,
          strokeOpacity: 1,
-         strokeDashArray: "5,5",
-         colors: '#ff7f0e'
        },
+       {
+         name: "After Subsequence",
+         values:  postSub,
+         strokeWidth: 2,
+         strokeOpacity: 0.7,
+       },
+
        {
          name: "Match",
          strokeWidth: 3,
          strokeOpacity: 1,
-         values:  this.props.result,
-         colors: "#aa32f1"
+         values:  this.props.result
        }
 	    ];
-        
-     var margins = {left: 45, right: 25, top: 35, bottom: 35};
-     var title = this.props.qSeq != null ? "Query" + this.props.qSeq : "No Query Chosen";
 
-      // chart series,
-      // field: is what field your data want to be selected
-      // name: the name of the field that display in legend
-      // color: what color is the line
+      var chartData = [];
 
-      // your x accessor
-      var x = function(d) {
-       return d.index;
+      //we're gonna draw the whole thing, and then color the start and end
+      chartData.push({
+        values:  this.props.qValues,
+        strokeWidth: 2,
+        strokeOpacity: 0.7
+      });
+
+
+      if (preSub.length > 0) {
+        chartData.push({
+          values:  preSub,
+          strokeWidth: 2,
+          strokeOpacity: 0.7
+        });
+      }
+      // if (sub.length > 0) {
+      //   chartData.push({
+      //     name: "Selected Subsequence",
+      //     values:  sub,
+      //     strokeWidth: 3,
+      //     strokeOpacity: 1,
+      //   });
+      // }
+      if (postSub.length > 0) {
+        chartData.push({
+          values:  postSub,
+          strokeWidth: 2,
+          strokeOpacity: 0.7
+        });
+      }
+      if (this.props.result.length > 0) {
+        chartData.push({
+          name: "Match",
+          strokeWidth: 3,
+          strokeOpacity: 1,
+          values:  this.props.result
+        });
       }
 
-    //
-	    // style: {
-	    //  "strokeWidth": 2,
-	    //"strokeOpacity": 1,
-	    // "fillOpacity": 0.5
-	    // }
-    // var legendJSX = <Legend
-    //     width= {this.props.width}
-    //     chartSeries = {chartSeries}
-    //     swatchShape= 'circle'
-    //     legendPosition = 'right'
-    //     offset = '200'
-    //   />;
+     var margins = {left: 60, right: 25, top: 35, bottom: 35};
 
     var
        xLabel = "Data",

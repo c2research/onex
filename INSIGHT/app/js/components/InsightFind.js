@@ -1,5 +1,6 @@
 var React = require('react');
 var InsightActions = require('./../flux/actions/InsightActions');
+var InsightButton = require('./InsightButton');
 
 var resizeId;
 
@@ -8,15 +9,10 @@ var resizeId;
  */
 var InsightFind = React.createClass({
    render: function() {
-
-     var buttonJSX =
+     return this.props.show ?
      <div className="options">
-       <div className="findButton"
-            onClick={this._eventListenerClick}>Find  Match
-        </div>
-     </div>
-
-     return buttonJSX;
+      <InsightButton text="Find Match" onClick={this._eventListenerClick} />
+     </div>: null;
    },
    _eventListenerClick: function(){
     clearTimeout(resizeId);
@@ -25,7 +21,6 @@ var InsightFind = React.createClass({
    _handleClickAction: function( e ) {
      InsightActions.findMatch();
    }
-
 });
 
 module.exports = InsightFind;

@@ -7,7 +7,6 @@ body {
   margin: 0;
   max-width: 100%;
   overflow-x: hidden;
-  max-height: : 100%;
   overflow-y: hidden;
   background-color: white;
 }
@@ -35,24 +34,27 @@ h1.insightBanner {
 }
  /* ---------->>> CONTROLPANEL <<<-----------*/
 div.controlPanel {
-  z-index: -1;
+  z-index: 1;
   position: fixed;
   left: 0;
   top: 127px;
-  bot: 0;
-  height: 90%;
-  min-width: 50px;
+  height: inherit;
+  max-height: 90%;
   background-color: #829db4;
   border-color: black;
   color: white;
   -webkit-box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
   -moz-box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
   box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
+  overflow-y: scroll;
+  padding-bottom: 100px;
 }
 div.section {
   margin-right: 15px;
   margin-left: 15px;
 }
+
+
  /* ---------->>> TABS <<<-----------*/
 div.controlPanelTabPane {
   margin-top: 0;
@@ -84,12 +86,10 @@ div.notselected {
   font-style: italic;
 }
 /* ---------->>> OPTIONS:CONTROLPANEL <<<-----------*/
-h3.options {
-  text-align: left;
-}
 div.options {
   box-shadow: inset 0 0 0 0 #c2c2d6;
-  margin-left: 10px;
+  margin-left: 15px;
+  margin-right: 15px;
   border-radius: 5px;
   padding: 3px;
 }
@@ -97,13 +97,20 @@ div.iconWrapper {
   float: left;
   margin-right: 10px;
 }
+h4 {
+  font-weight: lighter;
+  text-align: left;
+  font-size: 0.8em;
+  margin-bottom: 3px;
+  border-bottom: 1px solid #AAA;
+}
 h3 {
   margin: 5px;
-  font-weight: lighter;;
+  font-weight: lighter;
   text-align: center;
 }
 h2 {
-  font-weight: lighter;;
+  font-weight: lighter;
   text-align: left;
   font-size: 1.3em;
   border-bottom: 1px solid #AAA;
@@ -117,26 +124,24 @@ input {
   text-align: center;
 }
 /* ---------->>> BUTTONS <<<-----------*/
-.findButton {
+.insightButton {
   opacity: 0.7;
   background: white;
   color: grey;
   font-size: 0.9em;
   padding: 5px 5px 5px 5px;
   text-decoration: none;
-  width: 50%;
   border-radius: 3px;
-  margin-left: 55px;
   text-align: center;
 }
 
-.findButton:hover {
+.insightButton:hover {
   opacity: 1;
   background: #a9a9a9;
   color:white;
 }
 
-.findButton:active {
+.insightButton:active {
   background-image: -webkit-linear-gradient(top, #c2c2d6, #a9a9a9);
 }
 

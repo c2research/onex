@@ -1,6 +1,7 @@
 var React = require('react');
 var InsightActions = require('./../flux/actions/InsightActions');
 var InsightConstants = require('./../flux/constants/InsightConstants');
+var AnnotatedSlider = require('./AnnotatedSlider');
 
 var resizeId;
 
@@ -10,34 +11,61 @@ var resizeId;
  */
 var InsightQueryOptions = React.createClass({
    render: function() {
-     var rangeSliderJSX = this.props.dsCurrentLength != null && this.props.dsCurrentLength > 0 ?
-     <div>Start and End</div> : null;
 
-     //a slider with two dots, one green one red
-     //start and end
-     return rangeSliderJSX;
+     var startSliderJSX =
+     <div >
+        <h4> Select a starting data point </h4>
+        <div className="options">
+          <AnnotatedSlider
+            width={200}
+            value={this.props.qStart}
+            min={0}
+            max={this.props.qEnd}
+            step={1}
+            onChange={this._handleClickStart}/>
+         </div>
+     </div>;
+     var endSliderJSX =
+     <div >
+        <h4> Select the end data point </h4>
+        <div className="options">
+          <AnnotatedSlider
+            width={200}
+            value={this.props.qEnd}
+            min={this.props.qStart}
+            max={this.props.qValues.length}
+            step={1}
+            onChange={this._handleClickEnd}/>
+         </div>
+     </div>;
+
+     var queryOptionsJSX = this.props.qValues.length > 0 ?
+     <div id="optionsContainer">
+      {startSliderJSX}
+      {endSliderJSX}
+     </div> : null;
+
+     return queryOptionsJSX;
    },
-   _eventListenerStart: function(e){
-    clearTimeout(resizeId);
-    resizeId = setTimeout(this._onResizeStartAction(e), 100);
+   _handleClickStart: function(e){
+     resizeId = setTimeout(this._onResizeStartAction(e), 75);
    },
+   _handleClickEnd: function(e){
+     resizeId = setTimeout(this._onResizeEndAction(e), 75);
+   },
+
+
    /**
-    * user stopped changing stuff, fire event!
+    * fire event when start is chosen!
     */
    _onResizeStartAction: function(e){
-     var data = 5; //TODO: get the data
-     InsightActions.setStartQ(e.target.value);
-   },
-   _eventListenerEnd: function(e){
-    clearTimeout(resizeId);
-    resizeId = setTimeout(this._onResizeEndAction(e), 100);
+     InsightActions.selectStartQ(parseInt(e.target.value, 10));
    },
    /**
-    * user stopped changing stuff, fire event!
+    * fire event when end is chosen!
     */
    _onResizeEndAction: function(e){
-     var data = 5; //TODO: get the data
-     InsightActions.setEndQ(e.target.value);
+     InsightActions.selectEndQ(parseInt(e.target.value, 10));
    }
 });
 

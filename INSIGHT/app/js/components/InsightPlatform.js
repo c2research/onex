@@ -21,6 +21,8 @@ function getState() {
     dsCurrentLength: InsightStore.getDSCurrentLength(),
     qValues: InsightStore.getQValues(),
     qSeq: InsightStore.getQSeq(),
+    qStart: InsightStore.getQStart(),
+    qEnd: InsightStore.getQEnd(),
     result: InsightStore.getResult(),
 
     //meta (will add sizing stuff)
@@ -35,7 +37,10 @@ function getState() {
 
     //future
     distanceList: InsightStore.getDistanceList(),
-    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex()
+    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
+
+    //icon modes
+    datasetIconMode: InsightStore.getDatasetIconMode()
   };
 }
 
@@ -92,14 +97,18 @@ var InsightPlatform = React.createClass({
                               thresholdCurrent={this.state.thresholdCurrent}
                               thresholdStep={this.state.thresholdStep}
                               viewMode={this.state.viewMode}
-
+                              qStart={this.state.qStart}
+                              qEnd={this.state.qEnd}
                               distanceList={this.state.distanceList}
                               distanceCurrentIndex={this.state.distanceCurrentIndex}
+                              datasetIconMode={this.state.datasetIconMode}
                             />
           <InsightView width={this.state.sizing.displayWidth}
                        height={this.state.sizing.displayHeight}
                        qValues={this.state.qValues}
                        qSeq={this.state.qSeq}
+                       qStart={this.state.qStart}
+                       qEnd={this.state.qEnd}
                        result={this.state.result}
                        />
        </div>
