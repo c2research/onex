@@ -58,9 +58,10 @@ def api_dataset_init():
     # Load the new dataset
     current_collection_index = ds_collection_index
     ds_path = str(datasets[current_collection_index]['path'])
+    ds_name = str(datasets[current_collection_index]['name'])
     ds_index = onex.loadDataset(ds_path)
     current_ds_index = ds_index
-    app.logger.debug('Loaded dataset %d', current_collection_index)
+    app.logger.debug('Loaded dataset %d [%s]', current_collection_index, ds_name)
 
     # Group the new dataset%f' % (ds_collection_index, st)
     app.logger.debug('Grouping dataset %d with st = %f',
@@ -86,7 +87,7 @@ def api_query_from_dataset():
     seq_length = onex.getDatasetSeqLength(current_ds_index);
     app.logger.debug('Get sequence %d in dataset %d',
                      q_seq,
-                     current_ds_index)
+                     current_collection_index)
     query = onex.getSubsequence(current_ds_index, q_seq, 0, seq_length - 1)
 
     # Return the length of the dataset here
@@ -97,6 +98,7 @@ def api_query_from_dataset():
 def api_find_best_match():
   request_id = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
+  # TODO(Cuong) decide the use of q_index
   q_index = request.args.get('qIndex', -1, type=int)
   q_seq = request.args.get('qSeq', -1, type=int)
   q_start = request.args.get('qStart', -1, type=int)
@@ -105,9 +107,9 @@ def api_find_best_match():
     # TODO(Cuong) Check validity of parameters
     # TODO(Cuong) Check if ds_collection_index matches current_collection_index
     r_dist, r_seq, r_start, r_end = \
-      onex.findSimilar(current_ds_index, q_index, q_seq, q_start, q_end, 0, -1)
+      onex.findSimilar(current_ds_index, current_ds_index, q_seq, q_start, q_end, 0, -1)
     app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
-                     q_seq, q_start, q_end, current_ds_index)
+                     q_seq, q_start, q_end, current_collection_index)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
     return jsonify(result=result, dist=r_dist, requestID=request_id)
 
