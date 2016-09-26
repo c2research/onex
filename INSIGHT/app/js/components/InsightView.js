@@ -25,12 +25,12 @@ var InsightView = React.createClass({
 
      var chartData = [];
 
-      //we're gonna draw the whole thing, and then color the start and end
-      chartData.push({
-        values:  this.props.qValues,
-        strokeWidth: 2,
-        strokeOpacity: 0.7
-      });
+      // //we're gonna draw the whole thing, and then color the start and end
+      // chartData.push({
+      //   values:  this.props.qValues,
+      //   strokeWidth: 2,
+      //   strokeOpacity: 0.7
+      // });
 
       if (sub.length > 0) {
         chartData.push({
