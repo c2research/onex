@@ -2,18 +2,8 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var d3 = require('d3');
 
-// require `react-d3-core` for Chart component, which help us build a blank svg and chart title.
-// require `react-d3-basic` for Line chart component.
 var LineChart = require('rd3').LineChart;
 var AreaChart = require('rd3').AreaChart;
-
-// var Legend = require('react-d3-core').Legend;
-// var Xaxis = require('react-d3-core').Xaxis;
-// var Yaxis = require('react-d3-core').Yaxis;
-// var Line = require('react-d3-basic').Line;
-// var Xgrid = require('react-d3-core').Xgrid;
-// var Ygrid = require('react-d3-core').Ygrid;
-
 
 /**
  * This is a prototype for an initial view
@@ -56,7 +46,8 @@ var InsightView = React.createClass({
           name: "Whole Match",
           values: [{index:sub.data[0].index, value:0}],
           strokeWidth: 0,
-          strokeOpacity: 0
+          strokeOpacity: 0,
+          circleRadius: 0
         };
 
         chartData.total.push(wholeD);
