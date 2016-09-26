@@ -14,13 +14,13 @@ var InsightProcess = React.createClass({
 
      var style = {
        loading: {
-         color: "Thistle"
+         color: "Red"
        },
        loaded: {
-         color: "SpringGreen"
+         color: "Green"
        },
        ready: {
-         color: "CYAN"
+         color: "Blue"
        },
        notReady: {
          color: "Gray"
@@ -55,7 +55,7 @@ var InsightProcess = React.createClass({
      }
 
      var ProcessJSX =
-     <div >
+     <div className = "panel">
      <h4> Finalize and Process Dataset </h4>
      <div style={style.container}>
       <div style={style.icon}>

@@ -34,15 +34,17 @@ h1.insightBanner {
 }
  /* ---------->>> CONTROLPANEL <<<-----------*/
 div.controlPanel {
-  z-index: 1;
+  z-index: -1;
   position: fixed;
   left: 0;
   top: 127px;
   height: inherit;
   max-height: 90%;
-  background-color: #829db4;
+  /*background-color: #829db4;
+  background-color: rgba(71, 70, 68, 0.35); */
+  background-color: #f2f2f2;
   border-color: black;
-  color: white;
+  color: #666;
   -webkit-box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
   -moz-box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
   box-shadow: 1px 0px 0px 0px rgba(200,200,200,0.75);
@@ -77,7 +79,7 @@ div.tabSingleWrapper.selected {
 div.tabSingleWrapper.notselected {
   width: 25%;
   font-size: 0.7em;
-  background-color: rgba(250, 250, 250, 0.25);
+  background-color: rgba(63, 81, 181, 0.3); /*rgba(250, 250, 250, 0.25);*/
 }
 div.tabSingleWrapper:hover {
   box-shadow: inset 200px 0 0 0 #c2c2d6;
@@ -102,7 +104,7 @@ h4 {
   text-align: left;
   font-size: 0.8em;
   margin-bottom: 3px;
-  border-bottom: 1px solid #AAA;
+  border-bottom: 1px solid rgba(63, 81, 181, 0.3);
 }
 h3 {
   margin: 5px;
@@ -123,6 +125,17 @@ input {
   align-self: center;
   text-align: center;
 }
+.panel {
+  padding: 0px 0px 1px 1px;
+  border-radius: 2px;
+  margin-bottom: 2px;
+  color: black;
+  background-color: #eceff1; /*rgba(89, 90, 92, 1); /* a dark grey */
+  -webkit-box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
+  -moz-box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
+  box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
+}
+
 /* ---------->>> BUTTONS <<<-----------*/
 .insightButton {
   opacity: 0.7;

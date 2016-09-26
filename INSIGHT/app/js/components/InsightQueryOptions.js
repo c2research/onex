@@ -13,26 +13,28 @@ var InsightQueryOptions = React.createClass({
    render: function() {
 
      var startSliderJSX =
-     <div >
+     <div className="panel" >
         <h4> Select a starting data point </h4>
         <div className="options">
           <AnnotatedSlider
             width={200}
             value={this.props.qStart}
             min={0}
-            max={this.props.qEnd}
+            max={this.props.qValues.length}
+            realMax={this.props.qEnd}
             step={1}
             onChange={this._handleClickStart}/>
          </div>
      </div>;
      var endSliderJSX =
-     <div >
+     <div className="panel">
         <h4> Select the end data point </h4>
         <div className="options">
           <AnnotatedSlider
             width={200}
             value={this.props.qEnd}
-            min={this.props.qStart}
+            min={0}
+            realMin={this.props.qStart}
             max={this.props.qValues.length}
             step={1}
             onChange={this._handleClickEnd}/>

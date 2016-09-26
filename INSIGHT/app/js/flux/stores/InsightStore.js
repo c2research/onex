@@ -264,6 +264,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {Int} - the ending index of a query
 	 */
 	setQStart: function(qStart) {
+		if (qStart >= data.qEnd) return;
 		data.qStart = qStart;
 	},
 
@@ -271,6 +272,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {Int} - the ending index of a query
 	 */
 	setQEnd: function(qEnd) {
+		if (qEnd <= data.qStart) return;
 		data.qEnd = qEnd;
 	},
 
@@ -280,7 +282,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	setQValues: function(qValues) {
 		data.qValues = qValues;
 		data.qStart = 0;
-		data.qEnd = qValues.length - 1;
+		data.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+	},
+
+	/**
+	 * clears the values of the current query
+	 */
+	clearQuery: function() {
+		this.setQValues([]);
 	},
 
 	/**
@@ -303,7 +312,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {Number} - the new result (answer)
 	 */
 	setResult: function(r) {
-		data.result = result;
+		data.result = r;
+	},
+
+	/**
+	 * sets the result to be empty
+	 */
+	clearResult: function(r) {
+		this.setResult([]);
 	},
 
 	/**
@@ -365,6 +381,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 				data.dsCurrentLength = response.dsLength;
 				InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
 				InsightStore.emitChange();
+				InsightStore.setQSeq(0);//set off event seq to default query
+				InsightStore.requestQueryFromDataset();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -395,17 +413,16 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			success: function(response) {
 			  	if (response.requestID != requestID.fromDataset) {
-						//TODO: CUONG READ HERE! The app is a lot smoother without this check
-						//      and while its not gaurenteed to be in the correct order, I haven'
-					  //      seen it not be in the correct order!
-						//return;
+						//its not smooth if you run on your own comp, but definitely need it
+						//if someone else is using this. ill add another loading thing to make it more clear
+						return;
 			    }
 			    var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
 						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 					InsightStore.setQValues(endlist);
-			  	data.result = []
+			  	InsightStore.setResult([]);
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -520,11 +537,14 @@ AppDispatcher.register(function(action) {
 			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
 		case InsightConstants.SELECT_DS_INDEX:
-			InsightStore.setDSCollectionIndex(action.id)
+			InsightStore.setDSCollectionIndex(action.id);
+			InsightStore.clearQuery();
+			InsightStore.clearResult();
 			InsightStore.emitChange();//we want the list to update
 			break;
 		case InsightConstants.SELECT_QUERY:
 			InsightStore.setQSeq(action.id)
+			InsightStore.clearResult();
 			InsightStore.requestQueryFromDataset();
 			break;
 		case InsightConstants.SELECT_DISTANCE:
@@ -535,10 +555,12 @@ AppDispatcher.register(function(action) {
 			break;
 		case InsightConstants.SELECT_END_Q:
 			InsightStore.setQEnd(action.id);
+			InsightStore.clearResult();
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.SELECT_START_Q:
 			InsightStore.setQStart(action.id);
+			InsightStore.clearResult();
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.VIEW_MODE_SIMILARITY:
