@@ -22,10 +22,6 @@ var InsightControlPanel = React.createClass({
        }
      }
 
-     if (this.props.qValues.length < 1) {
-       style.divStyle.width = 1000
-     }
-
      //TODO: generalize this (probably)
      var modeList = [InsightConstants.VIEW_MODE_SIMILARITY,
                      InsightConstants.VIEW_MODE_SEASONAL,
