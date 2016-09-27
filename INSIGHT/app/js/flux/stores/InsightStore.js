@@ -367,7 +367,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		requestID.datasetInit += 1;
 
 		$.ajax({
-			url: '/dataset/init',
+			url: '/dataset/init/',
 			data: {
 			    dsCollectionIndex : data.dsCollectionIndex,
 				st : data.thresholdCurrent,
@@ -404,7 +404,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		requestID.fromDataset += 1;
 
 		$.ajax({
-			url: '/query/fromdataset',
+			url: '/query/fromdataset/',
 			data: {
 				dsIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
 				qSeq : data.qSeq, //the index of the query in the list
@@ -455,7 +455,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		requestID.findMatch += 1;
 
 		$.ajax({
-			url: '/query/find',
+			url: '/query/find/',
 			data: {
 			    dsIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
 			    qIndex: data.dsCollectionIndex, //the index of from which the qIndex belongs
