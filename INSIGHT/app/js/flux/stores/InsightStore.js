@@ -20,7 +20,7 @@ var data = {
 	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
 
 	//query information
-	qIndex: -1, //use this later for q from diff sets
+	qType: 0, //use this later for q from diff sets
 	qSeq: "",
 	qStart: 0,
 	qEnd: -1,
@@ -406,7 +406,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/query/fromdataset/',
 			data: {
-				dsIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
+				dsCollectionIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
 				qSeq : data.qSeq, //the index of the query in the list
 				requestID : requestID.fromDataset
 			},
@@ -457,8 +457,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/query/find/',
 			data: {
-			    dsIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
-			    qIndex: data.dsCollectionIndex, //the index of from which the qIndex belongs
+			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
+			    qType: data.qType, //the type of query, 0->dataset, 1->from file
 			    qSeq: data.qSeq, //the index of q in its ds
 			    qStart: data.qStart,
 			    qEnd: data.qEnd,
