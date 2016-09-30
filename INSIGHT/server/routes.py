@@ -1,3 +1,4 @@
+import os
 import random
 import json
 import threading
@@ -8,8 +9,14 @@ from flask import render_template
 from flask import request
 from flask import jsonify
 from flask import abort
+
 DEFAULT_ST = 0.2
 DATASET_LIST = 'datasets.json'
+
+UPLOAD_FOLDER = 'queries'
+UPLOAD_PART_NAME = 'query'
+UPLOAD_FILE_NAME = 'query'
+ALLOWED_EXTENSIONS = set(['txt', 'csv'])
 
 ####### Server Initialization #################
 lock = threading.Lock()
@@ -20,7 +27,7 @@ with open(DATASET_LIST) as datasets_file:
 
 current_collection_index = -1
 current_ds_index         = -1
-current_ds_length        = -1
+current_q_index          = -1
 ###############################################
 
 @app.route('/test')
@@ -44,8 +51,8 @@ def api_dataset_load():
 
 @app.route('/dataset/init/')
 def api_dataset_init():
-  global current_collection_index, current_ds_index, current_ds_length
-
+  global current_collection_index, current_ds_index
+  # TODO(Cuong): Instead of use default value of -1, catch the exception
   request_id          = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st                  = request.args.get('st', 0.2, type=float)
@@ -66,8 +73,8 @@ def api_dataset_init():
     current_collection_index = ds_collection_index
     ds_path                  = str(datasets[current_collection_index]['path'])
     ds_name                  = str(datasets[current_collection_index]['name'])
-    ds_index                 = onex.loadDataset(ds_path)
-    current_ds_index         = ds_index
+    current_ds_index         = onex.loadDataset(ds_path)
+
     app.logger.debug('Loaded dataset %d [%s]', current_collection_index, ds_name)
 
     # Group the new dataset%f' % (ds_collection_index, st)
@@ -78,28 +85,30 @@ def api_dataset_init():
                      current_collection_index, st, num_groups)
 
     # Return number of sequences in the dataset
-    current_ds_length = onex.getDatasetSeqCount(current_ds_index);
+    ds_length = onex.getDatasetSeqCount(current_ds_index);
 
-    return jsonify(dsLength=current_ds_length, numGroups=num_groups, requestID=request_id)
+    return jsonify(dsLength=ds_length, numGroups=num_groups, requestID=request_id)
 
 
 @app.route('/query/fromdataset/')
 def api_query_from_dataset():
-  global current_ds_index, current_ds_length
+  global current_ds_index
   request_id          = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   q_seq               = request.args.get('qSeq', -1, type=int)
   with lock:
     if not (ds_collection_index == current_collection_index):
-      abort(400, '{} is not loaded yet'.format(ds_collection_index))
+      abort(400, 'Dataset {} is not loaded yet'.format(ds_collection_index))
 
-    if (q_seq < 0 or q_seq >= current_ds_length):
+    ds_length = onex.getDatasetSeqCount(current_ds_index);
+    if (q_seq < 0 or q_seq >= ds_length):
       abort(400, 'Sequence index is out of bound')
 
-    seq_length = onex.getDatasetSeqLength(current_ds_index);
     app.logger.debug('Get sequence %d in dataset %d',
                      q_seq,
                      current_collection_index)
+
+    seq_length = onex.getDatasetSeqLength(current_ds_index);
     query = onex.getSubsequence(current_ds_index, q_seq, 0, seq_length - 1)
 
     return jsonify(query=query, requestID=request_id)
@@ -107,24 +116,90 @@ def api_query_from_dataset():
 
 @app.route('/query/find/')
 def api_find_best_match():
-  request_id          = request.args.get('requestID', -1, type=int)
-  ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
-  q_type              = request.args.get('qType', -1, type=int)
-  q_seq               = request.args.get('qSeq', -1, type=int)
-  q_start             = request.args.get('qStart', -1, type=int)
-  q_end               = request.args.get('qEnd', -2, type=int)
+  request_id               = request.args.get('requestID', -1, type=int)
+  ds_collection_index      = request.args.get('dsCollectionIndex', -1, type=int)
+  q_find_with_custom_query = request.args.get('qFindWithCustomQuery', 0, type=int)
+  q_seq                    = request.args.get('qSeq', -1, type=int)
+  q_start                  = request.args.get('qStart', -1, type=int)
+  q_end                    = request.args.get('qEnd', -1, type=int)
+
+  if q_start > q_end or q_start < 0 or q_end < 0:
+    abort(400, 'Invalid starting and ending position')
+
   with lock:
     if not (ds_collection_index == current_collection_index):
-      abort(400, '{} is not loaded yet'.format(ds_collection_index))
+      abort(400, 'Dataset {} is not loaded yet'.format(ds_collection_index))
 
-    if (q_seq < 0 or q_seq >= current_ds_length):
+    # Index of the dataset containing the query, by default set to the same dataset 
+    # where the best match will be searched from
+    q_ds_index = current_ds_index
+    if q_find_with_custom_query:
+      if current_q_index == -1:
+        abort(400, 'No custom query is loaded')
+      # If find with custom query, set to the dataset containing the custom query
+      q_ds_index = current_q_index
+      # There is only one sequence in this dataset
+      q_seq = 0
+
+    # Get number of sequences in the database containing the query
+    q_ds_length = onex.getDatasetSeqCount(q_ds_index)
+    if q_seq < 0 or q_seq >= q_ds_length:
       abort(400, 'Sequence index is out of bound')
 
+    seq_length = onex.getDatasetSeqLength(q_ds_index)
+    # TODO(Cuong): 1-based or 0-based ?
+    if q_start >= seq_length or q_end >= seq_length:
+      abort(400, 'Invalid starting and ending position')
+
+    if q_find_with_custom_query:
+      app.logger.debug('Look for best match with sequence %d (%d:%d) in the custom query',
+                   q_seq, q_start, q_end)
+    else:
+      app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
+                       q_seq, q_start, q_end, current_collection_index)
+ 
     r_dist, r_seq, r_start, r_end = \
-      onex.findSimilar(current_ds_index, current_ds_index, q_seq, q_start, q_end, 0, -1)
-    app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
-                     q_seq, q_start, q_end, current_collection_index)
+      onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
+
     return jsonify(result=result, dist=r_dist, requestID=request_id)
 
 
+@app.route('/query/upload', methods=['POST'])
+def api_upload_query():
+  if UPLOAD_PART_NAME not in request.files:
+    abort(400, "No '{}' part found".format(UPLOAD_PART_NAME))
+
+  file = request.files[UPLOAD_PART_NAME]
+  if file.filename == '':
+    abort(400, 'No selected file')
+
+  if not _allowed_file(file.filename):
+    abort(400, 'File type not allowed')
+
+  if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+  query_path = os.path.join(UPLOAD_FOLDER, UPLOAD_FILE_NAME)
+
+  file.save(query_path)
+
+  global current_q_index
+  request_id = request.args.get('requestID', -1, type=int)
+
+  with lock:
+    # Unload the current custom query in memory
+    if current_q_index != -1:
+      onex.unloadDataset(current_q_index)
+      app.logger.debug('Unloaded previous custom query')
+
+    current_q_index = onex.loadDataset(query_path)
+
+    seq_length = onex.getDatasetSeqLength(current_q_index);
+    query = onex.getSubsequence(current_q_index, 0, 0, seq_length - 1)
+
+    return jsonify(query=query, requestID=request_id)
+
+
+def _allowed_file(filename):
+  return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

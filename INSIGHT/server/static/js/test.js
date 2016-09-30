@@ -4,7 +4,7 @@ var appendOutput = function(output) {
 
 var getDatasetList = function() {
   $.ajax({
-    url: '/dataset/list/',
+    url: '/dataset/list',
     success: function(res) {
       for (ds in res['datasets']) {
         appendOutput(res['datasets'][ds]);
@@ -21,13 +21,16 @@ var loadAndGroupDataset = function() {
     data: {
       requestId: 0,
       dsCollectionIndex: currentDS,
-      st: 0.3
+      st: 0.2
     },
     success: function(res) {
       appendOutput(res['dsLength']);
     },
     error: function(jqXHR, textStatus, errorThrown) {
-     appendOutput(textStatus);
+      appendOutput(errorThrown);
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown)
     }
   });
 }
@@ -43,7 +46,10 @@ var sampleAQuery = function() {
       appendOutput(res['query']);
     },
     error: function(jqXHR, textStatus, errorThrown) {
-     appendOutput(textStatus);
+      appendOutput(errorThrown);
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown)
     }
   });
 }
@@ -54,16 +60,42 @@ var findMatch = function() {
     data: {
       requestId: 0,
       dsCollectionIndex: currentDS,
-      qIndex: currentDS,
+      qFindWithCustomQuery: 0,
       qSeq: 0,
       qStart: 0,
-      qEnd: 50
+      qEnd: 20
     },
     success: function(res) {
       appendOutput(res['result']);
     },
     error: function(jqXHR, textStatus, errorThrown) {
-     appendOutput(textStatus);
+      appendOutput(errorThrown);
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown)
+    }
+  });
+}
+
+var findMatchWithUploadedQuery = function() {
+  $.ajax({ 
+    url: '/query/find/',
+    data: {
+      requestId: 0,
+      dsCollectionIndex: currentDS,
+      qFindWithCustomQuery: 1,
+      qSeq: 0,
+      qStart: 0,
+      qEnd: 10
+    },
+    success: function(res) {
+      appendOutput(res['result']);
+    },
+    error: function(jqXHR, textStatus, errorThrown) {
+      appendOutput(errorThrown);
+      console.log(jqXHR);
+      console.log(textStatus);
+      console.log(errorThrown)
     }
   });
 }

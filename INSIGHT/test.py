@@ -97,7 +97,7 @@ class ServerTest(unittest.TestCase):
                        query_string={
                              'requestID': 0,
                              'dsCollectionIndex': dataset,
-                             'qIndex': dataset,
+                             'q_find_with_custom_query': 0,
                              'qSeq': 0,
                              'qStart': 0,
                              'qEnd': 50
