@@ -163,6 +163,10 @@ input {
 
 /* ---------->>> CHARTS <<<-----------*/
 
+.view {
+  overflow-y: scroll;
+}
+
 .containerD3 {
   position: absolute;
   right: 0;
