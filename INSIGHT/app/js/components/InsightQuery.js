@@ -31,6 +31,7 @@ var InsightQuery = React.createClass({
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="section">
         <h2> Query </h2>
+        <UploadQuery />
         <div>
           <div>
             <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
@@ -43,4 +44,37 @@ var InsightQuery = React.createClass({
    }
 });
 
+var UploadQuery = React.createClass({
+  handleDrop: function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+
+    var files = evt.dataTransfer.files; // FileList object.
+
+    // files is a FileList of File objects. List some properties.
+    var output = [];
+    for (var i = 0, f; f = files[i]; i++) {
+      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
+                  f.size, ' bytes, last modified: ',
+                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
+                  '</li>');
+    }
+    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+  },
+  handleDragOver: function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
+  },
+  render: function() {
+    return (<div>
+      <div id="drop_zone"
+           onDrag={this.handleDrag}
+           onDrop={this.handleDrop}>
+        <input type="file" id="files" name="file" />
+      </div>
+      <output id="list"></output>
+    </div>);
+  }
+});
 module.exports = InsightQuery;
