@@ -37,6 +37,21 @@ class ServerTest(unittest.TestCase):
                     'Number of groups must be positive')
 
 
+  def test_init_dataset_out_of_bound(self):
+    ret = self._init_dataset(-1, 1.0)
+    self.assertEqual(ret.status_code, 400,
+                     'Negative index of dataset must be invalid')
+    ret = self._init_dataset(9999, 1.0)
+    self.assertEqual(ret.status_code, 400,
+                     'Out of bound index of dataset must be invalid')
+
+
+  def test_init_dataset_st_out_of_bound(self):
+    ret = self._init_dataset(0, -1.0)
+    self.assertEqual(ret.status_code, 400,
+                     'Negative similarity threshold must be invalid')
+
+
   def test_sample_query(self):
     dataset = 0
     self._init_dataset(dataset, 1.0)
@@ -49,6 +64,30 @@ class ServerTest(unittest.TestCase):
     ret_data = json.loads(ret.data)
     self.assertTrue(len(ret_data['query']) > 0,
                     'Length of returned query must be positive')
+
+
+  def test_sample_query_from_unloaded_dataset(self):
+    self._init_dataset(0, 1.0)
+    ret = self.app.get('/query/fromdataset/',
+                       query_string={
+                             'requestID': 0,
+                             'dsCollectionIndex': 1,
+                             'qSeq': 0
+                      })
+    self.assertEqual(ret.status_code, 400,
+                    'Cannot sample from an unloaded dataset')
+
+
+  def test_sample_query_with_invalid_index(self):
+    self._init_dataset(0, 1.0)
+    ret = self.app.get('/query/fromdataset/',
+                       query_string={
+                             'requestID': 0,
+                             'dsCollectionIndex': 0,
+                             'qSeq': -1
+                      })
+    self.assertEqual(ret.status_code, 400,
+                    'Sequence index must be positive')
 
 
   def test_find_best_match_same_dataset(self):
