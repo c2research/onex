@@ -19,9 +19,10 @@ var InsightView = React.createClass({
      }
 
      var total = {
-       margins:  {left: 60, right: 25, top: 20, bottom: 25},
+       margins:  {left: 60, right: 25, top: 20, bottom: 5},
        domain: { x: [0,this.props.qValues.length], y: [0,1] },
-       yAxisTickCount: 3,
+       yAxisTickCount: 1,
+       xAxisTickCount: 1,
        data: this.props.qValues
      }
 
@@ -105,6 +106,7 @@ var InsightView = React.createClass({
        legend={false}
        domain={total.domain}
        yAxisTickCount={total.yAxisTickCount}
+       xAxisTickCount={total.xAxisTickCount}
        colors={d3.scale.category10()}
        width= {this.props.width}
        height= {totalHeight}

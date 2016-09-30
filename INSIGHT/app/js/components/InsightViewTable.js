@@ -20,7 +20,7 @@ const rows = [
 var InsightViewTable = React.createClass({
    render: function() {
      var tableJSX =
-     <div className="view">
+     <div className="viewTable">
      <Table
       rowHeight={50}
       rowsCount={rows.length}
