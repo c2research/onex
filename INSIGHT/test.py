@@ -9,6 +9,7 @@ class ServerTest(unittest.TestCase):
 
   def setUp(self):
     self.app = App.test_client()
+    self.app.application.logger.disabled = True
 
 
   def test_list_dataset(self):
@@ -16,6 +17,7 @@ class ServerTest(unittest.TestCase):
     ret_data = json.loads(ret.data)
     self.assertTrue(len(ret_data['datasets']) > 0,
                     'Returned dataset list must not be empty')
+
 
   def _init_dataset(self, ds_collection_index, st):
     # Choose a small dataset otherwise it will take forever
