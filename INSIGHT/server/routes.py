@@ -163,7 +163,14 @@ def api_find_best_match():
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
 
-    return jsonify(result=result, dist=r_dist, requestID=request_id)
+    # TODO(Cuong): consider making a separated endpoint for retrieving a subsequence
+    return jsonify(result=result, 
+                   dist=r_dist,
+                   dsName=datasets[current_collection_index],
+                   seq=r_seq,
+                   start=r_start,
+                   end=r_end,
+                   requestID=request_id)
 
 
 @app.route('/query/upload', methods=['POST'])

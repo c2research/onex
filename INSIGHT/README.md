@@ -56,13 +56,6 @@ Perform loading and grouping on a dataset.
   requestID: <int> # The requestID sent with the request
 }
 ```
-+ Example:
-```
-{ 
-  dsLength: 200,
-  requestID: 1
-}
-```
 
 <br/>
 ### 3. Get a sequence from a dataset
@@ -93,13 +86,7 @@ Perform loading and grouping on a dataset.
   requestID: <int>  # The requestID sent with the request
 }
 ```
-+ Example:
-```
-{ 
-  query: [1.24, 3.21, 3.1, 5.32],
-  requestID: 1
-}
-```
+
 
 <br />
 ### 4. Find best match
@@ -138,15 +125,11 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 { 
   dist: <double>     # Distance between the query and the result
   result: [<double>] # The result sequence
+  dsName: <string>   # Name of the dataset containing the result
+  seq: <int>         # Index of the sequence containing the result
+  start: <int>       # Starting position of the result in the sequence
+  end: <int>         # Ending position of the result in the sequence
   requestID: <int>   # The requestID sent with the request
-}
-```
-+ Example:
-```
-{ 
-  dist: 0.23
-  result: [1.24, 3.21, 3.1, 5.32],
-  requestID: 1
 }
 ```
 
@@ -182,11 +165,4 @@ Status: **200**
   requestID: <int>  # The requestID sent with the request
 }
 ```
-+ Example:
 
-```
-{ 
-  query: [1.24, 3.21, 3.1, 5.32],
-  requestID: 1
-}
-```
