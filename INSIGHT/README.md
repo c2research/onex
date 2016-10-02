@@ -1,15 +1,17 @@
 # INSIGHT: Interactive Time Series Analytics System
 
+Since this server performs computation with ONEX code, which is not written in a stateless manner, the server must also act as a state machine. Each of the following requests may or may not change the state of the server or depend on the previous requests. For example, making a 'Initialize a dataset' request loads a new dataset into the memory and the subsequence queries will be performed on this dataset. 
+
 ## Server API specification
 ### 1. Get a list of available datasets
 
 **HTTP method and URL**
 
-    GET /dataset/list/
+    GET /dataset/list
 
 **Success Response**
 
-+ Code: **200**
++ Status: **200**
 + Content:
 ```
 { 
@@ -22,7 +24,8 @@
   dataset: ['ECG', 'ItalyPower', 'FacesAll']
 }
 ```
-</br>
+
+<br/>
 ### 2. Initalize a dataset
 
 Perform loading and grouping on a dataset.
@@ -45,7 +48,7 @@ Perform loading and grouping on a dataset.
 
 **Success Response**
 
-+ Code: **200**
++ Status: **200**
 + Content:
 ```
 { 
@@ -61,23 +64,7 @@ Perform loading and grouping on a dataset.
 }
 ```
 
-**Error Response**
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Dataset collection index out of bound" }
-```
-+ Reason: Index of the dataset is negative or larger than the number of available datasets.
-
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Invalid similarity threshold value" }
-```
-+ Reason: Similarity threshold is negative
-</br>
+<br/>
 ### 3. Get a sequence from a dataset
 
 **HTTP method and URL**
@@ -98,7 +85,7 @@ Perform loading and grouping on a dataset.
 
 **Success Response**
 
-+ Code: **200**
++ Status: **200**
 + Content:
 ```
 { 
@@ -114,24 +101,7 @@ Perform loading and grouping on a dataset.
 }
 ```
 
-**Error Response**
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Dataset X is not loaded yet" }
-```
-+ Reason: Dataset X is not loaded before selected sequence from it
-
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Sequence index is out of bound" }
-```
-+ Reason: Index of the sequence is negative or largere than the number of available sequences.
-
-</br>
+<br />
 ### 4. Find best match
 Find the best match with a subsequence in a dataset from all subsequences in another dataset.
 
@@ -162,7 +132,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 
 **Success Response**
 
-+ Code: **200**
++ Status: **200**
 + Content:
 ```
 { 
@@ -180,40 +150,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 }
 ```
 
-**Error Response**
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Dataset X is not loaded yet" }
-```
-+ Reason: Dataset X is not loaded before selected sequence from it
-
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Sequence index is out of bound" }
-```
-+ Reason: Index of the sequence is negative or larger than the number of available sequences.
-
-
-+ Code: **400**
-+ Response JSON:
-```
-{ message: "No custom query is loaded" }
-```
-+ Reason: No custom query is uploaded to the server.
-
-
-+ Code: **400**
-+ Response JSON: 
-```
-{ message: "Invalid starting and ending position" }
-```
-
-</br>
-
+<br/>
 ### 5. Upload custom query
 Upload a custom query to the server.
 
@@ -228,12 +165,16 @@ Upload a custom query to the server.
 
 **Data**
 
-  TODO
+Use 'query' for the 'name' attribute. For example:
+
+```
+<input type="file" name="query">
+```
 
 
 **Success Response**
 
-Code: **200**
+Status: **200**
 + Content:
 ```
 { 
@@ -243,15 +184,9 @@ Code: **200**
 ```
 + Example:
 
-TODO
-
 ```
 { 
   query: [1.24, 3.21, 3.1, 5.32],
   requestID: 1
 }
 ```
-
-**Error Response**
-
-TODO
