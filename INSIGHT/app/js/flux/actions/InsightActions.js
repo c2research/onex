@@ -42,6 +42,15 @@ var InsightActions = {
   /**
    * initiates function seq to get a new random query
    */
+  selectQueryType: function(value) {
+    AppDispatcher.dispatch({
+      actionType: value,
+      id: 1
+    });
+  },
+  /**
+   * initiates function seq to get a new random query
+   */
   selectQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_QUERY,
@@ -110,7 +119,16 @@ var InsightActions = {
       actionType: InsightConstants.FIND_MATCH,
       id: 0
     });
-  }
+  },
+  /*
+   * initiates funciton seq to find similarity match
+   */
+   uploadQueryFile: function(files) {
+     AppDispatcher.dispatch({
+       actionType: InsightConstants.UPLOAD_QUERY_FILE,
+       id: files
+     });
+   }
 
 };
 

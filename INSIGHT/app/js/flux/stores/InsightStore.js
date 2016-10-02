@@ -8,8 +8,6 @@ var InsightConstants = require('./../constants/InsightConstants');
 
 var CHANGE_EVENT = 'change';
 
-var MAX_RANDOM_QUERIES = 5;//recycle after 5
-
 var data = {
 
 	//the information on all the datasets
@@ -20,11 +18,12 @@ var data = {
 	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
 
 	//query information
-	qType: 0, //use this later for q from diff sets
-	qSeq: "",
+	qTypeAPI: 0, //use this later for q from diff sets
+	qSeq: "",//index of the query
 	qStart: 0,
 	qEnd: -1,
 	qValues: [],
+ 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
 
   //threshold:
 	thresholdRange: [0.0, 1.0],
@@ -35,9 +34,6 @@ var data = {
 	viewMode: InsightConstants.VIEW_MODE_SIMILARITY,
 	sizing: {},
 
-	//result
-	result: [],
-
 	//icon modes
 	datasetIconMode: InsightConstants.ICON_DATASET_INIT_NULL,
 
@@ -47,10 +43,25 @@ var data = {
 	distanceCurrentIndex: 0
 };
 
+/*
+ * This will hold all the data on results and formed queries
+ * this can go into another Store eventaully
+ */
+var results = {
+	viewingResults: false,
+	viewLiveIndices: [],
+	resultList: []
+}
+
+/*
+ * A counter for requestIDs to ensure last query is ultimately
+ * used.
+ */
 var requestID = {
 	fromDataset: 0,
 	findMatch: 0,
-	datasetInit: 0
+	datasetInit: 0,
+	uploadQuery: 0
 }
 
 var InsightStore = assign({}, EventEmitter.prototype, {
@@ -109,6 +120,39 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		};
 
 		data.sizing = sizing;
+	},
+	/*
+	 * Called upon the success a query
+	 */
+	addQueryResultPair: function(qTypeLocal, qTypeAPI, qSeq, qStart, qEnd,
+		 													 qValues, threshold, qDsCollectionIndex,
+															 rSeq, rStart, rEnd, rValues, rDsCollectionIndex,
+															 warpingPath, similarity){
+		results.currentResultIndex = results.length;
+		results.resultList.add(
+			{ //placeholder to show structure
+					query : {
+						typeLocal: qTypeLocal,
+						typeAPI: qTypeAPI,
+						seq: qSeq,
+						start: qStart,
+						end: qEnd,
+						values: qValues,
+						threshold: threshold,
+						distanceType: null,
+						dsCollectionIndex: qDsCollectionIndex
+					},
+					result: {
+						seq: rSeq,
+						start: rStart,
+						end: rEnd,
+						values: rValues,
+						dsCollectionIndex: rDsCollectionIndex,
+						warpingPath: warpingPath,
+						similarityValue: similarityValue
+					}
+				}
+		);
 	},
 
 	/**
@@ -219,6 +263,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	getDatasetIconMode: function() {
 		return data.datasetIconMode;
+	},
+
+	/**
+	 * @param {InsightConstant} - the current query type
+	 */
+	setQueryType: function(v) {
+		data.queryType = v;
 	},
 
 	/**
@@ -458,13 +509,23 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			url: '/query/find/',
 			data: {
 			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
-			    qType: data.qType, //the type of query, 0->dataset, 1->from file
+			    qType: data.qTypeAPI, //the type of query, 0->dataset, 1->from file
 			    qSeq: data.qSeq, //the index of q in its ds
 			    qStart: data.qStart,
 			    qEnd: data.qEnd,
 			    requestID: requestID.findMatch
 			},
 			dataType: 'json',
+			currentState: {
+				qTypeLocal: data.qTypeLocal,
+				qTypeAPI: data.qTypeAPI,
+				qSeq: data.qSeq,
+				qStart: data.qStart,
+				qEnd: data.qEnd,
+				qValues: data.qValues,
+				threshold: data.threshold,
+				qDsCollectionIndex: data.dsCollectionIndex
+			},
 			success: function(response) {
 			    if (response.requestID != requestID.findMatch){
 						console.log(response, requestID);
@@ -475,6 +536,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 						endlist.push({index: (i + data.qStart), value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 			    data.result = endlist;
+
+					var values = this.currentState.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? qDatasetValues : qUploadValues;
+
+					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qTypeAPI, this.currentState.qSeq,
+						 	this.currentState.qStart, this.currentState.qEnd, values, this.currentState.threshold,
+							this.currentState.qDsCollectionIndex, response.result.seq, response.result.end, response.result.values,
+							response.result.dsCollectionIndex, response.result.warpingPath, response.result.similarity);
+
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -484,6 +553,39 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		});
 	},
 
+	/**
+	 * requests server upload a file
+	 */
+	requestUploadQuery: function(files) {
+
+		requestID.uploadQuery += 1;
+
+		$.ajax({
+			url: '/query/upload/',
+			data: {
+			    files: files, //the index of the ds in memory on the server we querying
+			    requestID: requestID.uploadMatch
+			},
+			method: 'POST',
+			dataType: 'json',
+			success: function(response) {
+			    if (response.requestID != requestID.uploadMatch){
+						console.log(response, requestID);
+						return;
+			    }
+					var endlist = [];
+			    for (var i = 0; i < response.query.length; i++) {
+						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+			    }
+			    data.qUploadValues = endlist;
+			    InsightStore.emitChange();
+			},
+			error: function(xhr) {
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error in finding answer");
+			}
+		});
+	},
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~  NOTE: not currently used ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
@@ -574,6 +676,17 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.VIEW_MODE_CLUSTER:
 			InsightStore.setViewMode(action.actionType);
 			InsightStore.emitChange();
+			break;
+		case InsightConstants.QUERY_TYPE_UPLOAD:
+			InsightStore.setQueryType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.QUERY_TYPE_DATASET:
+			InsightStore.setQueryType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.UPLOAD_QUERY_FILE:
+			InsightStore.requestUploadQuery(action.id);
 			break;
 		default:
 		  // no op

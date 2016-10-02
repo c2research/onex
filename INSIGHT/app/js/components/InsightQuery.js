@@ -31,6 +31,7 @@ var InsightQuery = React.createClass({
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="section">
         <h2> Query </h2>
+        <QueryTypeRadio />
         <UploadQuery />
         <div>
           <div>
@@ -44,37 +45,32 @@ var InsightQuery = React.createClass({
    }
 });
 
-var UploadQuery = React.createClass({
-  handleDrop: function(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-
-    var files = evt.dataTransfer.files; // FileList object.
-
-    // files is a FileList of File objects. List some properties.
-    var output = [];
-    for (var i = 0, f; f = files[i]; i++) {
-      output.push('<li><strong>', escape(f.name), '</strong> (', f.type || 'n/a', ') - ',
-                  f.size, ' bytes, last modified: ',
-                  f.lastModifiedDate ? f.lastModifiedDate.toLocaleDateString() : 'n/a',
-                  '</li>');
-    }
-    document.getElementById('list').innerHTML = '<ul>' + output.join('') + '</ul>';
+var QueryTypeRadio = React.createClass({
+  render: function(){
+    return (
+      <form action={this.setQueryType()}>
+        <input type="radio" value={InsightConstants.QUERY_TYPE_DATASET}/> Female
+        <input type="radio" value={InsightConstants.QUERY_TYPE_UPLOAD}/> Other
+      </form>
+    );
   },
-  handleDragOver: function(evt) {
-    evt.stopPropagation();
-    evt.preventDefault();
-    evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
-  },
-  render: function() {
-    return (<div>
-      <div id="drop_zone"
-           onDrag={this.handleDrag}
-           onDrop={this.handleDrop}>
-        <input type="file" id="files" name="file" />
-      </div>
-      <output id="list"></output>
-    </div>);
+  setQueryType: function(e){
+    console.log(e)
+    InsightActions.setQueryType(e.target.value);
   }
 });
+
+var UploadQuery = React.createClass({
+  render: function() {
+    return (
+    <div>
+      <input type="file" id="files" name="file" onChange={this.uploadQueryFile}/>
+      <output id="list"></output>
+    </div>);
+  },
+  uploadQueryFile: function(e) {
+    InsightActions.uploadQueryFile(e.target.files);
+  }
+});
+s
 module.exports = InsightQuery;
