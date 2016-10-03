@@ -127,15 +127,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	/*
 	 * Called upon the success a query
 	 */
-	addQueryResultPair: function(qTypeLocal, qTypeAPI, qSeq, qStart, qEnd,
+	addQueryResultPair: function(qTypeLocal, qSeq, qStart, qEnd,
 		 													 qValues, threshold, qDsCollectionIndex,
-															 rSeq, rStart, rEnd, rValues, dsName, similarity){
-		results.currentResultIndex = results.length;
-		results.resultList.add(
+															 rSeq, rStart, rEnd, rValues, dsName, similarityValue){
+		results.viewLiveIndices=[results.length];
+		results.resultList.push(
 			{ //placeholder to show structure
 					query : {
 						typeLocal: qTypeLocal,
-						typeAPI: qTypeAPI,
 						seq: qSeq,
 						start: qStart,
 						end: qEnd,
@@ -506,6 +505,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	requestFindMatch: function() {
 
+		var qType = data.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
+		var qValues = data.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? data.qDatasetValues : data.qUploadValues;
+
 		if ((data.dsCollectionIndex == null) || (data.qSeq == null) ||
 				(data.dsCollectionIndex < 0) || (data.qSeq < 0)){
 			console.log("dsCollectionIndex or qseq null, no need to req");
@@ -514,11 +516,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
 		if ((data.qStart == null) || (data.qEnd == null) ||
 				(data.qStart < 0) || (data.qEnd < 0) ||
-			  (data.qStart >= data.qEnd) || (data.qEnd > data.qValues.length)){
+			  (data.qStart >= data.qEnd) || (data.qEnd > qValues.length)){
 			console.log("setting defaults for qStart and end ");
 
 			 data.qStart = 0;
-			 data.qEnd = data.qValues.length - 1;
+			 data.qEnd = qValues.length - 1;
 		}
 
 		requestID.findMatch += 1;
@@ -527,7 +529,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			url: '/query/find/',
 			data: {
 			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
-			    qType: data.qTypeAPI, //the type of query, 0->dataset, 1->from file
+			    qType: qType, //the type of query, 0->dataset, 1->from file
 			    qSeq: data.qSeq, //the index of q in its ds
 			    qStart: data.qStart,
 			    qEnd: data.qEnd,
@@ -536,12 +538,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			dataType: 'json',
 			currentState: {
 				qTypeLocal: data.qTypeLocal,
-				qTypeAPI: data.qTypeAPI,
 				qSeq: data.qSeq,
 				qStart: data.qStart,
 				qEnd: data.qEnd,
-				qValues: data.qValues,
-				threshold: data.threshold,
+				qValues: qValues,
+				threshold: data.thresholdCurrent,
 				qDsCollectionIndex: data.dsCollectionIndex
 			},
 			success: function(response) {
@@ -551,18 +552,16 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					var endlist = [];
 			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push({index: (i + data.qStart), value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push({index: i, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
-			    data.result = endlist;
+					console.log(response, endlist);
 
-					var values = this.currentState.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? qDatasetValues : qUploadValues;
-
-					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qTypeAPI, this.currentState.qSeq,
-						 	this.currentState.qStart, this.currentState.qEnd, values, this.currentState.threshold,
-							this.currentState.qDsCollectionIndex, response.seq, response.end, response.values,
+					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qSeq,
+						 	this.currentState.qStart, this.currentState.qEnd, this.currentState.qValues, this.currentState.threshold,
+							this.currentState.qDsCollectionIndex, response.seq,  response.start, response.end, endlist,
 							response.dsName, response.dist);//response.result.warpingPath,
 
-			    InsightStore.emitChange();
+				  InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
