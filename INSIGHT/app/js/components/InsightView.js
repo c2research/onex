@@ -21,7 +21,6 @@ var InsightView = React.createClass({
       console.log(val);
       keepList.push(results.resultList[val]);
     }
-    console.log(keepList)
     var height = this.props.height - 100 / keepList.length;
     var that = this;
 
@@ -34,12 +33,12 @@ var InsightView = React.createClass({
                               width={that.props.width}
                               height={height}
                               graphType={that.props.graphType}
-                              qValues={resultQueryPair.query.values}
-                              qStart={resultQueryPair.query.start}
-                              qEnd={resultQueryPair.query.end}
-                              rValues={resultQueryPair.result.values}
-                              rStart={resultQueryPair.result.start}
-                              rEnd={resultQueryPair.result.end}/> //warpingPath={resultQueryPair.result.warpingPath}
+                              qValues={resultQueryPair.qValues}
+                              qStart={resultQueryPair.qStart}
+                              qEnd={resultQueryPair.qEnd}
+                              rValues={resultQueryPair.rValues}
+                              rStart={resultQueryPair.rStart}
+                              rEnd={resultQueryPair.rEnd}/> //warpingPath={resultQueryPair.result.warpingPath}
         );
     });
 
@@ -62,7 +61,7 @@ var InsightView = React.createClass({
 
     var InsightViewTableJSX =
     <InsightViewTable width={this.props.width}
-                      results={this.props.results}
+                      results={this.props.results.resultList}
                       height={100}/>
 
      return (<div className="containerD3">

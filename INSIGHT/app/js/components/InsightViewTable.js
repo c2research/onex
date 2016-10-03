@@ -1,56 +1,115 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
-var d3 = require('d3');
+var InsightConstants = require('./../flux/constants/InsightConstants');
 
-var LineChart = require('rd3').LineChart;
-var AreaChart = require('rd3').AreaChart;
-var {Table, Column, Cell} = require('fixed-data-table');
+var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
-//temp fake data
-const rows = [
-  ['a1', 'b1', 'c1'],
-  ['a2', 'b2', 'c2'],
-  ['a3', 'b3', 'c3'],
-  // .... and more
-];
+var DatasetNameCell = function({rowIndex, data, ...props}) {
+  return <Cell {...props}>
+          {data[rowIndex]['dsName']['name']}
+         </Cell>;
+}
+
+var SameDataset = function({rowIndex, data, ...props}) {
+  return <Cell {...props}>
+           {data[rowIndex]['qTypeLocal'] == InsightConstants.QUERY_TYPE_DATASET ? "Y" : "N"}
+         </Cell>
+}
+
+var TextCell = function({rowIndex, data, field, ...props}) {
+  return <Cell {...props}>
+           {data[rowIndex][field]}
+         </Cell>;
+}
+
+var DecimalCell = function({rowIndex, data, field, ...props}) {
+  return <Cell {...props}>
+           {data[rowIndex][field].toFixed(2)}
+         </Cell>;
+}
 
 /**
- * This is the data table
+ * Data table 
  */
 var InsightViewTable = React.createClass({
-   render: function() {
-     var tableJSX =
-     <div className="viewTable">
-     <Table
-      rowHeight={50}
-      rowsCount={rows.length}
-      width={this.props.width}
-      height={this.props.height}
-      headerHeight={50}>
-      <Column
-        header={<Cell>Col 1</Cell>}
-        cell={<Cell>Column 1 static content</Cell>}
-        width={this.props.width / 3}
-      />
-      <Column
-        header={<Cell>Col 2</Cell>}
-        cell={<Cell>Column 1 static content</Cell>}
-        width={this.props.width / 3}
-      />
-      <Column
-        header={<Cell>Col 3</Cell>}
-        cell={({rowIndex, ...props}) => (
-          <Cell {...props}>
-            Data for column 3: {rows[rowIndex][2]}
-          </Cell>
-        )}
-        width={this.props.width / 3}
-      />
-    </Table>
+  render: function() {
+    var resultData = this.props.results;
+
+    var QueryGroup =
+      <ColumnGroup
+        header={<Cell>Query</Cell>}>
+        <Column 
+          header={<Cell>Dataset Name</Cell>}
+          cell={<DatasetNameCell data={resultData} />}
+          width={150}
+        />
+        <Column
+          header={<Cell>From same dataset?</Cell>}
+          cell={<SameDataset data={resultData} />}
+          width={170}
+        />
+        <Column
+          header={<Cell>Sequence</Cell>}
+          cell={<TextCell data={resultData} field="qSeq" />}
+          width={100}
+        />
+        <Column
+          header={<Cell>Start</Cell>}
+          cell={<TextCell data={resultData} field="qStart" />}
+          width={50}
+        />
+        <Column
+          header={<Cell>End</Cell>}
+          cell={<TextCell data={resultData} field="qEnd" />}
+          width={50}
+        />
+        <Column
+          header={<Cell>Similarity</Cell>}
+          cell={<DecimalCell data={resultData} field="similarityValue" />}
+          width={100}
+        />
+      </ColumnGroup>
+
+    var ResultGroup =
+      <ColumnGroup
+        header={<Cell>Result</Cell>}>
+        <Column
+          header={<Cell>Sequence</Cell>}
+          cell={<TextCell data={resultData} field="rSeq" />}
+          width={100}
+        />
+        <Column
+          header={<Cell>Start</Cell>}
+          cell={<TextCell data={resultData} field="rStart" />}
+          width={50}
+        />
+        <Column
+          header={<Cell>End</Cell>}
+          cell={<TextCell data={resultData} field="rEnd" />}
+          width={50}
+        />
+        <Column
+          header={<Cell>Similarity</Cell>}
+          cell={<DecimalCell data={resultData} field="similarityValue" />}
+          width={100}
+        />
+      </ColumnGroup>
+
+    var tableJSX =
+    <div className="viewTable">
+      <Table
+        rowHeight={50}
+        rowsCount={resultData.length}
+        width={this.props.width}
+        height={200}
+        groupHeaderHeight={40}
+        headerHeight={40}>
+       {QueryGroup}
+       {ResultGroup}
+      </Table>
     </div>;
 
-     return tableJSX;
-   }
+    return tableJSX;
+  }
 });
 
 module.exports = InsightViewTable;

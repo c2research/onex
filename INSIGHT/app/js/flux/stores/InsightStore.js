@@ -133,26 +133,22 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		results.viewLiveIndices=[results.length];
 		results.resultList.push(
 			{ //placeholder to show structure
-					query : {
-						typeLocal: qTypeLocal,
-						seq: qSeq,
-						start: qStart,
-						end: qEnd,
-						values: qValues,
-						threshold: threshold,
-						distanceType: null,
-						dsCollectionIndex: qDsCollectionIndex
-					},
-					result: {
-						seq: rSeq,
-						start: rStart,
-						end: rEnd,
-						values: rValues,
-						dsName: dsName,
-						//warpingPath: warpingPath,
-						similarityValue: similarityValue
-					}
-				}
+				qTypeLocal: qTypeLocal,
+				qSeq: qSeq,
+				qStart: qStart,
+				qEnd: qEnd,
+				qValues: qValues,
+				qThreshold: threshold,
+				qDistanceType: null,
+				qDsCollectionIndex: qDsCollectionIndex,
+				rSeq: rSeq,
+				rStart: rStart,
+				rEnd: rEnd,
+				rValues: rValues,
+				dsName: dsName,
+				//warpingPath: warpingPath,
+				similarityValue: similarityValue
+			}
 		);
 	},
 
