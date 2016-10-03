@@ -1,6 +1,8 @@
 var React = require('react');
 var InsightQuerySlider = require('./InsightQuerySlider');
 var InsightQueryOptions = require('./InsightQueryOptions');
+var InsightActions = require('./../flux/actions/InsightActions');
+var InsightConstants = require('./../flux/constants/InsightConstants');
 
 /**
  * This dropdown will have all the pre-existing queries
@@ -31,7 +33,7 @@ var InsightQuery = React.createClass({
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="section">
         <h2> Query </h2>
-        <QueryTypeRadio />
+        <QueryTypeRadio qTypeLocal={this.props.qTypeLocal}/>
         <UploadQuery />
         <div>
           <div>
@@ -48,15 +50,17 @@ var InsightQuery = React.createClass({
 var QueryTypeRadio = React.createClass({
   render: function(){
     return (
-      <form action={this.setQueryType()}>
-        <input type="radio" value={InsightConstants.QUERY_TYPE_DATASET}/> Female
-        <input type="radio" value={InsightConstants.QUERY_TYPE_UPLOAD}/> Other
-      </form>
+      <div>
+        <h4> Choose which Query Type to Use </h4>
+          <input type="radio" value={InsightConstants.QUERY_TYPE_DATASET} checked={InsightConstants.QUERY_TYPE_DATASET == this.props.qTypeLocal} onChange={this.setQueryType}/> Dataset
+          <input type="radio" value={InsightConstants.QUERY_TYPE_UPLOAD} checked={InsightConstants.QUERY_TYPE_UPLOAD == this.props.qTypeLocal}  onChange={this.setQueryType}/> Upload
+      </div>
     );
   },
   setQueryType: function(e){
-    console.log(e)
-    InsightActions.setQueryType(e.target.value);
+    if (this.props.qTypeLocal != e.target.value) {
+      InsightActions.selectQueryType(e.target.value);
+    }
   }
 });
 
@@ -64,6 +68,7 @@ var UploadQuery = React.createClass({
   render: function() {
     return (
     <div>
+      <h4> Upload a Query from File </h4>
       <input type="file" id="files" name="file" onChange={this.uploadQueryFile}/>
       <output id="list"></output>
     </div>);
@@ -72,5 +77,5 @@ var UploadQuery = React.createClass({
     InsightActions.uploadQueryFile(e.target.files);
   }
 });
-s
+
 module.exports = InsightQuery;

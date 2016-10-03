@@ -22,7 +22,8 @@ var data = {
 	qSeq: "",//index of the query
 	qStart: 0,
 	qEnd: -1,
-	qValues: [],
+	qDatasetValues: [],
+	qUploadValues: [],
  	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
 
   //threshold:
@@ -37,6 +38,9 @@ var data = {
 	//icon modes
 	datasetIconMode: InsightConstants.ICON_DATASET_INIT_NULL,
 
+	//state
+	graphType: InsightConstants.GRAPH_TYPE_LINE,
+
 	//may not use:
 	controlPanelVisible: true,
 	distanceList: [],
@@ -48,7 +52,6 @@ var data = {
  * this can go into another Store eventaully
  */
 var results = {
-	viewingResults: false,
 	viewLiveIndices: [],
 	resultList: []
 }
@@ -109,7 +112,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
 		var controlPanelWidth = data.controlPanelVisible ? 275 : 5;//we will change this later when
 		 	      //we can resize this etc
-		var bannerHeight = 127; //hard code for now, get it later.
+		var bannerHeight = 76; //hard code for now, get it later.
 
 		//this sizing scheme puts the table of values inside the view
 		var sizing = {
@@ -126,8 +129,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	addQueryResultPair: function(qTypeLocal, qTypeAPI, qSeq, qStart, qEnd,
 		 													 qValues, threshold, qDsCollectionIndex,
-															 rSeq, rStart, rEnd, rValues, rDsCollectionIndex,
-															 warpingPath, similarity){
+															 rSeq, rStart, rEnd, rValues, dsName, similarity){
 		results.currentResultIndex = results.length;
 		results.resultList.add(
 			{ //placeholder to show structure
@@ -147,12 +149,19 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 						start: rStart,
 						end: rEnd,
 						values: rValues,
-						dsCollectionIndex: rDsCollectionIndex,
-						warpingPath: warpingPath,
+						dsName: dsName,
+						//warpingPath: warpingPath,
 						similarityValue: similarityValue
 					}
 				}
 		);
+	},
+
+	/*
+	 * @return {Object} - returns all the result information
+	 */
+	getResults: function() {
+		return results;
 	},
 
 	/**
@@ -199,10 +208,16 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
-	 * @return {Object} - the values of the current query
+	 * @return {Object} - the values of the current query (uploaded)
 	 */
-	getQValues: function() {
-		return data.qValues;
+	getQUploadValues: function() {
+		return data.qUploadValues;
+	},
+	/**
+	 * @return {Object} - the values of the current query (dataset)
+	 */
+	getQDatasetValues: function() {
+		return data.qDatasetValues;
 	},
 
 	/**
@@ -252,13 +267,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
-	 * @return {Object} - the current answer
-	 */
-	getResult: function() {
-		return data.result;
-	},
-
-	/**
 	 * @return {InsightConstant} - the current icon mode
 	 */
 	getDatasetIconMode: function() {
@@ -266,10 +274,18 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * @return {InsightConstant} - the current query type
+	 	(dataset vs upload vs playground (todo))
+	 */
+	getQTypeLocal: function(){
+		return data.qTypeLocal;
+	},
+
+	/**
 	 * @param {InsightConstant} - the current query type
 	 */
 	setQueryType: function(v) {
-		data.queryType = v;
+		data.qTypeLocal = v;
 	},
 
 	/**
@@ -330,17 +346,19 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	/**
 	 * @param {Object} - the values of the current query
 	 */
-	setQValues: function(qValues) {
-		data.qValues = qValues;
+	setQUploadValues: function(qValues) {
+		data.qUploadValues = qValues;
 		data.qStart = 0;
 		data.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
 	},
 
 	/**
-	 * clears the values of the current query
+	 * @param {Object} - the values of the current query
 	 */
-	clearQuery: function() {
-		this.setQValues([]);
+	setQDatasetValues: function(qValues) {
+		data.qDatasetValues = qValues;
+		data.qStart = 0;
+		data.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
 	},
 
 	/**
@@ -420,7 +438,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/dataset/init/',
 			data: {
-			    dsCollectionIndex : data.dsCollectionIndex,
+			  dsCollectionIndex : data.dsCollectionIndex,
 				st : data.thresholdCurrent,
 				requestID: requestID.datasetInit
 			},
@@ -472,7 +490,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    for (var i = 0; i < response.query.length; i++) {
 						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
-					InsightStore.setQValues(endlist);
+					InsightStore.setQDatasetValues(endlist);
 			  	InsightStore.setResult([]);
 			    InsightStore.emitChange();
 			},
@@ -541,8 +559,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
 					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qTypeAPI, this.currentState.qSeq,
 						 	this.currentState.qStart, this.currentState.qEnd, values, this.currentState.threshold,
-							this.currentState.qDsCollectionIndex, response.result.seq, response.result.end, response.result.values,
-							response.result.dsCollectionIndex, response.result.warpingPath, response.result.similarity);
+							this.currentState.qDsCollectionIndex, response.seq, response.end, response.values,
+							response.dsName, response.dist);//response.result.warpingPath,
 
 			    InsightStore.emitChange();
 			},
@@ -577,7 +595,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    for (var i = 0; i < response.query.length; i++) {
 						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
-			    data.qUploadValues = endlist;
+			    InsightStore.setQUploadValues(endlist);
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -640,7 +658,6 @@ AppDispatcher.register(function(action) {
 			break;
 		case InsightConstants.SELECT_DS_INDEX:
 			InsightStore.setDSCollectionIndex(action.id);
-			InsightStore.clearQuery();
 			InsightStore.clearResult();
 			InsightStore.emitChange();//we want the list to update
 			break;

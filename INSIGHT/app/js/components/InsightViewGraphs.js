@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var d3 = require('d3');
+var InsightConstants = require('./../flux/constants/InsightConstants');
 
 var LineChart = require('rd3').LineChart;
 var AreaChart = require('rd3').AreaChart;
@@ -8,9 +9,11 @@ var AreaChart = require('rd3').AreaChart;
 /**
  * This is a prototype for an initial view
  */
-var InsightView = React.createClass({
+var InsightViewGraphs = React.createClass({
    render: function() {
      if (this.props.qValues.length < 1) return null;
+
+     // TODO: split of graphType and ues that component
 
      var sub = {
        margins:  {left: 60, right: 25, top: 20, bottom: 20},
@@ -67,18 +70,19 @@ var InsightView = React.createClass({
         chartData.total.push(subData);
      }
 
-     if (this.props.result.length > 0) {
-        var resultD = {
-          name: "Match",
-          values:  this.props.result,
-          strokeWidth: 3,
-          strokeOpacity: 1
-        };
-
-        chartData.sub.push(resultD);
-        chartData.total.push(resultD);
-
-      }
+    //  TODO: add result back in
+    //  if (this.props.result.length > 0) {
+    //     var resultD = {
+    //       name: "Match",
+    //       values:  this.props.result,
+    //       strokeWidth: 3,
+    //       strokeOpacity: 1
+    //     };
+     //
+    //     chartData.sub.push(resultD);
+    //     chartData.total.push(resultD);
+     //
+    //   }
 
 
      var style = {
@@ -123,4 +127,4 @@ var InsightView = React.createClass({
    }
 });
 
-module.exports = InsightView;
+module.exports = InsightViewGraphs;

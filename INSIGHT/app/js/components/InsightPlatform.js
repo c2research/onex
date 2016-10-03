@@ -19,11 +19,15 @@ function getState() {
     dsCollectionList: InsightStore.getDSCollectionList(),
     dsCollectionIndex: InsightStore.getDSCollectionIndex(),
     dsCurrentLength: InsightStore.getDSCurrentLength(),
-    qValues: InsightStore.getQValues(),
+
+    //query
+    qTypeLocal: InsightStore.getQTypeLocal(),
+    qUploadValues: InsightStore.getQUploadValues(),
+    qDatasetValues: InsightStore.getQDatasetValues(),
     qSeq: InsightStore.getQSeq(),
     qStart: InsightStore.getQStart(),
     qEnd: InsightStore.getQEnd(),
-    result: InsightStore.getResult(),
+    results: InsightStore.getResults(),
 
     //meta (will add sizing stuff)
     controlPanelVisible: InsightStore.getControlPanelVisible(),
@@ -91,8 +95,10 @@ var InsightPlatform = React.createClass({
                               dsCollectionList={this.state.dsCollectionList}
                               dsCollectionIndex={this.state.dsCollectionIndex}
                               dsCurrentLength={this.state.dsCurrentLength}
+                              qTypeLocal={this.state.qTypeLocal}
                               qSeq={this.state.qSeq}
-                              qValues={this.state.qValues}
+                              qDatasetValues={this.state.qDatasetValues}
+                              qUploadValues={this.state.qUploadValues}
                               thresholdRange={this.state.thresholdRange}
                               thresholdCurrent={this.state.thresholdCurrent}
                               thresholdStep={this.state.thresholdStep}
@@ -105,11 +111,13 @@ var InsightPlatform = React.createClass({
                             />
           <InsightView width={this.state.sizing.displayWidth}
                        height={this.state.sizing.displayHeight}
-                       qValues={this.state.qValues}
+                       qTypeLocal={this.state.qTypeLocal}
+                       qUploadValues={this.state.qUploadValues}
+                       qDatasetValues={this.state.qDatasetValues}
                        qSeq={this.state.qSeq}
                        qStart={this.state.qStart}
                        qEnd={this.state.qEnd}
-                       result={this.state.result}
+                       results={this.state.results}
                        />
        </div>
      );

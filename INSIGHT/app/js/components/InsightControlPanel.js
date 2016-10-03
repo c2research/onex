@@ -30,7 +30,7 @@ var InsightControlPanel = React.createClass({
      var that = this;
      var tabList = modeList.map(function(mode) {
        return <InsightTab type={mode} current={that.props.viewMode} width={that.props.width / 3 - 10} key={mode} />;
-     })
+     });
 
      var tabsJSX = this.props.visible ?
        <div className="controlPanelTabPane"
@@ -47,19 +47,20 @@ var InsightControlPanel = React.createClass({
                             thresholdStep={this.props.thresholdStep}
                             datasetIconMode={this.props.datasetIconMode}/>;
 
+    var values = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? this.props.qDatasetValues:
+                 this.props.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD  ? this.props.qUploadValues : this.props.qBuildValues;
 
     var queryJSX = this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY ?
     <InsightQuery viewMode={this.props.viewMode}
                   dsCurrentLength={this.props.dsCurrentLength}
-                  qValues={this.props.qValues}
+                  qTypeLocal={this.props.qTypeLocal}
+                  qValues={values}
                   qStart={this.props.qStart}
                   qEnd={this.props.qEnd}
                   qSeq={this.props.qSeq}/> : null;
 
     var findJSX = this.props.viewMode != InsightConstants.VIEW_MODE_CLUSTER ?
-                  <InsightFind show={this.props.qValues.length > 0} /> : null;
-
-
+                  <InsightFind show={values.length > 0} /> : null;
 
     var panelJSX = this.props.visible ?
     <div className="controlPanel">

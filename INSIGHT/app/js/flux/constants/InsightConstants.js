@@ -19,7 +19,13 @@ var InsightConstants = keyMirror({
 	QUERY_TYPE_UPLOAD: null,
 	ICON_DATASET_INIT_LOADING: null,
 	ICON_DATASET_INIT_LOADED: null,
-	ICON_DATASET_INIT_NULL: null
+	ICON_DATASET_INIT_NULL: null,
+	GRAPH_TYPE_LINE: null,
+	GRAPH_TYPE_HORIZON: null,
+	GRAPH_TYPE_CONNECTED: null,
+	GRAPH_TYPE_ERROR: null,
+	GRAPH_TYPE_WARP: null,
+
 });
 
 module.exports = InsightConstants;
