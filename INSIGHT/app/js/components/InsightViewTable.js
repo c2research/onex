@@ -62,11 +62,6 @@ var InsightViewTable = React.createClass({
           cell={<TextCell data={resultData} field="qEnd" />}
           width={50}
         />
-        <Column
-          header={<Cell>Similarity</Cell>}
-          cell={<DecimalCell data={resultData} field="similarityValue" />}
-          width={100}
-        />
       </ColumnGroup>
 
     var ResultGroup =
