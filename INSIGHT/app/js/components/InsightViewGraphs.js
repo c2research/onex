@@ -16,13 +16,14 @@ var InsightViewGraphs = React.createClass({
      // TODO: split of graphType and ues that component
 
      var sub = {
-       margins:  {left: 60, right: 25, top: 20, bottom: 20},
+       margins:  {left: 35, right: 15, top: 20, bottom: 20},
        domain: { x: [], y: [0,1] },
+       yAxisTickCount: 5,
        data: this.props.qValues.slice(this.props.qStart, this.props.qEnd + 1)
      }
 
      var total = {
-       margins:  {left: 60, right: 25, top: 20, bottom: 5},
+       margins:  {left: 35, right: 15, top: 20, bottom: 5},
        domain: { x: [0,this.props.qValues.length], y: [0,1] },
        yAxisTickCount: 1,
        xAxisTickCount: 1,
@@ -99,6 +100,7 @@ var InsightViewGraphs = React.createClass({
        colors={d3.scale.category10()}
        width= {this.props.width}
        height= {subHeight}
+       yAxisTickCount= {sub.yAxisTickCount}
        data= {chartData.sub}
        xAccessor= {function(d){return d.index}}
        yAccessor= {function(d){return d.value}}

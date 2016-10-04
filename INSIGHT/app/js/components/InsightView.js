@@ -21,7 +21,7 @@ var InsightView = React.createClass({
       console.log(val);
       keepList.push(results.resultList[val]);
     }
-    var height = this.props.height - 100 / keepList.length;
+    var height = this.props.height - 200 / keepList.length;
     var that = this;
 
     var key = 0;
@@ -53,7 +53,7 @@ var InsightView = React.createClass({
       this.generateViews(this.props.results) :
       <InsightViewGraphs viewingResults={false}
                         width={this.props.width}
-                        height={this.props.height - 100}
+                        height={this.props.height - 200}
                         qValues={values}
                         qSeq={this.props.qSeq}
                         qStart={this.props.qStart}
@@ -62,7 +62,7 @@ var InsightView = React.createClass({
     var InsightViewTableJSX =
     <InsightViewTable width={this.props.width}
                       results={this.props.results.resultList}
-                      height={100}/>
+                      height={200}/>
 
      return (<div className="containerD3">
                {InsightViewGraphJSX}

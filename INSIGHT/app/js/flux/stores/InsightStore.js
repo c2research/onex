@@ -110,7 +110,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	  var w = Math.max( body.scrollWidth, body.offsetWidth,
 		                       html.clientWidth, html.scrollWidth, html.offsetWidth );
 
-		var controlPanelWidth = data.controlPanelVisible ? 275 : 5;//we will change this later when
+		var controlPanelWidth = data.qDatasetValues.length > 0 || data.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
 		 	      //we can resize this etc
 		var bannerHeight = 76; //hard code for now, get it later.
 
@@ -121,6 +121,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			displayHeight: h - bannerHeight,
 			displayWidth: w - controlPanelWidth
 		};
+
+		console.log(sizing.displayWidth, w, controlPanelWidth);
 
 		data.sizing = sizing;
 	},
@@ -487,6 +489,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					InsightStore.setQDatasetValues(endlist);
 			  	InsightStore.setResult([]);
+					InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases
+																						 //size of control panel, things need to be resized.
 			    InsightStore.emitChange();
 			},
 			error: function(xhr) {

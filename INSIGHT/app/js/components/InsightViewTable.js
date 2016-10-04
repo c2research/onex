@@ -28,7 +28,7 @@ var DecimalCell = function({rowIndex, data, field, ...props}) {
 }
 
 /**
- * Data table 
+ * Data table
  */
 var InsightViewTable = React.createClass({
   render: function() {
@@ -37,7 +37,7 @@ var InsightViewTable = React.createClass({
     var QueryGroup =
       <ColumnGroup
         header={<Cell>Query</Cell>}>
-        <Column 
+        <Column
           header={<Cell>Dataset Name</Cell>}
           cell={<DatasetNameCell data={resultData} />}
           width={150}

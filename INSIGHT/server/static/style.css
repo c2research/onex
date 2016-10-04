@@ -40,8 +40,10 @@ div.controlPanel {
   top: 76px;
   height: inherit;
   max-height: 90%;
-  /*background-color: #829db4;
-  background-color: rgba(71, 70, 68, 0.35); */
+  /*
+  background-color: #829db4;
+  background-color: rgba(71, 70, 68, 0.35);
+  */
   background-color: #f2f2f2;
   border-color: black;
   color: #666;
@@ -162,10 +164,6 @@ input {
 }
 
 /* ---------->>> CHARTS <<<-----------*/
-
-.viewTable {
-  overflow-y: scroll;
-}
 
 .containerD3 {
   position: absolute;
