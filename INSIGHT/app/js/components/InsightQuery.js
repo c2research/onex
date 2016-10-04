@@ -50,7 +50,7 @@ var InsightQuery = React.createClass({
 var QueryTypeRadio = React.createClass({
   render: function(){
     return (
-      <div>
+      <div className="panel" >
         <h4> Choose which Query Type to Use </h4>
           <input type="radio" value={InsightConstants.QUERY_TYPE_DATASET} checked={InsightConstants.QUERY_TYPE_DATASET == this.props.qTypeLocal} onChange={this.setQueryType}/> Dataset
           <input type="radio" value={InsightConstants.QUERY_TYPE_UPLOAD} checked={InsightConstants.QUERY_TYPE_UPLOAD == this.props.qTypeLocal}  onChange={this.setQueryType}/> Upload
@@ -67,7 +67,7 @@ var QueryTypeRadio = React.createClass({
 var UploadQuery = React.createClass({
   render: function() {
     return (
-    <div>
+    <div className="panel" >
       <h4> Upload a Query from File </h4>
       <input type="file" id="files" name="file" onChange={this.uploadQueryFile}/>
       <output id="list"></output>

@@ -122,8 +122,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			displayWidth: w - controlPanelWidth
 		};
 
-		console.log(sizing.displayWidth, w, controlPanelWidth);
-
 		data.sizing = sizing;
 	},
 	/*
@@ -132,9 +130,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	addQueryResultPair: function(qTypeLocal, qSeq, qStart, qEnd,
 		 													 qValues, threshold, qDsCollectionIndex,
 															 rSeq, rStart, rEnd, rValues, dsName, similarityValue){
-		results.viewLiveIndices=[results.length];
-		results.resultList.push(
-			{ //placeholder to show structure
+		results.viewLiveIndices=[0];
+		results.resultList.unshift( //pushes to start of array
+			{ //structure of query result pair
 				qTypeLocal: qTypeLocal,
 				qSeq: qSeq,
 				qStart: qStart,
@@ -152,6 +150,15 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 				similarityValue: similarityValue
 			}
 		);
+	},
+	/*
+	 * clears the list of view live indices, called on change in control panel
+	 * in order to show new query in full.
+	 * view live indices are set when a new
+ 	 * result is found and when a query/result match is selected in the data table (future)
+	 */
+	clearLiveView: function() {
+		results.viewLiveIndices = [];
 	},
 
 	/*
@@ -552,9 +559,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					var endlist = [];
 			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push({index: i, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push({index: i + this.currentState.qStart, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
-					console.log(response, endlist);
 
 					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qSeq,
 						 	this.currentState.qStart, this.currentState.qEnd, this.currentState.qValues, this.currentState.threshold,
@@ -638,7 +644,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
-
 	switch(action.actionType) {
 		case InsightConstants.RESIZE_APP:
 			InsightStore.calculateDimensions()
@@ -651,16 +656,19 @@ AppDispatcher.register(function(action) {
 			//if(InsightStore.emitChange();
 			break;
 		case InsightConstants.REQUEST_DATA_INIT:
+			InsightStore.clearLiveView();
 			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADING);
 			InsightStore.emitChange();
 			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
 		case InsightConstants.SELECT_DS_INDEX:
+			InsightStore.clearLiveView();
 			InsightStore.setDSCollectionIndex(action.id);
 			InsightStore.clearResult();
 			InsightStore.emitChange();//we want the list to update
 			break;
 		case InsightConstants.SELECT_QUERY:
+			InsightStore.clearLiveView();
 			InsightStore.setQSeq(action.id)
 			InsightStore.clearResult();
 			InsightStore.requestQueryFromDataset();
@@ -668,15 +676,18 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.SELECT_DISTANCE:
 			break;
 		case InsightConstants.SELECT_THRESHOLD:
+			InsightStore.clearLiveView();
 			InsightStore.setThresholdCurrent(action.id);
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.SELECT_END_Q:
+			InsightStore.clearLiveView();
 			InsightStore.setQEnd(action.id);
 			InsightStore.clearResult();
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.SELECT_START_Q:
+			InsightStore.clearLiveView();
 			InsightStore.setQStart(action.id);
 			InsightStore.clearResult();
 			InsightStore.emitChange();
@@ -694,14 +705,17 @@ AppDispatcher.register(function(action) {
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.QUERY_TYPE_UPLOAD:
+			InsightStore.clearLiveView();
 			InsightStore.setQueryType(action.actionType);
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.QUERY_TYPE_DATASET:
+			InsightStore.clearLiveView();
 			InsightStore.setQueryType(action.actionType);
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.UPLOAD_QUERY_FILE:
+			InsightStore.clearLiveView();
 			InsightStore.requestUploadQuery(action.id);
 			break;
 		default:

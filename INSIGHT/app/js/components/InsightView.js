@@ -18,7 +18,6 @@ var InsightView = React.createClass({
     var keepList = [];
     var val;
     for (val in results.viewLiveIndices) {
-      console.log(val);
       keepList.push(results.resultList[val]);
     }
     var height = this.props.height - 200 / keepList.length;
@@ -52,10 +51,10 @@ var InsightView = React.createClass({
     var InsightViewGraphJSX = this.props.results.viewLiveIndices.length > 0 ?
       this.generateViews(this.props.results) :
       <InsightViewGraphs viewingResults={false}
+                        graphType={this.props.graphType}
                         width={this.props.width}
                         height={this.props.height - 200}
                         qValues={values}
-                        qSeq={this.props.qSeq}
                         qStart={this.props.qStart}
                         qEnd={this.props.qEnd}/>
 

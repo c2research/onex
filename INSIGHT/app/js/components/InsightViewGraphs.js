@@ -7,14 +7,20 @@ var LineChart = require('rd3').LineChart;
 var AreaChart = require('rd3').AreaChart;
 
 /**
- * This is a prototype for an initial view
+ * This is a prototype for an initial view for the graphs
  */
 var InsightViewGraphs = React.createClass({
    render: function() {
+     /*
+        This component will organize the graphs and act as a factory for different
+        graphs, creating them as the user requests the various view.
+
+        If this.prop.viewingResults is true, then we are showing a results
+        pair! (And thus should render the result).
+      */
+
+
      if (this.props.qValues.length < 1) return null;
-
-     // TODO: split of graphType and ues that component
-
      var sub = {
        margins:  {left: 35, right: 15, top: 20, bottom: 20},
        domain: { x: [], y: [0,1] },
@@ -71,20 +77,21 @@ var InsightViewGraphs = React.createClass({
         chartData.total.push(subData);
      }
 
-    //  TODO: add result back in
-    //  if (this.props.result.length > 0) {
-    //     var resultD = {
-    //       name: "Match",
-    //       values:  this.props.result,
-    //       strokeWidth: 3,
-    //       strokeOpacity: 1
-    //     };
-     //
-    //     chartData.sub.push(resultD);
-    //     chartData.total.push(resultD);
-     //
-    //   }
+     if (this.props.viewingResults) {
+       var resultSubsequence = {
+         data: this.props.rValues //this.props.rValues.slice(this.props.rStart, this.props.rEnd + 1)
+       }
 
+       var resultD = {
+         name: "Match",
+         values:  resultSubsequence.data,
+         strokeWidth: 4,
+         strokeOpacity: 1
+       };
+
+       chartData.sub.push(resultD);
+       chartData.total.push(resultD);
+     }
 
      var style = {
        divider: {
