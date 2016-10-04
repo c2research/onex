@@ -105,10 +105,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		var body = document.body,
 		    html = document.documentElement;
 
-		var h = Math.max( body.scrollHeight, body.offsetHeight,
-		                       html.clientHeight, html.scrollHeight, html.offsetHeight );
-	  var w = Math.max( body.scrollWidth, body.offsetWidth,
-		                       html.clientWidth, html.scrollWidth, html.offsetWidth );
+		// var h = Math.max( body.scrollHeight, body.offsetHeight,
+		//                       html.clientHeight, html.scrollHeight, html.offsetHeight );
+		var h = html.clientHeight;
+		// var w = Math.max( body.scrollWidth, body.offsetWidth,
+		//                        html.clientWidth, html.scrollWidth, html.offsetWidth );
+		var w = html.clientWidth;
 
 		var controlPanelWidth = data.qDatasetValues.length > 0 || data.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
 		 	      //we can resize this etc

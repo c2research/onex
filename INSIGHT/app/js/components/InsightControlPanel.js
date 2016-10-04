@@ -63,7 +63,7 @@ var InsightControlPanel = React.createClass({
                   <InsightFind show={values.length > 0} /> : null;
 
     var panelJSX = this.props.visible ?
-    <div className="controlPanel">
+    <div className="controlPanel" style={style.divStyle}>
       {tabsJSX}
       {datasetJSX}
       {queryJSX}

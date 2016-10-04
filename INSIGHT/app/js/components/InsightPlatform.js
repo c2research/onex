@@ -109,7 +109,8 @@ var InsightPlatform = React.createClass({
                               distanceCurrentIndex={this.state.distanceCurrentIndex}
                               datasetIconMode={this.state.datasetIconMode}
                             />
-          <InsightView width={this.state.sizing.displayWidth}
+          <InsightView marginLeft={this.state.sizing.controlPanelWidth}
+                       width={this.state.sizing.displayWidth}
                        height={this.state.sizing.displayHeight}
                        qTypeLocal={this.state.qTypeLocal}
                        qUploadValues={this.state.qUploadValues}

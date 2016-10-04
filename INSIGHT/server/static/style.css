@@ -17,7 +17,8 @@ body {
 }
  /* ---------->>> BANNER <<<-----------*/
 div.insightBanner {
-  position: fixed;
+  position: relative;
+  z-index: 9999;
   width: 100%;
   left: 0;
   background-color: rgba(230, 230, 230, 0.35);
@@ -34,12 +35,11 @@ h1.insightBanner {
 }
  /* ---------->>> CONTROLPANEL <<<-----------*/
 div.controlPanel {
-  z-index: -1;
   position: fixed;
-  left: 0;
   top: 76px;
   height: inherit;
   max-height: 90%;
+  overflow: scroll;
   /*
   background-color: #829db4;
   background-color: rgba(71, 70, 68, 0.35);
@@ -165,12 +165,11 @@ input {
 
 /* ---------->>> CHARTS <<<-----------*/
 
-.containerD3 {
+.viewTable {
   position: absolute;
-  right: 0;
-  bottom: 0;
-  margin: 0;
+  bottom: 0px;
 }
+
 .legend {
   visibility: hidden;
 }

@@ -44,7 +44,6 @@ var InsightView = React.createClass({
 
   },
   render: function() {
-
     var values = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? this.props.qDatasetValues:
                  this.props.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD  ? this.props.qUploadValues : this.props.qBuildValues;
 
@@ -59,14 +58,23 @@ var InsightView = React.createClass({
                         qEnd={this.props.qEnd}/>
 
     var InsightViewTableJSX =
-    <InsightViewTable width={this.props.width}
-                      results={this.props.results.resultList}
-                      height={200}/>
+    <div className="viewTable">
+      <InsightViewTable width={this.props.width}
+                        results={this.props.results.resultList}
+                        height={200}/>
+    </div>
 
-     return (<div className="containerD3">
-               {InsightViewGraphJSX}
-               {InsightViewTableJSX}
-             </div> );
+
+    var divStyle = {
+      width: this.props.width,
+      height: this.props.height,
+      marginLeft: this.props.marginLeft
+    }
+
+    return (<div className="insightView" style={divStyle}>
+              {InsightViewGraphJSX}
+              {InsightViewTableJSX}
+            </div> );
    }
 });
 
