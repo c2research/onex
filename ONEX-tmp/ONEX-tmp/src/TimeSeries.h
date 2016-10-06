@@ -3,12 +3,14 @@
 
 
 #include <iostream>
+#include <vector>
 #include <stdlib.h>
 
 
 // Use doubles for time series data, set INF=1e20.
 #define INF 1e20
 typedef double seqitem_t;
+typedef std::vector<std::pair<seqitem_t, seqitem_t> > warping_path_t;
 
 
 struct SeriesDistanceMetric;
@@ -26,11 +28,20 @@ struct SeriesDistanceMetric
 
     // Find the distance betwee two intervals.
     seqitem_t (*run)(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout);
+    warping_path_t (*getWarpingPath)(TimeSeriesInterval &a, TimeSeriesInterval &b);
 
     // Because initialization is bothersome.
     SeriesDistanceMetric(const char *name,
                          const char *desc,
-                         seqitem_t (*run)(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout));
+                         seqitem_t (*run)(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout),
+                         warping_path_t (*getWarpingPath)(TimeSeriesInterval &a, TimeSeriesInterval &b) = _defaultGetWarpingPath);
+
+private:
+    static warping_path_t _defaultGetWarpingPath(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+    {
+        warping_path_t empty;
+        return empty;
+    }
 };
 
 // Available distance metrics.

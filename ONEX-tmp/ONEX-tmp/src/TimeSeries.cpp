@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,11 +16,13 @@ using namespace std;
 SeriesDistanceMetric::SeriesDistanceMetric(const char *name,
                                            const char *desc,
                                            seqitem_t (*run)(TimeSeriesInterval &a,
-                                                          TimeSeriesInterval &b, seqitem_t dropout))
+                                                          TimeSeriesInterval &b, seqitem_t dropout),
+                                           warping_path_t (*getWarpingPath)(TimeSeriesInterval &a, TimeSeriesInterval &b))
 {
     this->name = name;
     this->desc = desc;
     this->run = run;
+    this->getWarpingPath = getWarpingPath;
 }
 
 static inline seqitem_t _abs(seqitem_t a)
@@ -60,7 +63,8 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
                      seqitem_t (*distFunc)(seqitem_t, seqitem_t),
                      seqitem_t (*pullFunc)(seqitem_t, seqitem_t),
                      seqitem_t dropout=INF,
-                     int *warps = NULL)
+                     warping_path_t *warping_path=NULL)
+                     //int *warps = NULL)
 {
     int m = a.length();
     int n = b.length();
@@ -70,21 +74,28 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
         return distFunc(a[0],b[0]);
 
     // create cost matrix
-    seqitem_t cost[m][n];
+    seqitem_t cost[m][n]; // TODO (Cuong): allocate this on stack? 
+    auto trace = new pair<seqitem_t, seqitem_t>*[m]; // For tracing warping
+    for (int i = 0; i < m; i++) {
+        trace[i] = new pair<seqitem_t, seqitem_t>[n];
+    }
     int warpcount = 0; // Count warpings
 
     cost[0][0] = distFunc(a[0], b[0]);
+    trace[0][0] = make_pair(-1, -1);
 
     // calculate first row
     for(int i = 1; i < m; i++) {
 
         cost[i][0] = cost[i-1][0] + distFunc(a[i], b[0]);
+        trace[i][0] = make_pair(i - 1, 0);
     }
 
     // calculate first column
     for(int j = 1; j < n; j++) {
 
         cost[0][j] = cost[0][j-1] + distFunc(a[0], b[j]);
+        trace[0][j] = make_pair(0, j - 1);
     }
 
     // fill matrix. If using dropout, keep tabs on min cost per row.
@@ -114,21 +125,46 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
 
         for(int i = 1; i < m; i++) {
             for(int j = 1; j < n; j++) {
+                vector<seqitem_t> tmp;
+                tmp.push_back(cost[i - 1][j]);
+                tmp.push_back(cost[i][j - 1]);
+                tmp.push_back(cost[i - 1][j - 1]);
+                auto mp = min_element(tmp.begin(), tmp.end());
+                if (mp == tmp.begin()) {
+                    trace[i][j] = make_pair(i - 1, j);
+                }
+                else if (mp == tmp.begin() + 1) {
+                    trace[i][j] = make_pair(i, j - 1);
+                }
+                else if (mp == tmp.begin() + 2) {
+                    trace[i][j] = make_pair(i - 1, j - 1);
+                }
 
-                seqitem_t mp = std::min(cost[i-1][j],
-                                     std::min(cost[i][j-1],
-                                              cost[i-1][j-1]));
-
-                if (mp != cost[i-1][j-1])
+                if (*mp != cost[i-1][j-1])
                     warpcount++;
 
-                cost[i][j] = pullFunc(distFunc(a[i],b[j]),mp);
+                cost[i][j] = pullFunc(distFunc(a[i],b[j]), *mp);
             }
         }
     }
 
-    if (warps != NULL)
-        *warps = warpcount;
+    if (warping_path != NULL) {
+        int i = m - 1, j = n - 1;
+        while (i != -1) {
+            warping_path->push_back(make_pair(i, j));
+            int old_i = i, old_j = j;
+            i = trace[old_i][old_j].first;
+            j = trace[old_i][old_j].second;
+        }
+    }
+
+    // if (warps != NULL)
+    //     *warps = warpcount;
+
+    for (int i = 0; i < m; i++) {
+        delete trace[i];
+    }
+    delete[] trace;
 
     return cost[m-1][n-1];
 }
@@ -138,14 +174,35 @@ seqitem_t _dtw_lp1(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropo
     return _basic_dtw(a, b, _lp1_dist, _sum_pull, dropout);
 }
 
+warping_path_t _dtw_lp1_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+{
+    warping_path_t path;
+    _basic_dtw(a, b, _lp1_dist, _sum_pull, INF, &path);
+    return path;
+}
+
 seqitem_t _dtw_lp2(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout=INF)
 {
     return sqrt(_basic_dtw(a, b, _lp2_dist, _sum_pull, dropout));
 }
 
+warping_path_t _dtw_lp2_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+{
+    warping_path_t path;
+    _basic_dtw(a, b, _lp2_dist, _sum_pull, INF, &path);
+    return path;
+}
+
 seqitem_t _dtw_lpinf(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout=INF)
 {
     return _basic_dtw(a, b, _lp1_dist, _max_pull, dropout);
+}
+
+warping_path_t _dtw_lpinf_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+{
+    warping_path_t path;
+    _basic_dtw(a, b, _lp1_dist, _max_pull, INF, &path);
+    return path;
 }
 
 seqitem_t _dtw_lp1_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout=INF)
@@ -159,6 +216,13 @@ seqitem_t _dtw_lp1_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t 
     return _basic_dtw(a, b, _lp1_dist, _sum_pull, dropout)/len;
 }
 
+warping_path_t _dtw_lp1_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+{
+    warping_path_t path;
+    _basic_dtw(a, b, _lp1_dist, _sum_pull, INF, &path);
+    return path;
+}
+
 seqitem_t _dtw_lp2_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout=INF)
 {
     seqitem_t len = max(a.length(), b.length());
@@ -168,6 +232,13 @@ seqitem_t _dtw_lp2_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t 
         dropout = dropout*dropout * len;
 
     return sqrt(_basic_dtw(a, b, _lp2_dist, _sum_pull, dropout)/len);
+}
+
+warping_path_t _dtw_lp2_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+{
+    warping_path_t path;
+    _basic_dtw(a, b, _lp2_dist, _sum_pull, INF, &path);
+    return path;
 }
 
 seqitem_t _lp1(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout)
@@ -256,31 +327,36 @@ seqitem_t _lpinf(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout
 SeriesDistanceMetric dtw_lp1_dist = SeriesDistanceMetric(
     "dtw_lp1",
     "DTW distance between vectors using lp1 distance.",
-    _dtw_lp1
+    _dtw_lp1,
+    _dtw_lp1_wp
 );
 
 SeriesDistanceMetric dtw_lp2_dist = SeriesDistanceMetric(
     "dtw_lp2",
     "DTW distance between vectors using euclidean distance.",
-    _dtw_lp2
+    _dtw_lp2,
+    _dtw_lp2_wp
 );
 
 SeriesDistanceMetric dtw_lpinf_dist = SeriesDistanceMetric(
     "dtw_lpinf",
     "DTW distance between vectors using max / lpinf distance.",
-    _dtw_lpinf
+    _dtw_lpinf,
+    _dtw_lpinf_wp
 );
 
 SeriesDistanceMetric dtw_lp1_norm_dist = SeriesDistanceMetric(
     "dtw_lp1_norm",
     "DTW distance between vectors using taxicab distance, normalized by max length.",
-    _dtw_lp1_norm
+    _dtw_lp1_norm,
+    _dtw_lp1_norm_wp
 );
 
 SeriesDistanceMetric dtw_lp2_norm_dist = SeriesDistanceMetric(
     "dtw_lp2_norm",
     "DTW distance between vectors using squared distance, normalized by max length.",
-    _dtw_lp2_norm
+    _dtw_lp2_norm,
+    _dtw_lp2_norm_wp
 );
 
 SeriesDistanceMetric lp1_dist = SeriesDistanceMetric(

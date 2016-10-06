@@ -133,6 +133,21 @@ public:
                   SeriesDistanceMetric *metric);
 
     /**
+     * Get the warping path in dtw between two series.
+     *
+     * \param seq index of a sequence in this dataset.
+     * \param interval an interval in the selected sequence.
+     * \param other pointer to another dataset.
+     * \param otherSeq index of a sequence in the other dataset.
+     * \param otherInt an interval in the selected sequence in the other dataset.
+     * \param metric a metric object that performs the distance calculation.
+     * \return a vector containing the pairs of positions matched up between two series.
+     */
+    warping_path_t warping_path(int seq, TimeInterval interval,
+                  GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
+                  SeriesDistanceMetric *metric);
+
+    /**
      * Find a subsequence in this dataset that best-matches with a subsequence in 
      * another dataset.
      *

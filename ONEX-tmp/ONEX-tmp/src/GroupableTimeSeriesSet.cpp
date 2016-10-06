@@ -189,6 +189,18 @@ seqitem_t GroupableTimeSeriesSet::distance(int seq, TimeInterval interval,
     return dist;
 }
 
+warping_path_t GroupableTimeSeriesSet::warping_path(int seq, TimeInterval interval,
+                                      GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
+                                      SeriesDistanceMetric *metric)
+{
+    TimeSeriesInterval a = dataset->getInterval(seq, interval);
+    TimeSeriesInterval b = other->dataset->getInterval(otherSeq, otherInt);
+
+    warping_path_t path = metric->getWarpingPath(a, b);
+
+    return path;  
+}
+
 kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                                      SearchStrategy strat, int warps)
 {

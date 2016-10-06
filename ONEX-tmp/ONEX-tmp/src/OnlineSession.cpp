@@ -208,6 +208,14 @@ seqitem_t OnlineSession::findDist(int indexa, int indexb,
     return datasets[indexa]->distance(seqa, inta, datasets[indexb], seqb, intb, metric);
 }
 
+warping_path_t OnlineSession::getWarpingPath(int indexa, int indexb,
+              int seqa, int seqb,
+              TimeInterval inta, TimeInterval intb,
+              SeriesDistanceMetric *metric)
+{
+    return datasets[indexa]->warping_path(seqa, inta, datasets[indexb], seqb, intb, metric);
+}
+
 kBest OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat, int r)
 {
     if (strat == -1)
@@ -616,7 +624,6 @@ int OnlineSession::run(istream &in, bool interactive)
                     res = -1;
                     break;
                 }
-
                 getout() << "Using distance metric " << metric->name << " to find distance:" << endl;
                 getout() << "A: DB:" << iarg1 << ", " << iarg2 << "@[" << iarg3 << "," << iarg4 << "]." << endl;
                 getout() << "B: DB:" << iarg5 << ", " << iarg6 << "@[" << iarg7 << "," << iarg8 << "]." << endl;

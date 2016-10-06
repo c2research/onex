@@ -64,6 +64,11 @@ public:
                   TimeInterval inta, TimeInterval intb,
                   SeriesDistanceMetric *metric);
 
+    warping_path_t getWarpingPath(int indexa, int indexb,
+                  int seqa, int seqb,
+                  TimeInterval inta, TimeInterval intb,
+                  SeriesDistanceMetric *metric);
+
     kBest similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
     int outlier(int dbindex, int length);
 
