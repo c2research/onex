@@ -20,7 +20,7 @@ var InsightQueryOptions = React.createClass({
             width={200}
             value={this.props.qStart}
             min={0}
-            max={this.props.qValues.length}
+            max={this.props.qValues.length - 1}
             realMax={this.props.qEnd}
             step={1}
             onChange={this._handleClickStart}/>
@@ -35,7 +35,7 @@ var InsightQueryOptions = React.createClass({
             value={this.props.qEnd}
             min={0}
             realMin={this.props.qStart}
-            max={this.props.qValues.length}
+            max={this.props.qValues.length - 1}
             step={1}
             onChange={this._handleClickEnd}/>
          </div>
