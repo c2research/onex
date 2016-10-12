@@ -1,14 +1,9 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
-var d3 = require('d3');
 
 var InsightViewGraphs = require('./InsightViewGraphs');
 var InsightViewTable = require('./InsightViewTable');
 var InsightConstants = require('./../flux/constants/InsightConstants');
 
-
-var LineChart = require('rd3').LineChart;
-var AreaChart = require('rd3').AreaChart;
 
 /**
  * This is a prototype for an initial view

@@ -1,10 +1,7 @@
 var React = require('react');
-var ReactDOM = require('react-dom');
 var d3 = require('d3');
 var InsightConstants = require('./../flux/constants/InsightConstants');
-
-var LineChart = require('rd3').LineChart;
-var AreaChart = require('rd3').AreaChart;
+var MultiTimeSeriesChart = require('./charts/MultiTimeSeriesChart');
 
 /**
  * This is a prototype for an initial view for the graphs
@@ -19,118 +16,63 @@ var InsightViewGraphs = React.createClass({
         pair! (And thus should render the result).
       */
 
+    if (this.props.qValues.length < 1) return null;
 
-     if (this.props.qValues.length < 1) return null;
-     var sub = {
-       margins:  {left: 35, right: 15, top: 20, bottom: 20},
-       domain: { x: [], y: [0,1] },
-       yAxisTickCount: 5,
-       data: this.props.qValues.slice(this.props.qStart, this.props.qEnd + 1)
-     }
+    var qValues = this.props.qValues;
+    var qStart = this.props.qStart;
+    var qEnd = this.props.qEnd;
+    var qValuesSelection = qValues.slice(qStart, qEnd + 1);
+    var rValues = this.props.rValues;
+                                  
+    var subHeight = (4.0/5.0) * this.props.height - 30;
+    var totalHeight = this.props.height - subHeight - 30;
+    var subMargins = {left: 35, right: 15, top: 20, bottom: 20};
+    var totalMargins = {left: 35, right: 15, top: 5, bottom: 20};
 
-     var total = {
-       margins:  {left: 35, right: 15, top: 20, bottom: 5},
-       domain: { x: [0,this.props.qValues.length], y: [0,1] },
-       yAxisTickCount: 1,
-       xAxisTickCount: 1,
-       data: this.props.qValues
-     }
+    var subData = {
+      series: [],
+      domains: { x: [0, qValuesSelection.length], y: [0, 1]},
+    }
 
-     var chartData = {
-       sub: [],
-       total: []
-     };
+    var totalData = {
+      series: [],
+      domains: { x: [0, qValues.length], y: [0,1] }
+    }
 
-     var subHeight = (4.0/5.0) * this.props.height - 30;
-     var totalHeight = this.props.height - subHeight - 30;
+    totalData.series.push({ values: qValues, color: 'black'});
+    if (qValuesSelection.length > 0) {
+      var minIndex = qValuesSelection[0][0];
+      var leftAligned = qValuesSelection.map(function(x) { return [x[0] - minIndex, x[1]]});
+      subData.series.push({ values: leftAligned, color: 'black'});
+      totalData.series.push({ values: qValuesSelection, color: 'red'});
+    }
 
-     if (this.props.qValues.length > 0) {
-        var wholeD = {
-          name: "Whole Match",
-          values: total.data,
-          strokeWidth: 3,
-          strokeOpacity: 1
-        };
+    if (this.props.viewingResults) {
+      var minIndex = rValues[0][0];
+      var leftAligned = rValues.map(function(x) { return [x[0] - minIndex, x[1]]});
+      
+      subData.series.push({ values: leftAligned, color: 'green'});
+      totalData.series.push({values: rValues, color: 'green'});
+    }
 
-        // a hack to make colors the same!
-        var wholeDPlaceholder = {
-          name: "Whole Match",
-          values: [{index:sub.data[0].index, value:0}],
-          strokeWidth: 0,
-          strokeOpacity: 0,
-          circleRadius: 0
-        };
+    var subD3JSX = <MultiTimeSeriesChart
+                     margins={subMargins}
+                     width={this.props.width - subMargins.left - subMargins.right}
+                     height={subHeight - subMargins.top - subMargins.bottom}
+                     data={subData}
+                     strokeWidth={3}
+                   />;
 
-        chartData.total.push(wholeD);
-        chartData.sub.push(wholeDPlaceholder);
-     }
-
-     if (sub.data.length > 0) {
-        var subData = {
-          name: "Selected Subsequence",
-          values:  sub.data,
-          strokeWidth: 3,
-          strokeOpacity: 1
-        };
-
-        chartData.sub.push(subData);
-        chartData.total.push(subData);
-     }
-
-     if (this.props.viewingResults) {
-       var resultSubsequence = {
-         data: this.props.rValues //this.props.rValues.slice(this.props.rStart, this.props.rEnd + 1)
-       }
-
-       var resultD = {
-         name: "Match",
-         values:  resultSubsequence.data,
-         strokeWidth: 4,
-         strokeOpacity: 1
-       };
-
-       chartData.sub.push(resultD);
-       chartData.total.push(resultD);
-     }
-
-     var style = {
-       divider: {
-         height: 15
-       }
-     }
-
-     var subD3JSX = chartData != null ?
-     <LineChart
-       margins={sub.margins}
-       legend={false}
-       domain={sub.domain}
-       colors={d3.scale.category10()}
-       width= {this.props.width}
-       height= {subHeight}
-       yAxisTickCount= {sub.yAxisTickCount}
-       data= {chartData.sub}
-       xAccessor= {function(d){return d.index}}
-       yAccessor= {function(d){return d.value}}
-     /> : null;
-
-     var totalD3JSX = chartData != null ?
-     <LineChart
-       margins={total.margins}
-       legend={false}
-       domain={total.domain}
-       yAxisTickCount={total.yAxisTickCount}
-       xAxisTickCount={total.xAxisTickCount}
-       colors={d3.scale.category10()}
-       width= {this.props.width}
-       height= {totalHeight}
-       data= {chartData.total}
-       xAccessor= {function(d){return d.index}}
-       yAccessor= {function(d){return d.value}}
-     /> : null;
+    var totalD3JSX = <MultiTimeSeriesChart
+                       margins={totalMargins}
+                       width={this.props.width - totalMargins.left - totalMargins.right}
+                       height={totalHeight - totalMargins.top - totalMargins.bottom}
+                       data={totalData}
+                       strokeWidth={3}
+                     />;
 
      return <div>
               {subD3JSX}
-              <div style={style.divider}> </div>
               {totalD3JSX}
             </div>
    }

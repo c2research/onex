@@ -494,7 +494,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 			    var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
-						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push([i, response.query[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 					InsightStore.setQDatasetValues(endlist);
 			  	InsightStore.setResult([]);
@@ -561,7 +561,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					var endlist = [];
 			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push({index: i + this.currentState.qStart, value: response.result[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push([i + this.currentState.qStart, response.result[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 
 					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qSeq,
@@ -600,7 +600,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			    }
 					var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
-						endlist.push({index: i, value: response.query[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push([i, response.query[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 			    InsightStore.setQUploadValues(endlist);
 			    InsightStore.emitChange();
