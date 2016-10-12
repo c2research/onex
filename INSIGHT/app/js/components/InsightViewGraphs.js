@@ -54,7 +54,9 @@ var InsightViewGraphs = React.createClass({
       var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1]]});
       
       subData.series.push({ values: resultLeftAligned, color: 'green'});
+      subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
       totalData.series.push({values: rValues, color: 'green'});
+      totalData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], rValues[rValues.length - 1][0])]
     }
 
     var subD3JSX = <MultiTimeSeriesChart
