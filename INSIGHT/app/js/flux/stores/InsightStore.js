@@ -560,6 +560,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 						return;
 			    }
 					var endlist = [];
+					console.log(this.currentState.qStart);
 			    for (var i = 0; i < response.result.length; i++) {
 						endlist.push([i + this.currentState.qStart, response.result[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }

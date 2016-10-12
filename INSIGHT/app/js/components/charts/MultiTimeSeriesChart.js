@@ -16,7 +16,8 @@ var MultiTimeSeriesChart = React.createClass({
     this.d3MultiTimeSeriesChart.create(el, {
       width: this.props.width,
       height: this.props.height,
-      margins: this.props.margins
+      margins: this.props.margins,
+      strokeWidth: this.props.strokeWidth
     }, this.props.data);
   },
 

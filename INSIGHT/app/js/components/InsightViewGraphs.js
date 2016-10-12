@@ -39,19 +39,21 @@ var InsightViewGraphs = React.createClass({
       domains: { x: [0, qValues.length], y: [0,1] }
     }
 
+    
+
     totalData.series.push({ values: qValues, color: 'black'});
     if (qValuesSelection.length > 0) {
-      var minIndex = qValuesSelection[0][0];
-      var leftAligned = qValuesSelection.map(function(x) { return [x[0] - minIndex, x[1]]});
-      subData.series.push({ values: leftAligned, color: 'black'});
+      var offsetSelection = qValuesSelection[0][0];
+      var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
+      subData.series.push({ values: selectionLeftAligned, color: 'black'});
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
     if (this.props.viewingResults) {
-      var minIndex = rValues[0][0];
-      var leftAligned = rValues.map(function(x) { return [x[0] - minIndex, x[1]]});
+      var offsetResult = rValues[0][0];
+      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1]]});
       
-      subData.series.push({ values: leftAligned, color: 'green'});
+      subData.series.push({ values: resultLeftAligned, color: 'green'});
       totalData.series.push({values: rValues, color: 'green'});
     }
 

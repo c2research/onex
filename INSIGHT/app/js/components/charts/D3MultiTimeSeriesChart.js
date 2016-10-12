@@ -23,7 +23,7 @@ Example data:
 */
 
 var D3MultiTimeSeriesChart = function() {
-  this._pointRadius = 3;
+  this._pointRadius = 2;
 };
 
 D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
