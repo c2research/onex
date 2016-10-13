@@ -107,6 +107,35 @@ py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
 }
 
 /**
+ * Get the warping path between two subsequence.
+ *
+ * \param dbIndexA index of the first dataset in memory
+ * \param dbSeqA index of a sequence in the first dataset
+ * \param startA starting position of the first subsequence
+ * \param endA ending position of the first subsequence
+ * \param dbIndexB index of the second dataset in memory
+ * \param dbSeqB index of a sequence in the second dataset
+ * \param startB starting position of the second subsequence
+ * \param endB ending position of the second subsequence
+ * \return a Python list containing Python tuples representing pairs of 
+ *         indices each of which matches a point from the first subsequence 
+ *         to a point in the second subsequence.
+ */
+py::list getWarpingPath(int dbIndexA, int dbSeqA, int startA, int endA, 
+                        int dbIndexB, int dbSeqB, int startB, int endB) 
+{
+  py::list result;
+  warping_path_t warp = os.getWarpingPath(dbIndexA, dbIndexB, dbSeqA, dbSeqB,
+                                          TimeInterval(startA, endA), TimeInterval(startB, endB),
+                                          getDistMetric("dtw_lp2")); 
+  for (int i = 0; i < warp.size(); i++) {
+    py::tuple pair = py::make_tuple(warp[i].first, warp[i].second);
+    result.append(pair);
+  }
+  return result;
+}
+
+/**
  * Get the number of sequence in a dataset.
  * 
  * \param dbIndex index of a dataset.
@@ -138,6 +167,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("getSubsequence", getSubsequence);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
+  py::def("getWarpingPath", getWarpingPath);
 }
 
 

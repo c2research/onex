@@ -162,9 +162,11 @@ def api_find_best_match():
     r_dist, r_seq, r_start, r_end = \
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
+    warping = onex.getWarpingPath(current_ds_index, q_seq, q_start, q_end,
+                                  q_ds_index, r_seq, r_start, r_end)
 
-    # TODO(Cuong): consider making a separated endpoint for retrieving a subsequence
     return jsonify(result=result, 
+                   warping=warping,
                    dist=r_dist,
                    dsName=datasets[current_collection_index],
                    seq=r_seq,

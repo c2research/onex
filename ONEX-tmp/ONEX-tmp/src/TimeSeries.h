@@ -10,7 +10,7 @@
 // Use doubles for time series data, set INF=1e20.
 #define INF 1e20
 typedef double seqitem_t;
-typedef std::vector<std::pair<seqitem_t, seqitem_t> > warping_path_t;
+typedef std::vector<std::pair<int, int> > warping_path_t;
 
 
 struct SeriesDistanceMetric;

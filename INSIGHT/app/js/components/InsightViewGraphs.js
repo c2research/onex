@@ -39,8 +39,6 @@ var InsightViewGraphs = React.createClass({
       domains: { x: [0, qValues.length], y: [0,1] }
     }
 
-    
-
     totalData.series.push({ values: qValues, color: 'black'});
     if (qValuesSelection.length > 0) {
       var offsetSelection = qValuesSelection[0][0];

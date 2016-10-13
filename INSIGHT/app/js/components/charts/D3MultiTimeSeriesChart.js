@@ -203,7 +203,7 @@ D3MultiTimeSeriesChart.prototype._drawWarpingPath = function(svg, data) {
 
 D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
   var scales = this._scales(data.domains);
-  // TODO: handle the case of duplicated points 
+
   var points = this._extractRawPointCoords(data.series);
   var width = this.props.width;
   var height = this.props.height;
