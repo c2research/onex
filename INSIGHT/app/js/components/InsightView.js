@@ -31,6 +31,7 @@ var InsightView = React.createClass({
                               qStart={resultQueryPair.qStart}
                               qEnd={resultQueryPair.qEnd}
                               rValues={resultQueryPair.rValues}
+                              warpingPath={resultQueryPair.warpingPath}
                               rStart={resultQueryPair.rStart}
                               rEnd={resultQueryPair.rEnd}/> //warpingPath={resultQueryPair.result.warpingPath}
         );

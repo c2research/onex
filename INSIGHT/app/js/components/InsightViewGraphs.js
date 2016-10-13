@@ -23,7 +23,8 @@ var InsightViewGraphs = React.createClass({
     var qEnd = this.props.qEnd;
     var qValuesSelection = qValues.slice(qStart, qEnd + 1);
     var rValues = this.props.rValues;
-                                  
+    var warpingPath = this.props.warpingPath;
+
     var subHeight = (4.0/5.0) * this.props.height - 30;
     var totalHeight = this.props.height - subHeight - 30;
     var subMargins = {left: 35, right: 15, top: 20, bottom: 20};
@@ -43,7 +44,9 @@ var InsightViewGraphs = React.createClass({
     if (qValuesSelection.length > 0) {
       var offsetSelection = qValuesSelection[0][0];
       var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
+
       subData.series.push({ values: selectionLeftAligned, color: 'black'});
+
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
@@ -53,6 +56,8 @@ var InsightViewGraphs = React.createClass({
       
       subData.series.push({ values: resultLeftAligned, color: 'green'});
       subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
+      subData.warpingPath = warpingPath;
+
       totalData.series.push({values: rValues, color: 'green'});
       totalData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], rValues[rValues.length - 1][0])]
     }

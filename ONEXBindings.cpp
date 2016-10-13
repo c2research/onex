@@ -129,7 +129,9 @@ py::list getWarpingPath(int dbIndexA, int dbSeqA, int startA, int endA,
                                           TimeInterval(startA, endA), TimeInterval(startB, endB),
                                           getDistMetric("dtw_lp2")); 
   for (int i = 0; i < warp.size(); i++) {
-    py::tuple pair = py::make_tuple(warp[i].first, warp[i].second);
+    py::list pair;
+    pair.append(warp[i].first);
+    pair.append(warp[i].second);
     result.append(pair);
   }
   return result;

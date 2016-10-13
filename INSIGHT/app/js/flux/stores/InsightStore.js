@@ -129,29 +129,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	/*
 	 * Called upon the success a query
 	 */
-	addQueryResultPair: function(qTypeLocal, qSeq, qStart, qEnd,
-		 													 qValues, threshold, qDsCollectionIndex,
-															 rSeq, rStart, rEnd, rValues, dsName, similarityValue){
+	addQueryResultPair: function(result) {
 		results.viewLiveIndices=[0];
-		results.resultList.unshift( //pushes to start of array
-			{ //structure of query result pair
-				qTypeLocal: qTypeLocal,
-				qSeq: qSeq,
-				qStart: qStart,
-				qEnd: qEnd,
-				qValues: qValues,
-				qThreshold: threshold,
-				qDistanceType: null,
-				qDsCollectionIndex: qDsCollectionIndex,
-				rSeq: rSeq,
-				rStart: rStart,
-				rEnd: rEnd,
-				rValues: rValues,
-				dsName: dsName,
-				//warpingPath: warpingPath,
-				similarityValue: similarityValue
-			}
-		);
+		results.resultList.unshift(result);
 	},
 	/*
 	 * clears the list of view live indices, called on change in control panel
@@ -559,16 +539,31 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 						console.log(response, requestID);
 						return;
 			    }
+			    var currentState = this.currentState;
 					var endlist = [];
-					console.log(this.currentState.qStart);
+
 			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push([i + this.currentState.qStart, response.result[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
+						endlist.push([i + currentState.qStart, response.result[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
 			    }
 
-					InsightStore.addQueryResultPair(this.currentState.qTypeLocal, this.currentState.qSeq,
-						 	this.currentState.qStart, this.currentState.qEnd, this.currentState.qValues, this.currentState.threshold,
-							this.currentState.qDsCollectionIndex, response.seq,  response.start, response.end, endlist,
-							response.dsName, response.dist);//response.result.warpingPath,
+			    var result = { //structure of query result pair
+						qTypeLocal: currentState.qTypeLocal,
+						qSeq: currentState.qSeq,
+						qStart: currentState.qStart,
+						qEnd: currentState.qEnd,
+						qValues: currentState.qValues,
+						qThreshold: currentState.threshold,
+						qDistanceType: null,
+						qDsCollectionIndex: currentState.qDsCollectionIndex,
+						rSeq: response.seq,
+						rStart: response.start,
+						rEnd: response.end,
+						rValues: endlist,
+						dsName: response.dsName,
+						warpingPath: response.warpingPath,
+						similarityValue: response.dist
+					}
+					InsightStore.addQueryResultPair(result);//response.result.warpingPath,
 
 				  InsightStore.emitChange();
 			},
