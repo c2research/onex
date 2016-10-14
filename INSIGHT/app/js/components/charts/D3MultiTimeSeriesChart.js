@@ -22,10 +22,13 @@ Example data:
 
 */
 
+// Object constructor
 var D3MultiTimeSeriesChart = function() {
   this._pointRadius = 2;
 };
 
+// Append a new chart within a given DOM element. The props and data used 
+// to drawn the chart are kept inside the current object. 
 D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
   this.props = props;
 
@@ -33,21 +36,27 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
   var height = props.height;
   var margins = props.margins;
 
-  // Append a drawing area
+  // Append a drawing area. The use of margins follows the convention in:
+  // http://bl.ocks.org/mbostock/3019563
   var svg = d3.select(el).append('svg')
+              .classed('multi-time-series-chart', true)
               .attr('width', width + margins.left + margins.right)
               .attr('height', height + margins.top + margins.bottom);
 
   // Set up groups of components
-  svg.append('g').attr('class', 'xaxisWrapper')
+
+  // The axes are translated to left and bottom edge of the main area, which is bounded by the four magins.
+  svg.append('g').classed('xaxisWrapper', true)
      .attr('transform', 'translate(' + margins.left + ', ' + (height + margins.top) + ')')
-  svg.append('g').attr('class', 'yaxisWrapper')
+  svg.append('g').classed('yaxisWrapper', true)
      .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')')
-  svg.append('g').attr('class', 'linesWrapper').attr('transform', this._translate());
-  svg.append('g').attr('class', 'warpingPathWrapper').attr('transform', this._translate());
-  svg.append('g').attr('class', 'pointsWrapper').attr('transform', this._translate());
-  svg.append('g').attr('class', 'voronoiWrapper').attr('transform', this._translate());
-  var tooltipWrapper = svg.append('g').attr('class', 'tooltipWrapper').attr('transform', this._translate())
+
+  // Other groups are translated to the main area.
+  svg.append('g').classed('linesWrapper', true).attr('transform', this._translate());
+  svg.append('g').classed('warpingPathWrapper', true).attr('transform', this._translate());
+  svg.append('g').classed('pointsWrapper', true).attr('transform', this._translate());
+  svg.append('g').classed('voronoiWrapper', true).attr('transform', this._translate());
+  var tooltipWrapper = svg.append('g').classed('tooltipWrapper', true).attr('transform', this._translate())
 
   // Tooltip is hidden initially
   tooltipWrapper.style('opacity', 0)
@@ -65,11 +74,13 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
                 .style('font-family', 'sans-serif')
                 .style('text-anchor', 'middle');
 
+  // Call update to initiate the first rendering.
   this.update(el, data);
 };
 
+// Update the current chart with new data.
 D3MultiTimeSeriesChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg'); 
+  var svg = d3.select(el).select('svg.multi-time-series-chart'); 
 
   this._drawAxis(svg, data);
   this._drawLines(svg, data);
@@ -78,10 +89,12 @@ D3MultiTimeSeriesChart.prototype.update = function(el, data) {
   this._drawVoronoi(svg, data);
 };
 
+// Remove the current chart
 D3MultiTimeSeriesChart.prototype.destroy = function(el) {
-  d3.select(el).select('svg').remove();
+  d3.select(el).select('svg.multi-time-series-chart').remove();
 }
 
+// Return the scales with given domains
 D3MultiTimeSeriesChart.prototype._scales = function(domains) {
   var x = d3.scaleLinear()
             .domain(domains.x)
@@ -93,11 +106,15 @@ D3MultiTimeSeriesChart.prototype._scales = function(domains) {
   return {x: x, y: y};
 }
 
+// Draw axes
 D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   var height = this.props.height;
   var width = this.props.width;
   var domains = data.domains;
   var scales = this._scales(domains);
+
+  // The ticks are spaced with 40 pixels.
+  // Set tickSizeInner to -width and -height to create a grid
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
@@ -108,20 +125,24 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
                        .ticks(Math.min(Math.round(width / 40), domains.x[1]))
                        .tickFormat(d3.format('d'));
 
+  // Actually draw the axes
   svg.select('g.xaxisWrapper')
      .call(xaxisWrapper);
 
   svg.select('g.yaxisWrapper')
      .call(yaxisWrapper);
 
+  // Set a low opacity of the tick lines so that it won't obscure the content.
   svg.selectAll('.tick line')
      .style('opacity', 0.2);
 }
 
+// Return a string used in translating a group to the main area
 D3MultiTimeSeriesChart.prototype._translate = function() {
   return 'translate(' + this.props.margins.left + ',' + this.props.margins.top + ')';
 };
 
+// Return a list of points which is a merge of all series in a list of series.
 D3MultiTimeSeriesChart.prototype._extractRawPointCoords = function(series) {
   var flatten = series.map(function(s) { return s.values; })
                       .reduce(function(prev, cur) { 
@@ -130,6 +151,7 @@ D3MultiTimeSeriesChart.prototype._extractRawPointCoords = function(series) {
   return flatten;
 };
 
+// Draw lines of the series
 D3MultiTimeSeriesChart.prototype._drawLines = function(svg, data) {
   var scales = this._scales(data.domains);
   var series = data.series;
@@ -140,9 +162,6 @@ D3MultiTimeSeriesChart.prototype._drawLines = function(svg, data) {
                    .curve(d3.curveLinear);
 
   var pathGroup = svg.select('g.linesWrapper');
-
-  pathGroup.attr('transform', this._translate());
-
   var paths = pathGroup.selectAll('path').data(series);
 
   // enter + update
@@ -159,6 +178,7 @@ D3MultiTimeSeriesChart.prototype._drawLines = function(svg, data) {
 
 };
 
+// Draw points of the series
 D3MultiTimeSeriesChart.prototype._drawPoints = function(svg, data) {
   var scales = this._scales(data.domains);
   var points = this._extractRawPointCoords(data.series);
@@ -178,6 +198,7 @@ D3MultiTimeSeriesChart.prototype._drawPoints = function(svg, data) {
   circles.exit().remove();
 };
 
+// Draw the warping path if warpingPath in data is not null
 D3MultiTimeSeriesChart.prototype._drawWarpingPath = function(svg, data) {
   var scales = this._scales(data.domains);
   var series = data.series;
@@ -201,6 +222,7 @@ D3MultiTimeSeriesChart.prototype._drawWarpingPath = function(svg, data) {
   lines.exit().remove();
 }
 
+// Draw the invisible Voronoi diagram to assist user experience
 D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
   var scales = this._scales(data.domains);
 
@@ -214,6 +236,7 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
 
   var voronoiGroup = svg.select('g.voronoiWrapper')             
   
+  // Get an array of polygon. Each polygon is itself a array of points
   var polygons = voronoi(points).polygons();
 
   var voronoiPaths = voronoiGroup.selectAll('path').data(polygons);
@@ -253,9 +276,11 @@ D3MultiTimeSeriesChart.prototype._showToolTip = function(svg, x, y, text) {
   var tooltipWidth = textBBox.width + 20;
   var tooltipHeight = textBBox.height + 10;
 
+  // Position the text at the middle of the tooltip box
   tooltipText.attr('x', x)
              .attr('y', y + tooltipHeight / 2 + textBBox.height / 2)
 
+  // Tooltip box is shown below selected point
   tooltip.attr('x', x - tooltipWidth / 2)
          .attr('y', y + this._pointRadius)
          .attr('width', tooltipWidth)
