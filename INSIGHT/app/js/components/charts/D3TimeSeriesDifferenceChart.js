@@ -44,7 +44,7 @@ D3TimeSeriesDifferenceChart.prototype.create = function(el, props, data) {
               .classed('time-series-difference-chart', true)
               .attr('width', width + margins.left + margins.right)
               .attr('height', height + margins.top + margins.bottom);
-
+  console.log(height + margins.top + margins.bottom);
   svg.append('line').classed('base-line', true)
                     .attr('x1', margins.left)
                     .attr('y1', height / 2 + margins.top)

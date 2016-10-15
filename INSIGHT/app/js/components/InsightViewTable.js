@@ -1,5 +1,6 @@
 var React = require('react');
 var InsightConstants = require('./../flux/constants/InsightConstants');
+var TimeSeriesDifferenceChart = require('./charts/TimeSeriesDifferenceChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
@@ -27,13 +28,35 @@ var DecimalCell = function({rowIndex, data, field, ...props}) {
          </Cell>;
 }
 
+var OverviewCell = function({rowIndex, data, ...props}) {
+  var query = data[rowIndex].qValues;
+  var result = data[rowIndex].rValues;
+  var warpingPath = data[rowIndex].warpingPath;
+  var chartData = {
+    series: [{values: query}, {values: result}],
+    warpingPath: warpingPath,
+    maxDomainY: 0.3
+  };
+  var margins = {top: 0, bottom: 0, left: 0, right: 0};
+
+  var chart = <TimeSeriesDifferenceChart width={props.width - 16}
+                                         height={props.height - 16}
+                                         margins={margins}
+                                         data={chartData}
+                                         strokeWidth={1}
+                                         color={'blue'} />
+  return <Cell {...props}>
+          {chart}
+         </Cell>;
+}
+
+
 /**
  * Data table
  */
 var InsightViewTable = React.createClass({
   render: function() {
     var resultData = this.props.results;
-
     var QueryGroup =
       <ColumnGroup
         header={<Cell>Query</Cell>}>
@@ -86,6 +109,11 @@ var InsightViewTable = React.createClass({
           header={<Cell>Similarity</Cell>}
           cell={<DecimalCell data={resultData} field="similarityValue" />}
           width={100}
+        />
+        <Column
+          header={<Cell>Overview</Cell>}
+          cell={<OverviewCell data={resultData} />}
+          width={200}
         />
       </ColumnGroup>
 
