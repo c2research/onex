@@ -4,6 +4,7 @@
 #include <string>
 #include <exception>
 #include <stdexcept>
+#include <algorithm>
 
 #include <string.h>
 #include <stdlib.h>
@@ -213,7 +214,9 @@ warping_path_t OnlineSession::getWarpingPath(int indexa, int indexb,
               TimeInterval inta, TimeInterval intb,
               SeriesDistanceMetric *metric)
 {
-    return datasets[indexa]->warping_path(seqa, inta, datasets[indexb], seqb, intb, metric);
+    warping_path_t path = datasets[indexa]->warping_path(seqa, inta, datasets[indexb], seqb, intb, metric);
+    reverse(path.begin(), path.end());
+    return path;
 }
 
 kBest OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat, int r)
