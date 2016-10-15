@@ -44,7 +44,7 @@ D3TimeSeriesDifferenceChart.prototype.create = function(el, props, data) {
               .classed('time-series-difference-chart', true)
               .attr('width', width + margins.left + margins.right)
               .attr('height', height + margins.top + margins.bottom);
-  console.log(height + margins.top + margins.bottom);
+
   svg.append('line').classed('base-line', true)
                     .attr('x1', margins.left)
                     .attr('y1', height / 2 + margins.top)
@@ -76,7 +76,9 @@ D3TimeSeriesDifferenceChart.prototype._calcDifference = function(data) {
   var s1 = data.series[0] && data.series[0].values;
   var s2 = data.series[1] && data.series[1].values;
   if (!(s1 && s2 && data.warpingPath)) return [];
-  var diff = data.warpingPath.map(function(pair) { return s1[pair[0]][1] - s2[pair[1]][1]; });
+  var diff = data.warpingPath.map(function(pair) {
+    return s2[pair[1]][1] - s1[pair[0]][1];
+  });
   return diff;
 }
 
@@ -87,7 +89,7 @@ D3TimeSeriesDifferenceChart.prototype._drawBars = function(svg, data) {
     x: [0, diff.length - 1],
     y: [-data.maxDomainY, data.maxDomainY]
   };
-  console.log(diff);
+
   var scales = this._scales(domains);
   var series = data.series;
   var strokeWidth = this.props.strokeWidth || 1;

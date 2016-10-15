@@ -30,12 +30,15 @@ var DecimalCell = function({rowIndex, data, field, ...props}) {
 
 var OverviewCell = function({rowIndex, data, ...props}) {
   var query = data[rowIndex].qValues;
+  var start = data[rowIndex].qStart;
+  var end = data[rowIndex].qEnd;
+  var querySelection = query.slice(start, end + 1);
   var result = data[rowIndex].rValues;
   var warpingPath = data[rowIndex].warpingPath;
   var chartData = {
-    series: [{values: query}, {values: result}],
+    series: [{values: querySelection}, {values: result}],
     warpingPath: warpingPath,
-    maxDomainY: 0.3
+    maxDomainY: 0.2
   };
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
 
