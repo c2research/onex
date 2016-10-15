@@ -118,7 +118,13 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
             }
 
             if (min > dropout) // Short circuit calculation.
+            {
+                for (int i = 0; i < m; i++) {
+                    delete trace[i];
+                }
+                delete[] trace;
                 return INF;
+            }
         }
 
     } else {
