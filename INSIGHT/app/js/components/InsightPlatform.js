@@ -44,7 +44,10 @@ function getState() {
     distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
 
     //icon modes
-    datasetIconMode: InsightStore.getDatasetIconMode()
+    datasetIconMode: InsightStore.getDatasetIconMode(),
+
+    //dtw bias & menu options
+    dtwBiasValue: InsightStore.getDTWBias()
   };
 }
 
@@ -119,7 +122,8 @@ var InsightPlatform = React.createClass({
                        qStart={this.state.qStart}
                        qEnd={this.state.qEnd}
                        results={this.state.results}
-                       />
+                       dtwBiasValue={this.state.dtwBiasValue}
+                      />
        </div>
      );
    },

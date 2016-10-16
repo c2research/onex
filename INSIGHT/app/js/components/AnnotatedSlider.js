@@ -4,11 +4,18 @@ var React = require('react');
  * Place this above a input slider to annotate it
  * TODO: consider only showing it for a short while (only while value being changed)
  * TODO: style div and create an upside down arrow!
+ * TODO: fine tune calculation
  * width = the width of the slider beneath it
  * value = the value of the slider beanth it
  * max = the max value of the slider beneath it
  */
 var AnnotatedSlider = React.createClass({
+   getDefaultProps: function() {
+     return {
+       width: 200,
+       height: 8
+     };
+   },
    render: function() {
      var left = (this.props.width * ((this.props.value - this.props.min) / (this.props.max - this.props.min)));
      var style = {
@@ -22,7 +29,8 @@ var AnnotatedSlider = React.createClass({
        slider: {
          marginLeft: 0,
          marginRight: 0,
-         width: 100 + "%"
+         width: this.props.width,
+         height: this.props.height
        }
      }
      var sliderAnnotationJSX =
@@ -40,7 +48,7 @@ var AnnotatedSlider = React.createClass({
         min={this.props.min}
         step={this.props.step}
         value={this.props.value}
-        onChange={this.props.onChange} />
+        onChange={this.props.onChange}/>
      </div>
 
      return annotatedSliderJSX;

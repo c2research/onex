@@ -16,7 +16,8 @@ var InsightViewGraphs = React.createClass({
         pair! (And thus should render the result).
       */
 
-    if (this.props.qValues.length < 1) return null;
+    if (this.props.qValues.length < 1) return null; //TODO: a plain area is not great
+    //maybe we should expand initial options to full page at first??
 
     var qValues = this.props.qValues;
     var qStart = this.props.qStart;
@@ -51,9 +52,12 @@ var InsightViewGraphs = React.createClass({
     }
 
     if (this.props.viewingResults) {
+      //for now I just move the
+      var biasQuery = 0.05 * this.props.dtwBiasValue;
+
       var offsetResult = rValues[0][0];
-      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1]]});
-      
+      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]});
+
       subData.series.push({ values: resultLeftAligned, color: 'green'});
       subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
       subData.warpingPath = warpingPath;

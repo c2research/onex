@@ -2,8 +2,12 @@ var React = require('react');
 
 var InsightViewGraphs = require('./InsightViewGraphs');
 var InsightViewTable = require('./InsightViewTable');
+var InsightMenuBar = require('./InsightMenuBar');
+
 var InsightConstants = require('./../flux/constants/InsightConstants');
 
+var menuWidth = 25;
+var tableHeight = 200;
 
 /**
  * This is a prototype for an initial view
@@ -15,7 +19,7 @@ var InsightView = React.createClass({
     for (val in results.viewLiveIndices) {
       keepList.push(results.resultList[val]);
     }
-    var height = this.props.height - 200 / keepList.length;
+    var height = this.props.height - tableHeight / keepList.length;
     var that = this;
 
     var key = 0;
@@ -24,7 +28,7 @@ var InsightView = React.createClass({
         return (
           <InsightViewGraphs key={key}
                               viewingResults={true}
-                              width={that.props.width}
+                              width={that.props.width - menuWidth}
                               height={height}
                               graphType={that.props.graphType}
                               qValues={resultQueryPair.qValues}
@@ -33,7 +37,8 @@ var InsightView = React.createClass({
                               rValues={resultQueryPair.rValues}
                               warpingPath={resultQueryPair.warpingPath}
                               rStart={resultQueryPair.rStart}
-                              rEnd={resultQueryPair.rEnd}/> //warpingPath={resultQueryPair.result.warpingPath}
+                              rEnd={resultQueryPair.rEnd}
+                              dtwBiasValue={that.props.dtwBiasValue}/> //warpingPath={resultQueryPair.result.warpingPath}
         );
     });
 
@@ -47,28 +52,47 @@ var InsightView = React.createClass({
       this.generateViews(this.props.results) :
       <InsightViewGraphs viewingResults={false}
                         graphType={this.props.graphType}
-                        width={this.props.width}
-                        height={this.props.height - 200}
+                        width={this.props.width - menuWidth}
+                        height={this.props.height - tableHeight}
                         qValues={values}
                         qStart={this.props.qStart}
-                        qEnd={this.props.qEnd}/>
+                        qEnd={this.props.qEnd}
+                        dtwBiasValue={this.props.dtwBiasValue}/>
 
     var InsightViewTableJSX =
     <div className="viewTable">
       <InsightViewTable width={this.props.width}
                         results={this.props.results.resultList}
-                        height={200}/>
+                        height={tableHeight}/>
     </div>
 
+    var InsightMenuBarJSX =
+    <InsightMenuBar width={menuWidth}
+                    height={this.props.height - tableHeight}
+                    dtwBiasValue={this.props.dtwBiasValue}
+                    results={this.props.results.viewLiveIndices.length > 0}/>;
 
     var divStyle = {
       width: this.props.width,
       height: this.props.height,
       marginLeft: this.props.marginLeft
     }
+    var wrapperStyle = {
+      overflow: 'hidden'
+    }
+    var floatStyle = {
+      float: 'left'
+    }
 
     return (<div className="insightView" style={divStyle}>
-              {InsightViewGraphJSX}
+              <div style={wrapperStyle}>
+                <div style={floatStyle}>
+                  {InsightViewGraphJSX}
+                </div>
+                <div style={floatStyle}>
+                  {InsightMenuBarJSX}
+                </div>
+              </div>
               {InsightViewTableJSX}
             </div> );
    }

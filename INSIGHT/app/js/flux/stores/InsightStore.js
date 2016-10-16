@@ -44,7 +44,10 @@ var data = {
 	//may not use:
 	controlPanelVisible: true,
 	distanceList: [],
-	distanceCurrentIndex: 0
+	distanceCurrentIndex: 0,
+
+	//dtw bias
+	dtwBias: 0
 };
 
 /*
@@ -385,6 +388,20 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * sets the dtw bias
+	 * @param {Number} - the value to be set to
+	 */
+	setDTWBias: function(value) {
+		data.dtwBias = value;
+	},
+	/**
+	 * gets the dtw bias
+	 */
+	getDTWBias: function() {
+		return data.dtwBias;
+	},
+
+	/**
 	 * requests server to popluate datalist
 	 */
 	requestDatasetList: function() {
@@ -716,6 +733,9 @@ AppDispatcher.register(function(action) {
 			InsightStore.clearLiveView();
 			InsightStore.requestUploadQuery(action.id);
 			break;
+		case InsightConstants.SELECT_DTW_BIAS:
+			InsightStore.setDTWBias(action.id);
+			InsightStore.emitChange();
 		default:
 		  // no op
 		}

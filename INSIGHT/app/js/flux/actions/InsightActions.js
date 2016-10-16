@@ -128,8 +128,13 @@ var InsightActions = {
        actionType: InsightConstants.UPLOAD_QUERY_FILE,
        id: files
      });
+   },
+   updateDTWBias: function(value) {
+     AppDispatcher.dispatch({
+       actionType: InsightConstants.SELECT_DTW_BIAS,
+       id: value
+     });
    }
-
 };
 
 module.exports = InsightActions;

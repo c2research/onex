@@ -25,7 +25,7 @@ var InsightConstants = keyMirror({
 	GRAPH_TYPE_CONNECTED: null,
 	GRAPH_TYPE_ERROR: null,
 	GRAPH_TYPE_WARP: null,
-
+	SELECT_DTW_BIAS: null
 });
 
 module.exports = InsightConstants;

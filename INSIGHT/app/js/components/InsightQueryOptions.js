@@ -17,7 +17,6 @@ var InsightQueryOptions = React.createClass({
         <h4> Select a starting data point </h4>
         <div className="options">
           <AnnotatedSlider
-            width={200}
             value={this.props.qStart}
             min={0}
             max={this.props.qValues.length - 1}
@@ -31,7 +30,6 @@ var InsightQueryOptions = React.createClass({
         <h4> Select the end data point </h4>
         <div className="options">
           <AnnotatedSlider
-            width={200}
             value={this.props.qEnd}
             min={0}
             realMin={this.props.qStart}
