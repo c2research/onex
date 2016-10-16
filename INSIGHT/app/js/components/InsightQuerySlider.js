@@ -3,7 +3,7 @@ var Select = require('react-select');
 var InsightActions = require('./../flux/actions/InsightActions');
 var AnnotatedSlider = require('./AnnotatedSlider');
 
-var resizeId;
+// var resizeId;
 
 /**
  * This dropdown will have all the datasets
@@ -25,14 +25,19 @@ var InsightQuerySlider = React.createClass({
           min={0}
           step={1}
           value={this.props.qSeq}
-          onChange={this._handleQueryChange}/>
+          onChange={this._eventListenerThreshold}/>
         </div>
       </div> : null;
 
      return panelJSX;
    },
+   _eventListenerThreshold: function(e) {
+    InsightActions.selectQuery(parseInt(e.target.value, 10));
+    clearTimeout(this._resizeId);
+    this._resizeId = setTimeout(this._handleQueryChange(e), 200);
+   },
    _handleQueryChange: function( e ) {
-     InsightActions.selectQuery(e.target.value);
+     InsightActions.loadQuery();
    }
 });
 

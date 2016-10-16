@@ -49,13 +49,21 @@ var InsightActions = {
     });
   },
   /**
-   * initiates function seq to get a new random query
+   * change the current selected query
    */
   selectQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_QUERY,
       id: index
     });
+  },
+  /**
+   * load the current selected query
+   */
+  loadQuery: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.LOAD_QUERY
+    })
   },
   /**
    * initiates function seq to get a new random query

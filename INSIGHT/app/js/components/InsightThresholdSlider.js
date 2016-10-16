@@ -1,7 +1,6 @@
 var React = require('react');
 var InsightActions = require('./../flux/actions/InsightActions');
 var AnnotatedSlider = require('./AnnotatedSlider');
-var resizeId;
 
 /**
  * This dropdown will have all the datasets
@@ -26,8 +25,8 @@ var InsightThresholdSlider = React.createClass({
      return <div> {panelJSX} </div>;
    },
    _eventListenerThreshold: function(e){
-    clearTimeout(resizeId);
-    resizeId = setTimeout(this._handleThresholdChange(e), 100);
+    clearTimeout(this._resizeId);
+    this._resizeId = setTimeout(this._handleThresholdChange(e), 100);
    },
    _handleThresholdChange: function( e ) {
      InsightActions.selectThreshold(e.target.value);

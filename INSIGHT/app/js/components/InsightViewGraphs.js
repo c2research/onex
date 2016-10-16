@@ -56,7 +56,7 @@ var InsightViewGraphs = React.createClass({
       var biasQuery = 0.05 * this.props.dtwBiasValue;
 
       var offsetResult = rValues[0][0];
-      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]});
+      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]; });
 
       subData.series.push({ values: resultLeftAligned, color: 'green'});
       subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];

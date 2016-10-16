@@ -108,11 +108,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		var body = document.body,
 		    html = document.documentElement;
 
-		// var h = Math.max( body.scrollHeight, body.offsetHeight,
-		//                       html.clientHeight, html.scrollHeight, html.offsetHeight );
 		var h = html.clientHeight;
-		// var w = Math.max( body.scrollWidth, body.offsetWidth,
-		//                        html.clientWidth, html.scrollWidth, html.offsetWidth );
 		var w = html.clientWidth;
 
 		var controlPanelWidth = data.qDatasetValues.length > 0 || data.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
@@ -409,12 +405,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			url: '/dataset/list',
 			dataType: 'json',
 			success: function(response) {
-				var endlist = [];
-				for (var i = 0; i < response.datasets.length; i++) {
-					//format for dropdown
-					endlist.push({value: i, label: response.datasets[i]}); // ex: [{value: 0, label: "Italy Power"}... ]
-				}
-				data.dsCollectionList = endlist; //doing this so datasets can be labeled
+				var endlist = response.datasets.map(function(dataset, i) {
+					return { value: i, label: dataset };
+				})
+				// Doing this so datasets can be labeled
+				data.dsCollectionList = endlist; 
 
 				InsightStore.emitChange();
 			},
@@ -489,11 +484,10 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 						//if someone else is using this. ill add another loading thing to make it more clear
 						return;
 			    }
-			    var endlist = [];
-			    for (var i = 0; i < response.query.length; i++) {
-						endlist.push([i, response.query[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
-			    }
-					InsightStore.setQDatasetValues(endlist);
+			    var endlist = response.query.map(function(query, i) {
+			    	return [i, query];
+			    });
+			   	InsightStore.setQDatasetValues(endlist);
 			  	InsightStore.setResult([]);
 					InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases
 																						 //size of control panel, things need to be resized.
@@ -686,6 +680,9 @@ AppDispatcher.register(function(action) {
 			InsightStore.clearLiveView();
 			InsightStore.setQSeq(action.id)
 			InsightStore.clearResult();
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.LOAD_QUERY:
 			InsightStore.requestQueryFromDataset();
 			break;
 		case InsightConstants.SELECT_DISTANCE:

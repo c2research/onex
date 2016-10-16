@@ -6,6 +6,7 @@ var InsightConstants = keyMirror({
 	SELECT_DS_INDEX: null,
 	FIND_MATCH: null,
 	SELECT_QUERY: null,
+	LOAD_QUERY: null,
 	SELECT_DISTANCE: null,
 	SELECT_THRESHOLD: null,
 	SELECT_START_Q: null,
