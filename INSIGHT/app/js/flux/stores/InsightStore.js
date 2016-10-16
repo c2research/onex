@@ -589,22 +589,24 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * requests server upload a file
 	 */
 	requestUploadQuery: function(files) {
-
-		requestID.uploadQuery += 1;
-
+		//requestID.uploadQuery += 1;
+		var formData = new FormData();
+		$.each(files, function(key, value) {
+			formData.append('query', value);
+		})
+		// formData.append('requestID', requestID.uploadQuery)
 		$.ajax({
-			url: '/query/upload/',
-			data: {
-			    files: files, //the index of the ds in memory on the server we querying
-			    requestID: requestID.uploadMatch
-			},
-			method: 'POST',
-			dataType: 'json',
+			url: '/query/upload',
+			data: formData,
+			type: 'POST',
+			processData: false,
+			contentType: false,
+			//dataType: 'json',
 			success: function(response) {
-			    if (response.requestID != requestID.uploadMatch){
-						console.log(response, requestID);
-						return;
-			    }
+			   //  if (response.requestID != requestID.uploadQuery){
+						// console.log(response, requestID);
+						// return;
+			   //  }
 					var endlist = [];
 			    for (var i = 0; i < response.query.length; i++) {
 						endlist.push([i, response.query[i]]); // ex: [{value: 0, label: "Italy Power"}... ]

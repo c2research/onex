@@ -69,7 +69,7 @@ var UploadQuery = React.createClass({
     return (
     <div className="panel" >
       <h4> Upload a Query from File </h4>
-      <input type="file" id="files" name="file" onChange={this.uploadQueryFile}/>
+      <input type="file" id="files" name="query" onChange={this.uploadQueryFile}/>
       <output id="list"></output>
     </div>);
   },
