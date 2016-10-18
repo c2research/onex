@@ -17,14 +17,20 @@ var data = {
 	//current dataset information
 	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
 
-	//similarity query information
-	qTypeAPI: 0, //use this later for q from diff sets
-	qSeq: "",//index of the query
-	qStart: 0,
-	qEnd: -1,
-	qDatasetValues: [],
-	qUploadValues: [],
- 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
+	similarityQueryInfo: {
+		qTypeAPI: 0, //use this later for q from diff sets
+		qSeq: "",//index of the query
+		qStart: 0,
+		qEnd: -1,
+		qDatasetValues: [],
+		qUploadValues: [],
+	 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
+	},
+
+	// seasonal query information
+	seasonalQueryInfo: {
+
+	},
 
   //threshold:
 	thresholdRange: [0.0, 1.0],
@@ -111,7 +117,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		var h = html.clientHeight;
 		var w = html.clientWidth;
 
-		var controlPanelWidth = data.qDatasetValues.length > 0 || data.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
+		var controlPanelWidth = data.similarityQueryInfo.qDatasetValues.length > 0 || data.similarityQueryInfo.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
 		 	      //we can resize this etc
 		var bannerHeight = 76; //hard code for now, get it later.
 
@@ -196,13 +202,13 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @return {Object} - the values of the current query (uploaded)
 	 */
 	getQUploadValues: function() {
-		return data.qUploadValues;
+		return data.similarityQueryInfo.qUploadValues;
 	},
 	/**
 	 * @return {Object} - the values of the current query (dataset)
 	 */
 	getQDatasetValues: function() {
-		return data.qDatasetValues;
+		return data.similarityQueryInfo.qDatasetValues;
 	},
 
 	/**
@@ -211,17 +217,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * perhaps files will be ds,
 	 * add custom will be another ds
 	 */
-	getQSeq: function() {
-		return data.qSeq;
-	},
-
-	getQStart: function() {
-		return data.qStart;
-	},
-
-	getQEnd: function() {
-		return data.qEnd;
-	},
 
 	/**
 	 * @return {Object} - the range of the threshold
@@ -258,19 +253,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		return data.datasetIconMode;
 	},
 
-	/**
-	 * @return {InsightConstant} - the current query type
-	 	(dataset vs upload vs playground (todo))
-	 */
-	getQTypeLocal: function(){
-		return data.qTypeLocal;
+	getSimilarityQueryInfo: function() {
+		return data.similarityQueryInfo;
 	},
-
 	/**
 	 * @param {InsightConstant} - the current query type
 	 */
 	setQueryType: function(v) {
-		data.qTypeLocal = v;
+		data.similarityQueryInfo.qTypeLocal = v;
 	},
 
 	/**
@@ -308,7 +298,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {Int} - the index of the query in the LIST IT BELONGS TO
 	 */
 	setQSeq: function(qSeq) {
-		data.qSeq = qSeq;
+		data.similarityQueryInfo.qSeq = qSeq;
 		//TODO: consider what values to set
 	},
 
@@ -316,34 +306,34 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {Int} - the ending index of a query
 	 */
 	setQStart: function(qStart) {
-		if (qStart >= data.qEnd) return;
-		data.qStart = qStart;
+		if (qStart >= data.similarityQueryInfo.qEnd) return;
+		data.similarityQueryInfo.qStart = qStart;
 	},
 
 	/**
 	 * @param {Int} - the ending index of a query
 	 */
 	setQEnd: function(qEnd) {
-		if (qEnd <= data.qStart) return;
-		data.qEnd = qEnd;
+		if (qEnd <= data.similarityQueryInfo.qStart) return;
+		data.similarityQueryInfo.qEnd = qEnd;
 	},
 
 	/**
 	 * @param {Object} - the values of the current query
 	 */
 	setQUploadValues: function(qValues) {
-		data.qUploadValues = qValues;
-		data.qStart = 0;
-		data.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+		data.similarityQueryInfo.qUploadValues = qValues;
+		data.similarityQueryInfo.qStart = 0;
+		data.similarityQueryInfo.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
 	},
 
 	/**
 	 * @param {Object} - the values of the current query
 	 */
 	setQDatasetValues: function(qValues) {
-		data.qDatasetValues = qValues;
-		data.qStart = 0;
-		data.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+		data.similarityQueryInfo.qDatasetValues = qValues;
+		data.similarityQueryInfo.qStart = 0;
+		data.similarityQueryInfo.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
 	},
 
 	/**
@@ -462,8 +452,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * requests server for a query within the dataset
 	 */
 	requestQueryFromDataset: function() {
-		if ((data.dsCollectionIndex == null) || (data.qSeq == null) ||
-	 			(data.dsCollectionIndex < 0) || (data.qSeq < 0)){
+		if ((data.dsCollectionIndex == null) || (data.similarityQueryInfo.qSeq == null) ||
+	 			(data.dsCollectionIndex < 0) || (data.similarityQueryInfo.qSeq < 0)){
 			console.log("dsCollectionIndex or qseq null, no need to req");
 			return;
 		}
@@ -474,7 +464,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			url: '/query/fromdataset/',
 			data: {
 				dsCollectionIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
-				qSeq : data.qSeq, //the index of the query in the list
+				qSeq : data.similarityQueryInfo.qSeq, //the index of the query in the list
 				requestID : requestID.fromDataset
 			},
 			dataType: 'json',
@@ -505,22 +495,22 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	requestFindMatch: function() {
 
-		var qType = data.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
-		var qValues = data.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? data.qDatasetValues : data.qUploadValues;
+		var qType = data.similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
+		var qValues = data.similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? data.similarityQueryInfo.qDatasetValues : data.similarityQueryInfo.qUploadValues;
 
-		if ((data.dsCollectionIndex == null) || (data.qSeq == null) ||
-				(data.dsCollectionIndex < 0) || (data.qSeq < 0)){
+		if ((data.dsCollectionIndex == null) || (data.similarityQueryInfo.qSeq == null) ||
+				(data.dsCollectionIndex < 0) || (data.similarityQueryInfo.qSeq < 0)){
 			console.log("dsCollectionIndex or qseq null, no need to req");
 			return;
 		}
 
-		if ((data.qStart == null) || (data.qEnd == null) ||
-				(data.qStart < 0) || (data.qEnd < 0) ||
-			  (data.qStart >= data.qEnd) || (data.qEnd > qValues.length)){
+		if ((data.similarityQueryInfo.qStart == null) || (data.similarityQueryInfo.qEnd == null) ||
+				(data.similarityQueryInfo.qStart < 0) || (data.similarityQueryInfo.qEnd < 0) ||
+			  (data.similarityQueryInfo.qStart >= data.similarityQueryInfo.qEnd) || (data.similarityQueryInfo.qEnd > qValues.length)){
 			console.log("setting defaults for qStart and end ");
 
-			 data.qStart = 0;
-			 data.qEnd = qValues.length - 1;
+			 data.similarityQueryInfo.qStart = 0;
+			 data.similarityQueryInfo.qEnd = qValues.length - 1;
 		}
 
 		requestID.findMatch += 1;
@@ -530,17 +520,17 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			data: {
 			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
 			    qType: qType, //the type of query, 0->dataset, 1->from file
-			    qSeq: data.qSeq, //the index of q in its ds
-			    qStart: data.qStart,
-			    qEnd: data.qEnd,
+			    qSeq: data.similarityQueryInfo.qSeq, //the index of q in its ds
+			    qStart: data.similarityQueryInfo.qStart,
+			    qEnd: data.similarityQueryInfo.qEnd,
 			    requestID: requestID.findMatch
 			},
 			dataType: 'json',
 			currentState: {
-				qTypeLocal: data.qTypeLocal,
-				qSeq: data.qSeq,
-				qStart: data.qStart,
-				qEnd: data.qEnd,
+				qTypeLocal: data.similarityQueryInfo.qTypeLocal,
+				qSeq: data.similarityQueryInfo.qSeq,
+				qStart: data.similarityQueryInfo.qStart,
+				qEnd: data.similarityQueryInfo.qEnd,
 				qValues: qValues,
 				threshold: data.thresholdCurrent,
 				qDsCollectionIndex: data.dsCollectionIndex

@@ -20,13 +20,8 @@ function getState() {
     dsCollectionIndex: InsightStore.getDSCollectionIndex(),
     dsCurrentLength: InsightStore.getDSCurrentLength(),
 
-    //query
-    qTypeLocal: InsightStore.getQTypeLocal(),
-    qUploadValues: InsightStore.getQUploadValues(),
-    qDatasetValues: InsightStore.getQDatasetValues(),
-    qSeq: InsightStore.getQSeq(),
-    qStart: InsightStore.getQStart(),
-    qEnd: InsightStore.getQEnd(),
+    similarityQueryInfo: InsightStore.getSimilarityQueryInfo(),
+
     results: InsightStore.getResults(),
 
     //meta (will add sizing stuff)
@@ -67,81 +62,90 @@ var InsightPlatform = React.createClass({
    * Event handler for 'change' events coming from the InsightStore
    * This will refresh the appropriate state values from the store
    */
-   _onChange: function() {
-     this.setState(getState());
-   },
-   componentWillMount: function() {
-     //set initial state values
-     InsightStore.init();
-     this.setState(getState());
-   },
-   componentDidMount: function() {
-     //add event for resizing
-     window.addEventListener('resize', this._eventListenerResize);
+  _onChange: function() {
+    this.setState(getState());
+  },
+  componentWillMount: function() {
+    //set initial state values
+    InsightStore.init();
+    this.setState(getState());
+  },
+  componentDidMount: function() {
+   //add event for resizing
+    window.addEventListener('resize', this._eventListenerResize);
 
-     //listen for changes from store (flux)
-     InsightStore.addChangeListener(this._onChange);
-   },
-   componentWillUnmount: function() {
-     //remove change listener
-     window.removeEventListener('resize');
-
+    //listen for changes from store (flux)
+    InsightStore.addChangeListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    //remove change listener
+    window.removeEventListener('resize');
      //stop listening for changes from store (flux)
-     InsightStore.removeChangeListener(this._onChange);
-   },
-   render: function() {
-     return (
-       <div className="insightPlatform">
-         <InsightBanner baseTitle="insight" />
-         <InsightControlPanel visible={this.state.controlPanelVisible}
-                              width={this.state.sizing.controlPanelWidth}
-                              dsCollectionList={this.state.dsCollectionList}
-                              dsCollectionIndex={this.state.dsCollectionIndex}
-                              dsCurrentLength={this.state.dsCurrentLength}
-                              qTypeLocal={this.state.qTypeLocal}
-                              qSeq={this.state.qSeq}
-                              qDatasetValues={this.state.qDatasetValues}
-                              qUploadValues={this.state.qUploadValues}
-                              thresholdRange={this.state.thresholdRange}
-                              thresholdCurrent={this.state.thresholdCurrent}
-                              thresholdStep={this.state.thresholdStep}
-                              viewMode={this.state.viewMode}
-                              qStart={this.state.qStart}
-                              qEnd={this.state.qEnd}
-                              distanceList={this.state.distanceList}
-                              distanceCurrentIndex={this.state.distanceCurrentIndex}
-                              datasetIconMode={this.state.datasetIconMode}
-                            />
-          <InsightView marginLeft={this.state.sizing.controlPanelWidth}
-                       width={this.state.sizing.displayWidth}
-                       height={this.state.sizing.displayHeight}
-                       qTypeLocal={this.state.qTypeLocal}
-                       qUploadValues={this.state.qUploadValues}
-                       qDatasetValues={this.state.qDatasetValues}
-                       qSeq={this.state.qSeq}
-                       qStart={this.state.qStart}
-                       qEnd={this.state.qEnd}
-                       results={this.state.results}
-                       dtwBiasValue={this.state.dtwBiasValue}
-                      />
-       </div>
-     );
-   },
+    InsightStore.removeChangeListener(this._onChange);
+  },
+  render: function() {
+    var similarityQueryState = {
+      qTypeLocal: this.state.qTypeLocal,
+      qSeq: this.state.qSeq,
+      qDatasetValues: this.state.qDatasetValues,
+      qUploadValues: this.state.qUploadValues,
+      
+      qStart: this.state.qStart,
+      qEnd: this.state.qEnd
+    };
+    var seasonalQueryState = {
 
-   /** private functions **/
-   /**
-    * Called when the window is resized
-    */
-   _eventListenerResize: function(){
+    }
+    return (
+      <div className="insightPlatform">
+        <InsightBanner baseTitle="insight" />
+        <InsightControlPanel visible={this.state.controlPanelVisible}
+                             width={this.state.sizing.controlPanelWidth}
+                             viewMode={this.state.viewMode}
+                             dsCollectionList={this.state.dsCollectionList}
+                             dsCollectionIndex={this.state.dsCollectionIndex}
+                             dsCurrentLength={this.state.dsCurrentLength}
+                             datasetIconMode={this.state.datasetIconMode}
+                             thresholdRange={this.state.thresholdRange}
+                             thresholdCurrent={this.state.thresholdCurrent}
+                             thresholdStep={this.state.thresholdStep}
+                             similarityQueryInfo={this.state.similarityQueryInfo}
+                             distanceList={this.state.distanceList}
+                             distanceCurrentIndex={this.state.distanceCurrentIndex}
+        />
+        <InsightView marginLeft={this.state.sizing.controlPanelWidth}
+                     width={this.state.sizing.displayWidth}
+                     height={this.state.sizing.displayHeight}
+                     similarityQueryInfo={this.state.similarityQueryInfo}
+                     
+                     // qTypeLocal={this.state.qTypeLocal}
+                     // qUploadValues={this.state.qUploadValues}
+                     // qDatasetValues={this.state.qDatasetValues}
+                     // qSeq={this.state.qSeq}
+                     // qStart={this.state.qStart}
+                     // qEnd={this.state.qEnd}
+
+                     results={this.state.results}
+                     dtwBiasValue={this.state.dtwBiasValue}
+        />
+       </div>
+    );
+  },
+
+  /** private functions **/
+  /**
+  * Called when the window is resized
+  */
+  _eventListenerResize: function(){
     clearTimeout(resizeId);
     resizeId = setTimeout(this._onResizeAction, 100);
-   },
-   /**
-    * user stopped resizing, go!
-    */
-   _onResizeAction: function(){
-     InsightActions.resizeApp();
-   }
+  },
+  /**
+  * user stopped resizing, go!
+  */
+  _onResizeAction: function(){
+    InsightActions.resizeApp();
+  }
 });
 
 module.exports = InsightPlatform;

@@ -71,23 +71,24 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSimilarityQueryControls: function() {
-    var qTypeLocal = this.props.qTypeLocal;
+    var similarityQueryInfo = this.props.similarityQueryInfo;
+    var qTypeLocal = similarityQueryInfo.qTypeLocal;
     var values;
     if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
-      values = this.props.qDatasetValues;
+      values = similarityQueryInfo.qDatasetValues;
     } else if (qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
-      values = this.props.qUploadValues;
+      values = similarityQueryInfo.qUploadValues;
     } else {
-      values = this.props.qBuildValues;
+      values = similarityQueryInfo.qBuildValues;
     }
 
     var queryJSX = <InsightSimilarityQuery viewMode={this.props.viewMode}
                                            dsCurrentLength={this.props.dsCurrentLength}
-                                           qTypeLocal={this.props.qTypeLocal}
+                                           qTypeLocal={similarityQueryInfo.qTypeLocal}
                                            qValues={values}
-                                           qStart={this.props.qStart}
-                                           qEnd={this.props.qEnd}
-                                           qSeq={this.props.qSeq}/>;
+                                           qStart={similarityQueryInfo.qStart}
+                                           qEnd={similarityQueryInfo.qEnd}
+                                           qSeq={similarityQueryInfo.qSeq}/>;
 
     var findButtonJSX = <InsightFind show={values.length > 0} 
                                      viewMode={this.props.viewMode}/>;
@@ -99,8 +100,8 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSeasonalQueryControls: function() {
-    var findButtonJSX = <InsightFind show={values.length > 0} 
-                                     viewMode={this.props.viewMode}/>;
+    //var findButtonJSX = <InsightFind show={values.length > 0} 
+    //                                 viewMode={this.props.viewMode}/>;
 
     return null;
   },
