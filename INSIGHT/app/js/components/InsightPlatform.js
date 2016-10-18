@@ -117,14 +117,6 @@ var InsightPlatform = React.createClass({
                      width={this.state.sizing.displayWidth}
                      height={this.state.sizing.displayHeight}
                      similarityQueryInfo={this.state.similarityQueryInfo}
-                     
-                     // qTypeLocal={this.state.qTypeLocal}
-                     // qUploadValues={this.state.qUploadValues}
-                     // qDatasetValues={this.state.qDatasetValues}
-                     // qSeq={this.state.qSeq}
-                     // qStart={this.state.qStart}
-                     // qEnd={this.state.qEnd}
-
                      results={this.state.results}
                      dtwBiasValue={this.state.dtwBiasValue}
         />

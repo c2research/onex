@@ -27,7 +27,6 @@ var data = {
 	 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
 	},
 
-	// seasonal query information
 	seasonalQueryInfo: {
 
 	},
@@ -494,23 +493,23 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * requests server to find the answer
 	 */
 	requestFindMatch: function() {
-
-		var qType = data.similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
-		var qValues = data.similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? data.similarityQueryInfo.qDatasetValues : data.similarityQueryInfo.qUploadValues;
-
-		if ((data.dsCollectionIndex == null) || (data.similarityQueryInfo.qSeq == null) ||
-				(data.dsCollectionIndex < 0) || (data.similarityQueryInfo.qSeq < 0)){
+		var similarityQueryInfo = data.similarityQueryInfo;
+		var qType = similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
+		var qValues = similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? similarityQueryInfo.qDatasetValues : similarityQueryInfo.qUploadValues;
+		var {qStart, qEnd, qSeq, qTypeLocal} = similarityQueryInfo;
+		if ((data.dsCollectionIndex == null) || (qSeq == null) ||
+				(data.dsCollectionIndex < 0) || (qSeq < 0)){
 			console.log("dsCollectionIndex or qseq null, no need to req");
 			return;
 		}
 
-		if ((data.similarityQueryInfo.qStart == null) || (data.similarityQueryInfo.qEnd == null) ||
-				(data.similarityQueryInfo.qStart < 0) || (data.similarityQueryInfo.qEnd < 0) ||
-			  (data.similarityQueryInfo.qStart >= data.similarityQueryInfo.qEnd) || (data.similarityQueryInfo.qEnd > qValues.length)){
+		if ((qStart == null) || (qEnd == null) ||
+				(qStart < 0) || (qEnd < 0) ||
+			  (qStart >= qEnd) || (qEnd > qValues.length)){
 			console.log("setting defaults for qStart and end ");
 
-			 data.similarityQueryInfo.qStart = 0;
-			 data.similarityQueryInfo.qEnd = qValues.length - 1;
+			 qStart = 0;
+			 qEnd = qValues.length - 1;
 		}
 
 		requestID.findMatch += 1;
@@ -520,17 +519,17 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			data: {
 			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
 			    qType: qType, //the type of query, 0->dataset, 1->from file
-			    qSeq: data.similarityQueryInfo.qSeq, //the index of q in its ds
-			    qStart: data.similarityQueryInfo.qStart,
-			    qEnd: data.similarityQueryInfo.qEnd,
+			    qSeq: qSeq, //the index of q in its ds
+			    qStart: qStart,
+			    qEnd: qEnd,
 			    requestID: requestID.findMatch
 			},
 			dataType: 'json',
 			currentState: {
-				qTypeLocal: data.similarityQueryInfo.qTypeLocal,
-				qSeq: data.similarityQueryInfo.qSeq,
-				qStart: data.similarityQueryInfo.qStart,
-				qEnd: data.similarityQueryInfo.qEnd,
+				qTypeLocal: qTypeLocal,
+				qSeq: qSeq,
+				qStart: qStart,
+				qEnd: qEnd,
 				qValues: qValues,
 				threshold: data.thresholdCurrent,
 				qDsCollectionIndex: data.dsCollectionIndex
