@@ -1,5 +1,5 @@
 #include <boost/python.hpp>
-
+#include <algorithm>
 #include "OnlineSession.h"
 
 namespace py = boost::python;
@@ -137,6 +137,48 @@ py::list getWarpingPath(int dbIndexA, int dbSeqA, int startA, int endA,
   return result;
 }
 
+bool _intervalCmp(kBest A, kBest B) {
+  return A.interval.end < B.interval.end;
+}
+
+/**
+ * Get seasonal patterns of a given length in a specified sequence. 
+ *
+ * \param dbIndex index of the a dataset
+ * \param dbSeq index of a sequence in the dataset
+ * \param length length of the desired repeated patterns
+ * \return a Python list of seasonal patterns. Each list of seasonal pattern contains
+ *         pairs of starting and ending positions of subsequences which are similar to
+ *         each other.
+ */
+py::list getSeasonal(int dbIndex, int dbSeq, int length) 
+{
+  vector< vector<kBest> > seasonalGroups = os.seasonalSimilarity(dbIndex, dbSeq, length);
+  py::list seasonals;
+  for (int i = 0; i < seasonalGroups.size(); i++) {
+    // Sort for the greedy algorithm
+    sort(seasonalGroups[i].begin(), seasonalGroups[i].end(), _intervalCmp);
+    py::list seasonal;
+    int lastEnd = -1;
+    for (int j = 0; j < seasonalGroups[i].size(); j++) {
+      int curStart = seasonalGroups[i][j].interval.start;
+      int curEnd = seasonalGroups[i][j].interval.end;
+      // Greedily choose non-overlap subsequences
+      if (curStart > lastEnd) {
+        py::list startEnd;
+        startEnd.append(curStart);
+        startEnd.append(curEnd);
+        seasonal.append(startEnd);
+        lastEnd = curEnd;
+      }
+    }
+    if (py::len(seasonal) > 1) {
+      seasonals.append(seasonal);
+    }
+  }
+  return seasonals;
+}
+
 /**
  * Get the number of sequence in a dataset.
  * 
@@ -170,6 +212,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
   py::def("getWarpingPath", getWarpingPath);
+  py::def("getSeasonal", getSeasonal);
 }
 
 

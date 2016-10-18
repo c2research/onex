@@ -162,6 +162,9 @@ public:
     kBest similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                  SearchStrategy strat=EBOTTOM_TOP, int warps=-1);
 
+    vector< vector<kBest> > seasonalSimilarity(int TSIndex, int length);
+
+
     void outlier(int length);
 
     void printdb(void);

@@ -70,6 +70,8 @@ public:
                   SeriesDistanceMetric *metric);
 
     kBest similar(int dbindex, int qindex, int qseq, TimeInterval qint, int strat=-1, int r=-1);
+    vector< vector<kBest> > seasonalSimilarity(int dbindex, int TSIndex, int length);
+
     int outlier(int dbindex, int length);
 
     // Meta and other commands.

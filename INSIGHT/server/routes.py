@@ -213,5 +213,20 @@ def api_upload_query():
     return jsonify(query=query, requestID=request_id)
 
 
+@app.route('/seasonal')
+def api_get_seasonal():
+  request_id               = request.args.get('requestID', -1, type=int)
+  ds_collection_index      = request.args.get('dsCollectionIndex', -1, type=int)
+  q_seq                    = request.args.get('qSeq', -1, type=int)
+  length                   = request.args.get('length', -1, type=int)
+  with lock:
+    if not (ds_collection_index == current_collection_index):
+      raise InvalidUsage('Dataset {} is not loaded yet'.format(ds_collection_index))
+
+    seasonal = os.getSeasonal(current_ds_index, q_seq, length)
+
+    return jsonify(seasonal=seasonal, requestID=request_id)
+
+
 def _allowed_file(filename):
   return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

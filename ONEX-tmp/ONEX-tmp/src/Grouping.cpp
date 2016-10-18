@@ -398,6 +398,24 @@ kBest TimeSeriesGroup::getBestMatch(TimeSeriesIntervalEnvelope query, int warps,
     return bsf;
 }
 
+vector<kBest> TimeSeriesGroup::getSeasonal(int seq)
+{
+    vector<kBest> TSubseq;
+    for (int start = 0; start < perSeq; start++) {
+        if (members[seq * perSeq + start]) 
+        {
+            kBest sub = {
+                .seq = seq,
+                .interval = TimeInterval(start, start + length - 1),
+                .dist = 0
+            };
+            TSubseq.push_back(sub);
+        }
+
+    }
+    return TSubseq;
+}
+
 void TimeSeriesGroup::toFile(ostream &out)
 {
     int seqCount = dataset->getSeqCount();
@@ -543,6 +561,16 @@ int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t
     *dist = bsfDist;
 
     return bsfIndex;
+}
+
+vector<vector<kBest>> TimeSeriesGrouping::getSeasonal(int seq)
+{
+    vector<vector<kBest>> allSeasonal;
+    for (unsigned int i = 0; i < groups.size(); i++) {
+        vector<kBest> currentSeasonal = groups[i]->getSeasonal(seq);
+        allSeasonal.push_back(currentSeasonal);
+    }
+    return allSeasonal;
 }
 
 /*

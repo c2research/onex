@@ -125,6 +125,7 @@ public:
     void genEnvelope(void);
 
     kBest getBestMatch(TimeSeriesIntervalEnvelope query, int warps=-1, double dropout=INF);
+    vector<kBest> getSeasonal(int);
 
     vector<seqitem_t> &getCentroid(void);
 };
@@ -165,6 +166,7 @@ public:
     void genEnvelopes(void);
 
     int getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t *dist=NULL, int warps=-1, double dropout=INF);
+    vector< vector<kBest> > getSeasonal(int);
 };
 
 // Strategy when searching for similar representatives.

@@ -230,6 +230,11 @@ kBest OnlineSession::similar(int dbindex, int qindex, int qseq, TimeInterval qin
     return datasets[dbindex]->similar(datasets[qindex], qseq, qint, (SearchStrategy) strat, r);
 }
 
+vector< vector<kBest> > OnlineSession::seasonalSimilarity(int dbindex, int TSIndex, int length)
+{
+    return datasets[dbindex]->seasonalSimilarity(TSIndex, length);
+}
+
 int OnlineSession::outlier(int dbindex, int length)
 {
     datasets[dbindex]->outlier(length);

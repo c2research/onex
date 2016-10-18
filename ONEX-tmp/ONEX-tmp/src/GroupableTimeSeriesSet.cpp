@@ -201,6 +201,19 @@ warping_path_t GroupableTimeSeriesSet::warping_path(int seq, TimeInterval interv
     return path;  
 }
 
+vector< vector<kBest> > GroupableTimeSeriesSet::seasonalSimilarity(int TSIndex, int length)
+{
+    if (length < 1 || length > dataset->getSeqLength()) {
+        cerr << "Warning: Given invalid length: " << length << "." << endl;
+        return vector<vector<kBest>>();
+    }
+    if (grouping == NULL) {
+        cerr << "Warning: Attempted to find seasonal similarity on ungrouped dataset." << endl;
+        return vector<vector<kBest>>();
+    }
+    return grouping->getGroup(length-1)->getSeasonal(TSIndex);
+}
+
 kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSeq, TimeInterval otherInt,
                                      SearchStrategy strat, int warps)
 {
