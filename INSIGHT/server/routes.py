@@ -222,9 +222,7 @@ def api_get_seasonal():
   with lock:
     if not (ds_collection_index == current_collection_index):
       raise InvalidUsage('Dataset {} is not loaded yet'.format(ds_collection_index))
-
-    seasonal = os.getSeasonal(current_ds_index, q_seq, length)
-
+    seasonal = onex.getSeasonal(current_ds_index, q_seq, length)
     return jsonify(seasonal=seasonal, requestID=request_id)
 
 

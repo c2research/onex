@@ -111,5 +111,20 @@ class ServerTest(unittest.TestCase):
                     'A distance must be returned')
 
 
+  def test_get_seasonal(self):
+    dataset = 0
+    self._init_dataset(dataset, 0.3)
+    ret = self.app.get('/seasonal',
+                       query_string={
+                             'requestID': 0,
+                             'dsCollectionIndex': dataset,
+                             'qSeq': 0,
+                             'length': 10
+                      })
+    ret_data = json.loads(ret.data)
+    self.assertTrue(len(ret_data['seasonal']) > 0,
+                'Length of returned seasonal must be positive')
+
+
 if __name__=='__main__':
   unittest.main()
