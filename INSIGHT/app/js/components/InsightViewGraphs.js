@@ -33,7 +33,7 @@ var InsightViewGraphs = React.createClass({
 
     var subData = {
       series: [],
-      domains: { x: [qStart, qEnd], y: [0, 1]},
+      domains: { x: [0, qValuesSelection.length], y: [0, 1]},
     }
 
     var totalData = {
@@ -41,13 +41,13 @@ var InsightViewGraphs = React.createClass({
       domains: { x: [0, qValues.length], y: [0,1] }
     }
 
-    // Display the whole time series in the total chart
     totalData.series.push({ values: qValues, color: 'black'});
-    subData.series.push({ values: qValues, color: 'black'});
-
-    // 
     if (qValuesSelection.length > 0) {
       var offsetSelection = qValuesSelection[0][0];
+      var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
+
+      subData.series.push({ values: selectionLeftAligned, color: 'black'});
+
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
@@ -56,15 +56,11 @@ var InsightViewGraphs = React.createClass({
       var biasQuery = 0.05 * this.props.dtwBiasValue;
 
       var offsetResult = rValues[0][0];
-      var biasedRValue = rValues.map(function(x) { return [x[0], x[1] + biasQuery]});
+      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]; });
 
-      subData.series.push({ values: biasedRValue, color: biasQuery == 0 ? 'green' : 'magenta'});
-      
-      // Adjust domain to fix both the query and result 
-      subData.domains.x[1] = qStart + Math.max(qValuesSelection.length, rValues.length);
-
-      // Shift left value of warping path to match the selection window
-      subData.warpingPath = warpingPath.map(function(x) { return [x[0] + qStart, x[1]]; });
+      subData.series.push({ values: resultLeftAligned, color: 'green'});
+      subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
+      subData.warpingPath = warpingPath;
 
       totalData.series.push({values: rValues, color: 'green'});
       totalData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], rValues[rValues.length - 1][0])]
