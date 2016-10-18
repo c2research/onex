@@ -17,7 +17,7 @@ var data = {
 	//current dataset information
 	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
 
-	//query information
+	//similarity query information
 	qTypeAPI: 0, //use this later for q from diff sets
 	qSeq: "",//index of the query
 	qStart: 0,
