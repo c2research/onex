@@ -69,7 +69,7 @@ Perform loading and grouping on a dataset.
     dsCollectionIndex: int
       Index of the dataset in the dataset list.
 
-    qSeq: double 
+    qSeq: int 
       Index of a sequence in the dataset.
       
     requestID: int
@@ -104,7 +104,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
     qFindWithCustomQuery: int
       If this is 0, find best match with a query from the same dataset. If this is 1, find best match with the uploaded query.
     
-    qSeq: double 
+    qSeq: int 
       Index of a sequence containing the query.
       
     qStart: int
@@ -162,6 +162,44 @@ Status: **200**
 ```
 { 
   query: [<double>] # The uploaded query
+  requestID: <int>  # The requestID sent with the request
+}
+```
+
+<br/>
+### 6. Get seasonal patterns
+Get a list of seasonal patterns within a given time series.
+
+**HTTP method and URL**
+
+    GET /seasonal
+    
+**URL params**
+
+    dsCollectionIndex: int
+      Index of the dataset in the dataset list.
+
+    qSeq: int 
+      Index of a sequence in the dataset.
+
+    length: int
+      Length of each pattern in a seasonal patterns.
+
+    requestID: int
+      A unique ID of the request. This ID is used to match up this request with its response.
+
+
+```
+<input type="file" name="query">
+```
+
+**Success Response**
+
+Status: **200**
++ Content:
+```
+{ 
+  seasonal: [[[<double>, <double>]] # A list of list of pair of starting position and ending position
   requestID: <int>  # The requestID sent with the request
 }
 ```
