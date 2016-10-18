@@ -119,9 +119,9 @@ var InsightActions = {
       id: 0
     });
   },
- /*
-  * initiates funciton seq to find similarity match
-  */
+  /*
+   * initiates funciton seq to find similarity match
+   */
   findMatch: function() {
     AppDispatcher.dispatch({
       actionType: InsightConstants.FIND_MATCH,
@@ -131,18 +131,43 @@ var InsightActions = {
   /*
    * initiates funciton seq to find similarity match
    */
-   uploadQueryFile: function(files) {
-     AppDispatcher.dispatch({
-       actionType: InsightConstants.UPLOAD_QUERY_FILE,
-       id: files
-     });
-   },
-   updateDTWBias: function(value) {
-     AppDispatcher.dispatch({
-       actionType: InsightConstants.SELECT_DTW_BIAS,
-       id: value
-     });
-   }
+  uploadQueryFile: function(files) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.UPLOAD_QUERY_FILE,
+      id: files
+    });
+  },
+  updateDTWBias: function(value) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_DTW_BIAS,
+      id: value
+    });
+  },
+  
+  selectSeasonalQuery: function(index) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEASONAL_SELECT_QUERY,
+      id: index
+    });
+  },
+  selectSeasonalLength: function(value) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEASONAL_SELECT_LENGTH,
+      id: value
+    });
+  },
+  selectSeasonalPatternIndex: function(index) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEASONAL_SELECT_PATTERN_INDEX,
+      id: index
+    });
+  },
+  requestSeasonal: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEASONAL_REQUEST
+    });
+  }
+
 };
 
 module.exports = InsightActions;

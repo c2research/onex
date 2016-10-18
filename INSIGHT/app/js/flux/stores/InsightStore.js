@@ -4,10 +4,9 @@ var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
 var $ = require('jquery');
 
-var InsightConstants = require('./../constants/InsightConstants');
-
 var CHANGE_EVENT = 'change';
 
+// TODO: how about moving these objects into the Store object? 
 var data = {
 
 	//the information on all the datasets
@@ -25,10 +24,6 @@ var data = {
 		qDatasetValues: [],
 		qUploadValues: [],
 	 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
-	},
-
-	seasonalQueryInfo: {
-
 	},
 
   //threshold:
@@ -252,16 +247,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		return data.datasetIconMode;
 	},
 
-	getSimilarityQueryInfo: function() {
-		return data.similarityQueryInfo;
-	},
-	/**
-	 * @param {InsightConstant} - the current query type
-	 */
-	setQueryType: function(v) {
-		data.similarityQueryInfo.qTypeLocal = v;
-	},
-
 	/**
 	 * @param {Int} - list of DS
 	 */
@@ -274,8 +259,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 */
 	setDSCollectionIndex: function(dsCollectionIndex) {
 		data.dsCollectionIndex = dsCollectionIndex;
-		//TODO: consider this choice:
-		data.qIndex = null;
 	},
 
 	/**
@@ -286,11 +269,29 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
-	 * @param {Int} - NOTE: currently unused
-	 * \ consider this in light of the single index
+	 * @param {InsightConstant} - the view mode to switch to
 	 */
-	setQIndex: function(qIndex) {
-		data.qIndex = qIndex;
+	setViewMode: function(mode) {
+		if (data.viewMode != mode) {
+			data.viewMode = mode;
+		}
+	},
+
+	/**
+	 * @param {Number} - the new current threshold
+	 */
+	setThresholdCurrent: function(v) {
+		data.thresholdCurrent = v;
+	},
+
+	getSimilarityQueryInfo: function() {
+		return data.similarityQueryInfo;
+	},
+	/**
+	 * @param {InsightConstant} - the current query type
+	 */
+	setQueryType: function(v) {
+		data.similarityQueryInfo.qTypeLocal = v;
 	},
 
 	/**
@@ -333,22 +334,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		data.similarityQueryInfo.qDatasetValues = qValues;
 		data.similarityQueryInfo.qStart = 0;
 		data.similarityQueryInfo.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
-	},
-
-	/**
-	 * @param {InsightConstant} - the view mode to switch to
-	 */
-	setViewMode: function(mode) {
-		if (data.viewMode != mode) {
-			data.viewMode = mode;
-		}
-	},
-
-	/**
-	 * @param {Number} - the new current threshold
-	 */
-	setThresholdCurrent: function(v) {
-		data.thresholdCurrent = v;
 	},
 
 	/**
@@ -726,7 +711,7 @@ AppDispatcher.register(function(action) {
 			InsightStore.emitChange();
 		default:
 		  // no op
-		}
+	}
 });
 
 module.exports = InsightStore;
