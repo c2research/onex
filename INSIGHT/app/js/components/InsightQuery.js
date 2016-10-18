@@ -30,6 +30,10 @@ var InsightQuery = React.createClass({
      </div>
      */
 
+     var querySlider = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET && 
+                       <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
+
+
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="section">
         <h2> Query </h2>
@@ -37,7 +41,7 @@ var InsightQuery = React.createClass({
         <UploadQuery />
         <div>
           <div>
-            <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
+            {querySlider}
             <InsightQueryOptions qValues={this.props.qValues} qStart={this.props.qStart} qEnd={this.props.qEnd} />
           </div>
         </div>

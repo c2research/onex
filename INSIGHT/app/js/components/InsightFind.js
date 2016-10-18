@@ -9,10 +9,10 @@ var resizeId;
  */
 var InsightFind = React.createClass({
    render: function() {
-     return this.props.show ?
+     return this.props.show &&
      <div className="options">
       <InsightButton text="Find Match" onClick={this._eventListenerClick} />
-     </div>: null;
+     </div>;
    },
    _eventListenerClick: function(){
     clearTimeout(resizeId);
