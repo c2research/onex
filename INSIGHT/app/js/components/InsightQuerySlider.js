@@ -9,9 +9,6 @@ var AnnotatedSlider = require('./AnnotatedSlider');
  * This dropdown will have all the datasets
  */
 var InsightQuerySlider = React.createClass({
-   getInitialState () {
-     return {};
-   },
    render: function() {
      var placeholder = "choose from the dataset";
 

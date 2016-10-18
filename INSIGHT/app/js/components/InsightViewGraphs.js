@@ -58,7 +58,7 @@ var InsightViewGraphs = React.createClass({
       var offsetResult = rValues[0][0];
       var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]; });
 
-      subData.series.push({ values: resultLeftAligned, color: 'green'});
+      subData.series.push({ values: resultLeftAligned, color: biasQuery == 0 ? 'green' : 'magenta'});
       subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
       subData.warpingPath = warpingPath;
 

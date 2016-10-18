@@ -60,7 +60,6 @@ var InsightStoreSeasonal = assign({}, EventEmitter.prototype, {
       });
   }
 
-
 });
 
 // Register callback to handle all updates

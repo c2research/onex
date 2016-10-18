@@ -162,7 +162,7 @@ var InsightActions = {
       id: index
     });
   },
-  requestSeasonal: function() {
+  findSeasonal: function() {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_REQUEST
     });

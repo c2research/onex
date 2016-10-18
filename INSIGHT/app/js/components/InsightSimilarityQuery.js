@@ -7,7 +7,7 @@ var InsightConstants = require('./../flux/constants/InsightConstants');
 /**
  * This dropdown will have all the pre-existing queries
  */
-var InsightQuery = React.createClass({
+var InsightSimilarityQuery = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
@@ -34,18 +34,16 @@ var InsightQuery = React.createClass({
                        <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
 
 
-     var panelJSX = this.props.dsCurrentLength > 0 ?
+     var panelJSX = this.props.dsCurrentLength > 0 &&
      <div className="section">
         <h2> Query </h2>
         <QueryTypeRadio qTypeLocal={this.props.qTypeLocal}/>
         <UploadQuery />
         <div>
-          <div>
-            {querySlider}
-            <InsightQueryOptions qValues={this.props.qValues} qStart={this.props.qStart} qEnd={this.props.qEnd} />
-          </div>
+          {querySlider}
+          <InsightQueryOptions qValues={this.props.qValues} qStart={this.props.qStart} qEnd={this.props.qEnd} />
         </div>
-     </div> : null;
+     </div>;
 
      return <div> {panelJSX} </div>;
    }
@@ -82,4 +80,4 @@ var UploadQuery = React.createClass({
   }
 });
 
-module.exports = InsightQuery;
+module.exports = InsightSimilarityQuery;
