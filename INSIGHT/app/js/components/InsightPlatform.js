@@ -84,18 +84,6 @@ var InsightPlatform = React.createClass({
     InsightStore.removeChangeListener(this._onChange);
   },
   render: function() {
-    var similarityQueryState = {
-      qTypeLocal: this.state.qTypeLocal,
-      qSeq: this.state.qSeq,
-      qDatasetValues: this.state.qDatasetValues,
-      qUploadValues: this.state.qUploadValues,
-      
-      qStart: this.state.qStart,
-      qEnd: this.state.qEnd
-    };
-    var seasonalQueryState = {
-
-    }
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="insight" />
