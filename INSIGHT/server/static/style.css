@@ -173,3 +173,20 @@ input {
 .legend {
   visibility: hidden;
 }
+
+/* ---------->>> ICONS <<<-----------*/
+i.menu {
+  color: black;
+  padding-right: 5px;
+  opacity: .55;
+}
+i.focus {
+  color: #7c63d8;
+  opacity: .75;
+}
+i.menu:hover {
+  opacity: 1;
+}
+i.menu:active {
+  color: #ff921a;
+}

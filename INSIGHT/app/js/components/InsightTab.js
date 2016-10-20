@@ -40,7 +40,7 @@ var InsightTab = React.createClass({
      return tabJSX;
    },
    _handleClick: function( e ) {
-     InsightActions.switchViewMode(this.props.type);
+     InsightActions.selectViewMode(this.props.type);
    }
 });
 

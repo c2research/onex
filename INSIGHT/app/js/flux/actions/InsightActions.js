@@ -113,7 +113,16 @@ var InsightActions = {
   /**
    * initiates function seq to change view mode
    */
-  switchViewMode: function(mode) {
+  selectViewMode: function(mode) {
+    AppDispatcher.dispatch({
+      actionType: mode,
+      id: 0
+    });
+  },
+  /**
+   * initiates function seq to change graphTypeList
+   */
+  selectGraphType: function(mode) {
     AppDispatcher.dispatch({
       actionType: mode,
       id: 0
@@ -143,7 +152,7 @@ var InsightActions = {
       id: value
     });
   },
-  
+
   selectSeasonalQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_SELECT_QUERY,

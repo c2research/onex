@@ -40,7 +40,7 @@ function getState() {
     datasetIconMode: InsightStore.getDatasetIconMode(),
 
     /* ### similarity state ### */
-
+    graphType: InsightStoreSimilarity.getGraphType(),
     similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
     similarityResults: InsightStoreSimilarity.getResults(),
 
@@ -96,22 +96,31 @@ var InsightPlatform = React.createClass({
   },
   render: function() {
     var insightViewJSX;
-    if (this.state.viewMode == InsightConstants.VIEW_MODE_SIMILARITY) {
-      insightViewJSX =  <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
-                                               width={this.state.sizing.displayWidth}
-                                               height={this.state.sizing.displayHeight}
-                                               similarityQueryInfo={this.state.similarityQueryInfo}
-                                               results={this.state.similarityResults}
-                                               dtwBiasValue={this.state.dtwBiasValue}
-                        />
-    }
-    else if (this.state.viewMode == InsightConstants.VIEW_MODE_SEASONAL) {
-      insightViewJSX = <InsightViewSeasonal marginLeft={this.state.sizing.controlPanelWidth}
-                                            width={this.state.sizing.displayWidth}
-                                            height={this.state.sizing.displayHeight}
-                                            seasonalQueryInfo={this.state.seasonalQueryInfo}
-                                            results={this.state.seasonalResults}
-                       />
+
+    switch (this.state.viewMode) {
+      case InsightConstants.VIEW_MODE_SIMILARITY:
+        insightViewJSX =  <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
+                                                 width={this.state.sizing.displayWidth}
+                                                 height={this.state.sizing.displayHeight}
+                                                 similarityQueryInfo={this.state.similarityQueryInfo}
+                                                 results={this.state.similarityResults}
+                                                 dtwBiasValue={this.state.dtwBiasValue}
+                                                 graphType={this.state.graphType}
+                                                 />
+        break;
+      case InsightConstants.VIEW_MODE_SEASONAL:
+        insightViewJSX = <InsightViewSeasonal marginLeft={this.state.sizing.controlPanelWidth}
+                                              width={this.state.sizing.displayWidth}
+                                              height={this.state.sizing.displayHeight}
+                                              seasonalQueryInfo={this.state.seasonalQueryInfo}
+                                              results={this.state.seasonalResults}
+                                              />
+        break;
+      case InsightConstants.VIEW_MODE_CLUSTER:
+        insightViewJSX = null;
+        break;
+      default:
+        //no op
     }
 
     return (

@@ -9,7 +9,7 @@ var CHANGE_EVENT = 'change';
 var data = {
 
 	//state
-	graphType: InsightConstants.GRAPH_TYPE_LINE,
+	graphType: InsightConstants.GRAPH_TYPE_WARP,
 
 	//dtw bias
 	dtwBias: 0
@@ -87,6 +87,10 @@ var InsightStoreSimilarity = assign({}, {
 
 	getSimilarityQueryInfo: function() {
 		return similarityQueryInfo;
+	},
+
+	getGraphType: function() {
+		return data.graphType;
 	},
 
 	/**
@@ -167,6 +171,14 @@ var InsightStoreSimilarity = assign({}, {
 	setDTWBias: function(value) {
 		data.dtwBias = value;
 	},
+
+	/**
+	 * @param {InsightConstants} - the graph type to be set
+	 */
+	setGraphType: function(type) {
+		data.graphType = type;
+	},
+
 	/**
 	 * gets the dtw bias
 	 */
@@ -379,6 +391,27 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.SELECT_DTW_BIAS:
 			InsightStoreSimilarity.setDTWBias(action.id);
 			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_LINE:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_HORIZON:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_CONNECTED:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_ERROR:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_WARP:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
 		default:
 		  // no op
 	}
