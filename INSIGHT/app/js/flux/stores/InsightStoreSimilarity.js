@@ -16,16 +16,16 @@ var data = {
 };
 
 var similarityQueryInfo = {
-		qTypeAPI: 0, //use this later for q from diff sets
-		qUploadSeq: 0,//index of the query
-		qDatasetSeq: 0,//index of the query
-		qDatasetStart: 0,
-		qDatasetEnd: -1,
-		qUploadStart: 0,
-		qUploadEnd: -1,
-		qDatasetValues: [],
-		qUploadValues: [],
-	 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET
+	qTypeAPI: 0, //use this later for q from diff sets
+	qUploadSeq: 0,//index of the query
+	qDatasetSeq: 0,//index of the query
+	qDatasetStart: 0,
+	qDatasetEnd: -1,
+	qUploadStart: 0,
+	qUploadEnd: -1,
+	qDatasetValues: [],
+	qUploadValues: [],
+ 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET
 }
 /*
  * This will hold all the data on results and formed queries
@@ -41,7 +41,6 @@ var results = {
  * used.
  */
 var requestID = {
-	fromDataset: 0,
 	findMatch: 0,
 	uploadQuery: 0
 }
@@ -175,49 +174,15 @@ var InsightStoreSimilarity = assign({}, {
 		return data.dtwBias;
 	},
 
-	/**
-	 * requests server for a query within the dataset
-	 */
 	requestQueryFromDataset: function() {
-		var dsCollectionIndex = InsightStore.getDSCollectionIndex();
-
-		if ((dsCollectionIndex == null) || (similarityQueryInfo.qDatasetSeq == null) ||
-	 			(dsCollectionIndex < 0) || (similarityQueryInfo.qDatasetSeq < 0)){
-			console.log("dsCollectionIndex or qseq null, no need to req");
-			return;
-		}
-
-		requestID.fromDataset += 1;
-
-		$.ajax({
-			url: '/query/fromdataset/',
-			data: {
-				dsCollectionIndex : dsCollectionIndex, //the index of the ds in memory on the server
-				qSeq : similarityQueryInfo.qDatasetSeq, //the index of the query in the list
-				requestID : requestID.fromDataset
-			},
-			dataType: 'json',
-			success: function(response) {
-		  	if (response.requestID != requestID.fromDataset) {
-					//its not smooth if you run on your own comp, but definitely need it
-					//if someone else is using this. ill add another loading thing to make it more clear
-					return;
-		    }
-
-		    var endlist = response.query.map(function(query, i) {
-		    	return [i, query];
-		    });
+		InsightStore.requestSequenceFromDataset(similarityQueryInfo.qDatasetSeq, 
+			function(endlist) {
 		   	InsightStoreSimilarity.setQDatasetValues(endlist);
-				InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases													 //size of control panel, things need to be resized.
+				InsightStore.calculateDimensions();
 		    InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in requesting query values");
-			}
-		});
+		   }
+		);
 	},
-
 	/**
 	 * requests server upload a file
 	 */

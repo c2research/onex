@@ -35,6 +35,7 @@ var data = {
  */
 var requestID = {
 	datasetInit: 0,
+	fromDataset: 0
 }
 
 var InsightStore = assign({}, EventEmitter.prototype, {
@@ -253,6 +254,48 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
 				console.log("error requesting dataset init");
+			}
+		});
+	},
+
+	/**
+	 * requests server for a sequence within the dataset
+	 */
+	requestSequenceFromDataset: function(sequenceIndex, callback) {
+		var dsCollectionIndex = InsightStore.getDSCollectionIndex();
+
+		if ((dsCollectionIndex == null) || (sequenceIndex == null) ||
+	 			(dsCollectionIndex < 0) || (sequenceIndex < 0)){
+			console.log("dsCollectionIndex or qseq null, no need to req");
+			return;
+		}
+
+		requestID.fromDataset += 1;
+
+		$.ajax({
+			url: '/query/fromdataset/',
+			data: {
+				dsCollectionIndex : dsCollectionIndex, //the index of the ds in memory on the server
+				qSeq : sequenceIndex, //the index of the query in the list
+				requestID : requestID.fromDataset
+			},
+			dataType: 'json',
+			success: function(response) {
+		  	if (response.requestID != requestID.fromDataset) {
+					//its not smooth if you run on your own comp, but definitely need it
+					//if someone else is using this. ill add another loading thing to make it more clear
+					return;
+		    }
+
+		    var endlist = response.query.map(function(query, i) {
+		    	return [i, query];
+		    });
+
+		    callback(endlist);
+			},
+			error: function(xhr) {
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error in requesting query values");
 			}
 		});
 	},

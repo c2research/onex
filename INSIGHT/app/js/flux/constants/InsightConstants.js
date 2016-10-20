@@ -28,15 +28,10 @@ var InsightConstants = keyMirror({
 	GRAPH_TYPE_WARP: null,
 	SELECT_DTW_BIAS: null,
 
-	
-
 	SEASONAL_SELECT_QUERY: null,
 	SEASONAL_SELECT_LENGTH: null,
 	SEASONAL_SELECT_PATTERN_INDEX: null,
 	SEASONAL_REQUEST: null,
-
-
-
 });
 
 module.exports = InsightConstants;
