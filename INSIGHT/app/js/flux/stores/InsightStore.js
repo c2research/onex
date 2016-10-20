@@ -4,9 +4,11 @@ var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
 var $ = require('jquery');
 
+var InsightStoreSimilarity = require('./InsightStoreSimilarity');
+
 var CHANGE_EVENT = 'change';
 
-// TODO: how about moving these objects into the Store object? 
+// TODO: how about moving these objects into the Store object?
 var data = {
 
 	//the information on all the datasets
@@ -15,16 +17,6 @@ var data = {
 
 	//current dataset information
 	dsCurrentLength: 0, //used for determing start and end positions in a subsequence
-
-	similarityQueryInfo: {
-		qTypeAPI: 0, //use this later for q from diff sets
-		qSeq: "",//index of the query
-		qStart: 0,
-		qEnd: -1,
-		qDatasetValues: [],
-		qUploadValues: [],
-	 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET,
-	},
 
   //threshold:
 	thresholdRange: [0.0, 1.0],
@@ -38,36 +30,14 @@ var data = {
 	//icon modes
 	datasetIconMode: InsightConstants.ICON_DATASET_INIT_NULL,
 
-	//state
-	graphType: InsightConstants.GRAPH_TYPE_LINE,
-
-	//may not use:
-	controlPanelVisible: true,
-	distanceList: [],
-	distanceCurrentIndex: 0,
-
-	//dtw bias
-	dtwBias: 0
 };
-
-/*
- * This will hold all the data on results and formed queries
- * this can go into another Store eventaully
- */
-var results = {
-	viewLiveIndices: [],
-	resultList: []
-}
 
 /*
  * A counter for requestIDs to ensure last query is ultimately
  * used.
  */
 var requestID = {
-	fromDataset: 0,
-	findMatch: 0,
 	datasetInit: 0,
-	uploadQuery: 0
 }
 
 var InsightStore = assign({}, EventEmitter.prototype, {
@@ -111,7 +81,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		var h = html.clientHeight;
 		var w = html.clientWidth;
 
-		var controlPanelWidth = data.similarityQueryInfo.qDatasetValues.length > 0 || data.similarityQueryInfo.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
+		var controlPanelWidth = 301; //data.similarityQueryInfo.qDatasetValues.length > 0 || data.similarityQueryInfo.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
 		 	      //we can resize this etc
 		var bannerHeight = 76; //hard code for now, get it later.
 
@@ -124,29 +94,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		};
 
 		data.sizing = sizing;
-	},
-	/*
-	 * Called upon the success a query
-	 */
-	addQueryResultPair: function(result) {
-		results.viewLiveIndices=[0];
-		results.resultList.unshift(result);
-	},
-	/*
-	 * clears the list of view live indices, called on change in control panel
-	 * in order to show new query in full.
-	 * view live indices are set when a new
- 	 * result is found and when a query/result match is selected in the data table (future)
-	 */
-	clearLiveView: function() {
-		results.viewLiveIndices = [];
-	},
-
-	/*
-	 * @return {Object} - returns all the result information
-	 */
-	getResults: function() {
-		return results;
 	},
 
 	/**
@@ -165,24 +112,10 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
-	 * @return {boolean} - if app should render the control panel
-	 */
-	getControlPanelVisible: function() {
-		return data.controlPanelVisible;
-	},
-
-	/**
 	 * @return {Object} - return the list of datasets [{string, boolean}], name, preprocessed
 	 */
 	getDSCollectionList: function() {
 		return data.dsCollectionList;
-	},
-
-	/**
-	 * @return {Number} - the index of the current dataset
-	 */
-	getDSCollectionIndex: function() {
-		return data.dsCollectionIndex;
 	},
 
 	/**
@@ -191,26 +124,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	getDSCurrentLength: function() {
 		return data.dsCurrentLength;
 	},
-
-	/**
-	 * @return {Object} - the values of the current query (uploaded)
-	 */
-	getQUploadValues: function() {
-		return data.similarityQueryInfo.qUploadValues;
-	},
-	/**
-	 * @return {Object} - the values of the current query (dataset)
-	 */
-	getQDatasetValues: function() {
-		return data.similarityQueryInfo.qDatasetValues;
-	},
-
-	/**
-	 * @return {int} - the index of the query (of the ds)
-	 * [NOTE: we'll have to define this clearly once we start creating queries]
-	 * perhaps files will be ds,
-	 * add custom will be another ds
-	 */
 
 	/**
 	 * @return {Object} - the range of the threshold
@@ -246,12 +159,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	getDatasetIconMode: function() {
 		return data.datasetIconMode;
 	},
-
 	/**
-	 * @param {Int} - list of DS
+	 * @return {Number} - the index of the current dataset
 	 */
-	setDSCollectionList: function(dsCollectionList) {
-		data.dsCollectionList = dsCollectionList;
+	getDSCollectionIndex: function() {
+		return data.dsCollectionIndex;
 	},
 
 	/**
@@ -272,9 +184,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * @param {InsightConstant} - the view mode to switch to
 	 */
 	setViewMode: function(mode) {
-		if (data.viewMode != mode) {
-			data.viewMode = mode;
-		}
+		data.viewMode = mode;
 	},
 
 	/**
@@ -284,93 +194,12 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 		data.thresholdCurrent = v;
 	},
 
-	getSimilarityQueryInfo: function() {
-		return data.similarityQueryInfo;
-	},
-	/**
-	 * @param {InsightConstant} - the current query type
-	 */
-	setQueryType: function(v) {
-		data.similarityQueryInfo.qTypeLocal = v;
-	},
-
-	/**
-	 * @param {Int} - the index of the query in the LIST IT BELONGS TO
-	 */
-	setQSeq: function(qSeq) {
-		data.similarityQueryInfo.qSeq = qSeq;
-		//TODO: consider what values to set
-	},
-
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQStart: function(qStart) {
-		if (qStart >= data.similarityQueryInfo.qEnd) return;
-		data.similarityQueryInfo.qStart = qStart;
-	},
-
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQEnd: function(qEnd) {
-		if (qEnd <= data.similarityQueryInfo.qStart) return;
-		data.similarityQueryInfo.qEnd = qEnd;
-	},
-
-	/**
-	 * @param {Object} - the values of the current query
-	 */
-	setQUploadValues: function(qValues) {
-		data.similarityQueryInfo.qUploadValues = qValues;
-		data.similarityQueryInfo.qStart = 0;
-		data.similarityQueryInfo.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
-	},
-
-	/**
-	 * @param {Object} - the values of the current query
-	 */
-	setQDatasetValues: function(qValues) {
-		data.similarityQueryInfo.qDatasetValues = qValues;
-		data.similarityQueryInfo.qStart = 0;
-		data.similarityQueryInfo.qEnd = qValues.length > 0 ? qValues.length - 1 : 0;
-	},
-
-	/**
-	 * @param {Number} - the new result (answer)
-	 */
-	setResult: function(r) {
-		data.result = r;
-	},
-
-	/**
-	 * sets the result to be empty
-	 */
-	clearResult: function(r) {
-		this.setResult([]);
-	},
-
 	/**
 	 * @param {InsightConstant} - sets the icon view mode (loading vs loaded)
 	 */
 	setDatasetIconMode: function(mode) {
 		data.datasetIconMode = mode;
 	},
-
-	/**
-	 * sets the dtw bias
-	 * @param {Number} - the value to be set to
-	 */
-	setDTWBias: function(value) {
-		data.dtwBias = value;
-	},
-	/**
-	 * gets the dtw bias
-	 */
-	getDTWBias: function() {
-		return data.dtwBias;
-	},
-
 	/**
 	 * requests server to popluate datalist
 	 */
@@ -383,8 +212,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 					return { value: i, label: dataset };
 				})
 				// Doing this so datasets can be labeled
-				data.dsCollectionList = endlist; 
-
+				data.dsCollectionList = endlist;
 				InsightStore.emitChange();
 			},
 			error: function(xhr) {
@@ -392,7 +220,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			}
 		});
 	},
-
 	/**
 	 * initial request to the server for information on
 	 * a dataset
@@ -422,8 +249,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 				data.dsCurrentLength = response.dsLength;
 				InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
 				InsightStore.emitChange();
-				InsightStore.setQSeq(0);//set off event seq to default query
-				InsightStore.requestQueryFromDataset();
+				console.log('hello');
+				InsightStoreSimilarity.setQDatasetSeq(0);//set off event seq to default query
+				InsightStoreSimilarity.requestQueryFromDataset();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -431,200 +259,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 			}
 		});
 	},
-
-	/**
-	 * requests server for a query within the dataset
-	 */
-	requestQueryFromDataset: function() {
-		if ((data.dsCollectionIndex == null) || (data.similarityQueryInfo.qSeq == null) ||
-	 			(data.dsCollectionIndex < 0) || (data.similarityQueryInfo.qSeq < 0)){
-			console.log("dsCollectionIndex or qseq null, no need to req");
-			return;
-		}
-
-		requestID.fromDataset += 1;
-
-		$.ajax({
-			url: '/query/fromdataset/',
-			data: {
-				dsCollectionIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
-				qSeq : data.similarityQueryInfo.qSeq, //the index of the query in the list
-				requestID : requestID.fromDataset
-			},
-			dataType: 'json',
-			success: function(response) {
-			  	if (response.requestID != requestID.fromDataset) {
-						//its not smooth if you run on your own comp, but definitely need it
-						//if someone else is using this. ill add another loading thing to make it more clear
-						return;
-			    }
-			    var endlist = response.query.map(function(query, i) {
-			    	return [i, query];
-			    });
-			   	InsightStore.setQDatasetValues(endlist);
-			  	InsightStore.setResult([]);
-					InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases
-																						 //size of control panel, things need to be resized.
-			    InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in requesting query values");
-			}
-		});
-	},
-
-	/**
-	 * requests server to find the answer
-	 */
-	requestFindMatch: function() {
-		var similarityQueryInfo = data.similarityQueryInfo;
-		var qType = similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? 0 : 1; //TODO: add option for build
-		var qValues = similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? similarityQueryInfo.qDatasetValues : similarityQueryInfo.qUploadValues;
-		var {qStart, qEnd, qSeq, qTypeLocal} = similarityQueryInfo;
-		if ((data.dsCollectionIndex == null) || (qSeq == null) ||
-				(data.dsCollectionIndex < 0) || (qSeq < 0)){
-			console.log("dsCollectionIndex or qseq null, no need to req");
-			return;
-		}
-
-		if ((qStart == null) || (qEnd == null) ||
-				(qStart < 0) || (qEnd < 0) ||
-			  (qStart >= qEnd) || (qEnd > qValues.length)){
-			console.log("setting defaults for qStart and end ");
-
-			 qStart = 0;
-			 qEnd = qValues.length - 1;
-		}
-
-		requestID.findMatch += 1;
-
-		$.ajax({
-			url: '/query/find/',
-			data: {
-			    dsCollectionIndex: data.dsCollectionIndex, //the index of the ds in memory on the server we querying
-			    qType: qType, //the type of query, 0->dataset, 1->from file
-			    qSeq: qSeq, //the index of q in its ds
-			    qStart: qStart,
-			    qEnd: qEnd,
-			    requestID: requestID.findMatch
-			},
-			dataType: 'json',
-			currentState: {
-				qTypeLocal: qTypeLocal,
-				qSeq: qSeq,
-				qStart: qStart,
-				qEnd: qEnd,
-				qValues: qValues,
-				threshold: data.thresholdCurrent,
-				qDsCollectionIndex: data.dsCollectionIndex
-			},
-			success: function(response) {
-			    if (response.requestID != requestID.findMatch){
-						console.log(response, requestID);
-						return;
-			    }
-			    var currentState = this.currentState;
-					var endlist = [];
-
-			    for (var i = 0; i < response.result.length; i++) {
-						endlist.push([i + currentState.qStart, response.result[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
-			    }
-
-			    var result = { //structure of query result pair
-						qTypeLocal: currentState.qTypeLocal,
-						qSeq: currentState.qSeq,
-						qStart: currentState.qStart,
-						qEnd: currentState.qEnd,
-						qValues: currentState.qValues,
-						qThreshold: currentState.threshold,
-						qDistanceType: null,
-						qDsCollectionIndex: currentState.qDsCollectionIndex,
-						rSeq: response.seq,
-						rStart: response.start,
-						rEnd: response.end,
-						rValues: endlist,
-						dsName: response.dsName,
-						warpingPath: response.warpingPath,
-						similarityValue: response.dist
-					}
-					InsightStore.addQueryResultPair(result);//response.result.warpingPath,
-
-				  InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in finding answer");
-			}
-		});
-	},
-
-	/**
-	 * requests server upload a file
-	 */
-	requestUploadQuery: function(files) {
-		//requestID.uploadQuery += 1;
-		var formData = new FormData();
-		$.each(files, function(key, value) {
-			formData.append('query', value);
-		})
-		// formData.append('requestID', requestID.uploadQuery)
-		$.ajax({
-			url: '/query/upload',
-			data: formData,
-			type: 'POST',
-			processData: false,
-			contentType: false,
-			//dataType: 'json',
-			success: function(response) {
-			   //  if (response.requestID != requestID.uploadQuery){
-						// console.log(response, requestID);
-						// return;
-			   //  }
-					var endlist = [];
-			    for (var i = 0; i < response.query.length; i++) {
-						endlist.push([i, response.query[i]]); // ex: [{value: 0, label: "Italy Power"}... ]
-			    }
-			    InsightStore.setQUploadValues(endlist);
-			    InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in finding answer");
-			}
-		});
-	},
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~  NOTE: not currently used ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
-	/**
-	 * @return {Object} - the list of the distance |
-	 */
-	getDistanceList: function() {
-		return data.queryCurrentIndex;
-	},
-
-	/**
-	 * @return {Number} - the index of the current index
-	 */
-	getDistanceCurrentIndex: function() {
-		return data.queryCurrentIndex;
-	},
-
-	/**
-	 * @param {boolean} value - if app should render the control panel
-	 */
-	setControlPanelVisible: function(value) {
-		data.controlPanelVisible = value;
-	},
-
-	/**
-	 * @param {Number} - the new index of the current index
-	 */
-	setDistanceCurrentIndex: function(v) {
-		data.queryCurrentIndex = v;
-	}
 });
 
 // Register callback to handle all updates
@@ -634,50 +268,20 @@ AppDispatcher.register(function(action) {
 			InsightStore.calculateDimensions()
 			InsightStore.emitChange();
 			break;
-		case InsightConstants.FIND_MATCH:
-			InsightStore.requestFindMatch();
-			break;
-		case InsightConstants.CONTROL_PANEL_VISIBLE:
-			//if(InsightStore.emitChange();
+		case InsightConstants.SELECT_DS_INDEX:
+			InsightStoreSimilarity.clearLiveView();
+			InsightStore.setDSCollectionIndex(action.id);
+			InsightStore.emitChange();//we want the list to update
 			break;
 		case InsightConstants.REQUEST_DATA_INIT:
-			InsightStore.clearLiveView();
+			InsightStoreSimilarity.clearLiveView();
 			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADING);
 			InsightStore.emitChange();
 			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
-		case InsightConstants.SELECT_DS_INDEX:
-			InsightStore.clearLiveView();
-			InsightStore.setDSCollectionIndex(action.id);
-			InsightStore.clearResult();
-			InsightStore.emitChange();//we want the list to update
-			break;
-		case InsightConstants.SELECT_QUERY:
-			InsightStore.clearLiveView();
-			InsightStore.setQSeq(action.id)
-			InsightStore.clearResult();
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.LOAD_QUERY:
-			InsightStore.requestQueryFromDataset();
-			break;
-		case InsightConstants.SELECT_DISTANCE:
-			break;
 		case InsightConstants.SELECT_THRESHOLD:
-			InsightStore.clearLiveView();
+			InsightStoreSimilarity.clearLiveView();
 			InsightStore.setThresholdCurrent(action.id);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.SELECT_END_Q:
-			InsightStore.clearLiveView();
-			InsightStore.setQEnd(action.id);
-			InsightStore.clearResult();
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.SELECT_START_Q:
-			InsightStore.clearLiveView();
-			InsightStore.setQStart(action.id);
-			InsightStore.clearResult();
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.VIEW_MODE_SIMILARITY:
@@ -692,23 +296,6 @@ AppDispatcher.register(function(action) {
 			InsightStore.setViewMode(action.actionType);
 			InsightStore.emitChange();
 			break;
-		case InsightConstants.QUERY_TYPE_UPLOAD:
-			InsightStore.clearLiveView();
-			InsightStore.setQueryType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.QUERY_TYPE_DATASET:
-			InsightStore.clearLiveView();
-			InsightStore.setQueryType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.UPLOAD_QUERY_FILE:
-			InsightStore.clearLiveView();
-			InsightStore.requestUploadQuery(action.id);
-			break;
-		case InsightConstants.SELECT_DTW_BIAS:
-			InsightStore.setDTWBias(action.id);
-			InsightStore.emitChange();
 		default:
 		  // no op
 	}

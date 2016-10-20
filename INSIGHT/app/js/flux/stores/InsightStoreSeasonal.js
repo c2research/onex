@@ -10,7 +10,7 @@ var CHANGE_EVENT = 'change';
 var seasonalQueryInfo = {
   qSeq: 0,
   qLength: 1,
-  currentPatternIndex: 0 
+  currentPatternIndex: 0
 };
 
 var seasonalResult = [];
@@ -57,7 +57,8 @@ var InsightStoreSeasonal = assign({}, EventEmitter.prototype, {
       error: function(xhr) {
         //TODO: later on, pop up a red message top-right corner that something failed
         console.log("error requesting seasonal");
-      });
+      }
+    });
   }
 
 });
@@ -69,15 +70,15 @@ AppDispatcher.register(function(action) {
       InsightStoreSeasonal.setQSeq(action.id);
       InsightStoreSeasonal.emitChange();
       break;
-    case SEASONAL_SELECT_LENGTH:
+    case InsightConstants.SEASONAL_SELECT_LENGTH:
       InsightStoreSeasonal.setQLength(action.id);
       InsightStoreSeasonal.emitChange();
       break;
-    case SEASONAL_SELECT_PATTERN_INDEX:
+    case InsightConstants.SEASONAL_SELECT_PATTERN_INDEX:
       InsightStoreSeasonal.setCurrentPatternIndex(action.id);
       InsightStoreSeasonal.emitChange();
       break;
-    case SEASONAL_REQUEST:
+    case InsightConstants.SEASONAL_REQUEST:
       InsightStoreSeasonal.requestSeasonal();
       break;
     default:

@@ -1,6 +1,9 @@
 var React = require('react');
 
 var InsightStore = require('./../flux/stores/InsightStore');
+var InsightStoreSimilarity = require('./../flux/stores/InsightStoreSimilarity');
+var InsightStoreSeasonal = require('./../flux/stores/InsightStoreSeasonal');
+
 var InsightConstants = require('./../flux/constants/InsightConstants');
 var InsightActions = require('./../flux/actions/InsightActions');
 
@@ -16,33 +19,40 @@ var resizeId;
  */
 function getState() {
   return {
+
+    /* ### general state ### */
+    // dataset information
     dsCollectionList: InsightStore.getDSCollectionList(),
     dsCollectionIndex: InsightStore.getDSCollectionIndex(),
     dsCurrentLength: InsightStore.getDSCurrentLength(),
-
-    similarityQueryInfo: InsightStore.getSimilarityQueryInfo(),
-
-    results: InsightStore.getResults(),
-
-    //meta (will add sizing stuff)
-    controlPanelVisible: InsightStore.getControlPanelVisible(),
-    viewMode: InsightStore.getViewMode(),
-    sizing: InsightStore.getSizing(),
 
     //threshold
     thresholdRange: InsightStore.getThresholdRange(),
     thresholdCurrent: InsightStore.getThresholdCurrent(),
     thresholdStep: InsightStore.getThresholdStep(),
 
-    //future
-    distanceList: InsightStore.getDistanceList(),
-    distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
+    // meta
+    viewMode: InsightStore.getViewMode(),
+    sizing: InsightStore.getSizing(),
 
     //icon modes
     datasetIconMode: InsightStore.getDatasetIconMode(),
 
+    /* ### similarity state ### */
+
+    similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
+    results: InsightStoreSimilarity.getResults(),
+
     //dtw bias & menu options
-    dtwBiasValue: InsightStore.getDTWBias()
+    dtwBiasValue: InsightStoreSimilarity.getDTWBias()
+
+    /* ### seasonal state ### */
+
+
+
+    // //future
+    // distanceList: InsightStore.getDistanceList(),
+    // distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
   };
 }
 
@@ -66,6 +76,9 @@ var InsightPlatform = React.createClass({
     this.setState(getState());
   },
   componentWillMount: function() {
+    console.log(InsightStore.getDSCollectionIndex(), InsightStoreSimilarity.getSimilarityQueryInfo());
+
+
     //set initial state values
     InsightStore.init();
     this.setState(getState());
@@ -87,8 +100,7 @@ var InsightPlatform = React.createClass({
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="insight" />
-        <InsightControlPanel visible={this.state.controlPanelVisible}
-                             width={this.state.sizing.controlPanelWidth}
+        <InsightControlPanel width={this.state.sizing.controlPanelWidth}
                              viewMode={this.state.viewMode}
                              dsCollectionList={this.state.dsCollectionList}
                              dsCollectionIndex={this.state.dsCollectionIndex}

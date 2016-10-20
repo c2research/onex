@@ -31,7 +31,7 @@ var InsightControlPanel = React.createClass({
       return <InsightTab type={mode} current={that.props.viewMode} width={that.props.width / 3 - 10} key={mode} />;
     });
 
-    var tabsJSX = this.props.visible &&
+    var tabsJSX =
     <div className="controlPanelTabPane"
          style={style.divStyle} >
       {tabList}
@@ -58,39 +58,45 @@ var InsightControlPanel = React.createClass({
         queryControlJSX = this._getClusterQueryControls();
         break;
     }
-  
-    var panelJSX = this.props.visible &&
+
+    var panelJSX = 
     <div className="controlPanel" style={style.divStyle}>
       {tabsJSX}
       {datasetJSX}
       {queryControlJSX}
-    <div style={style.cheatingStyle}> </div>
+      <div style={style.cheatingStyle}> </div>
     </div>;
-
     return panelJSX;
   },
 
   _getSimilarityQueryControls: function() {
     var similarityQueryInfo = this.props.similarityQueryInfo;
     var qTypeLocal = similarityQueryInfo.qTypeLocal;
-    var values;
+    var values, qStart, qEnd, qSeq;
+
     if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
       values = similarityQueryInfo.qDatasetValues;
+      qStart = similarityQueryInfo.qDatasetStart;
+      qEnd = similarityQueryInfo.qDatasetEnd;
+      qSeq = similarityQueryInfo.qDatasetSeq;
     } else if (qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
       values = similarityQueryInfo.qUploadValues;
+      qStart = similarityQueryInfo.qUploadStart;
+      qEnd = similarityQueryInfo.qUploadEnd;
+      qSeq = similarityQueryInfo.qUploadSeq;
     } else {
       values = similarityQueryInfo.qBuildValues;
     }
 
     var queryJSX = <InsightSimilarityQuery viewMode={this.props.viewMode}
                                            dsCurrentLength={this.props.dsCurrentLength}
-                                           qTypeLocal={similarityQueryInfo.qTypeLocal}
+                                           qTypeLocal={qTypeLocal}
                                            qValues={values}
-                                           qStart={similarityQueryInfo.qStart}
-                                           qEnd={similarityQueryInfo.qEnd}
-                                           qSeq={similarityQueryInfo.qSeq}/>;
+                                           qStart={qStart}
+                                           qEnd={qEnd}
+                                           qSeq={qSeq}/>;
 
-    var findButtonJSX = <InsightFind show={values.length > 0} 
+    var findButtonJSX = <InsightFind show={values.length > 0}
                                      viewMode={this.props.viewMode}/>;
 
     return <div>
@@ -100,7 +106,7 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSeasonalQueryControls: function() {
-    //var findButtonJSX = <InsightFind show={values.length > 0} 
+    //var findButtonJSX = <InsightFind show={values.length > 0}
     //                                 viewMode={this.props.viewMode}/>;
 
     return null;
