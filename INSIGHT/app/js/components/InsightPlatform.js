@@ -9,7 +9,7 @@ var InsightActions = require('./../flux/actions/InsightActions');
 
 var InsightBanner = require('./InsightBanner');
 var InsightControlPanel = require('./InsightControlPanel');
-var InsightView = require('./InsightView');
+var InsightViewSimilarity = require('./InsightViewSimilarity');
 
 var resizeId;
 
@@ -110,12 +110,12 @@ var InsightPlatform = React.createClass({
                              distanceList={this.state.distanceList}
                              distanceCurrentIndex={this.state.distanceCurrentIndex}
         />
-        <InsightView marginLeft={this.state.sizing.controlPanelWidth}
-                     width={this.state.sizing.displayWidth}
-                     height={this.state.sizing.displayHeight}
-                     similarityQueryInfo={this.state.similarityQueryInfo}
-                     results={this.state.results}
-                     dtwBiasValue={this.state.dtwBiasValue}
+        <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
+                               width={this.state.sizing.displayWidth}
+                               height={this.state.sizing.displayHeight}
+                               similarityQueryInfo={this.state.similarityQueryInfo}
+                               results={this.state.results}
+                               dtwBiasValue={this.state.dtwBiasValue}
         />
        </div>
     );
