@@ -1,5 +1,4 @@
 var AppDispatcher = require('./../dispatcher/AppDispatcher');
-var EventEmitter = require('events').EventEmitter;
 var InsightConstants = require('./../constants/InsightConstants');
 var InsightStore = require('./InsightStore');
 var assign = require('object-assign');
@@ -15,11 +14,7 @@ var seasonalQueryInfo = {
 
 var seasonalResult = [];
 
-var InsightStoreSeasonal = assign({}, EventEmitter.prototype, {
-
-  emitChange: function() {
-    this.emit(CHANGE_EVENT);
-  },
+var InsightStoreSeasonal = assign({}, {
 
   getSeasonalQueryInfo: function() {
     return seasonalQueryInfo;
@@ -52,7 +47,7 @@ var InsightStoreSeasonal = assign({}, EventEmitter.prototype, {
             console.log(requestID, response.requestID);
         }
         seasonalResult = response.seasonal;
-        InsightStoreSeasonal.emitChange();
+        InsightStore.emitChange();
       },
       error: function(xhr) {
         //TODO: later on, pop up a red message top-right corner that something failed
@@ -66,20 +61,26 @@ var InsightStoreSeasonal = assign({}, EventEmitter.prototype, {
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
   switch(action.actionType) {
+    case InsightConstants.REQUEST_DATA_INIT:
+      if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SEASONAL) {
+        InsightStore.requestDatasetInit(function() {
+        });
+      }
+      break;
     case InsightConstants.SEASONAL_SELECT_QUERY:
       InsightStoreSeasonal.setQSeq(action.id);
-      InsightStoreSeasonal.emitChange();
+      InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_SELECT_LENGTH:
       InsightStoreSeasonal.setQLength(action.id);
-      InsightStoreSeasonal.emitChange();
+      InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_SELECT_PATTERN_INDEX:
       InsightStoreSeasonal.setCurrentPatternIndex(action.id);
-      InsightStoreSeasonal.emitChange();
+      InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_REQUEST:
-      InsightStoreSeasonal.requestSeasonal();
+      InsightStore.requestSeasonal();
       break;
     default:
       // no op

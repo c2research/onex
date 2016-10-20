@@ -1,5 +1,4 @@
 var AppDispatcher = require('./../dispatcher/AppDispatcher');
-var EventEmitter = require('events').EventEmitter;
 var InsightStore = require('./InsightStore');
 var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
@@ -7,7 +6,6 @@ var $ = require('jquery');
 
 var CHANGE_EVENT = 'change';
 
-// TODO: how about moving these objects into the Store object?
 var data = {
 
 	//state
@@ -48,28 +46,7 @@ var requestID = {
 	uploadQuery: 0
 }
 
-var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
-	/**
-	 * emits a change event, which is registered in view controller
-	 */
-	emitChange: function() {
-	    this.emit(CHANGE_EVENT);
-	},
-
-	/**
-	 * @param {function} callback
-	 */
-	addChangeListener: function(callback) {
-	    this.on(CHANGE_EVENT, callback);
-	},
-
-	/**
-	 * @param {function} callback
-	 */
-	removeChangeListener: function(callback) {
-	    this.removeListener(CHANGE_EVENT, callback);
-	},
-
+var InsightStoreSimilarity = assign({}, {
 	/*
 	 * Called upon the success a query
 	 */
@@ -154,8 +131,8 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 	 * @param {Int} - the ending index of a query
 	 */
 	setQUploadStart: function(qStart) {
-		if (qStart >= similarityQueryInfo.qEnd) return;
-		similarityQueryInfo.qStart = qStart;
+		if (qStart >= similarityQueryInfo.qUploadEnd) return;
+		similarityQueryInfo.qUploadStart = qStart;
 	},
 
 	/**
@@ -171,8 +148,8 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 	 */
 	setQUploadValues: function(qValues) {
 		similarityQueryInfo.qUploadValues = qValues;
-		similarityQueryInfo.qDatasetStart = 0;
-		similarityQueryInfo.qDatasetEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+		similarityQueryInfo.qUploadStart = 0;
+		similarityQueryInfo.qUploadEnd = qValues.length > 0 ? qValues.length - 1 : 0;
 	},
 
 	/**
@@ -202,9 +179,10 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 	 * requests server for a query within the dataset
 	 */
 	requestQueryFromDataset: function() {
+		var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 
-		if ((InsightStore.getDSCollectionIndex() == null) || (similarityQueryInfo.qDatasetSeq == null) ||
-	 			(InsightStore.getDSCollectionIndex() < 0) || (similarityQueryInfo.qDatasetSeq < 0)){
+		if ((dsCollectionIndex == null) || (similarityQueryInfo.qDatasetSeq == null) ||
+	 			(dsCollectionIndex < 0) || (similarityQueryInfo.qDatasetSeq < 0)){
 			console.log("dsCollectionIndex or qseq null, no need to req");
 			return;
 		}
@@ -214,23 +192,24 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/query/fromdataset/',
 			data: {
-				dsCollectionIndex : data.dsCollectionIndex, //the index of the ds in memory on the server
-				qSeq : data.similarityQueryInfo.qDatasetSeq, //the index of the query in the list
+				dsCollectionIndex : dsCollectionIndex, //the index of the ds in memory on the server
+				qSeq : similarityQueryInfo.qDatasetSeq, //the index of the query in the list
 				requestID : requestID.fromDataset
 			},
 			dataType: 'json',
 			success: function(response) {
-			  	if (response.requestID != requestID.fromDataset) {
-						//its not smooth if you run on your own comp, but definitely need it
-						//if someone else is using this. ill add another loading thing to make it more clear
-						return;
-			    }
-			    var endlist = response.query.map(function(query, i) {
-			    	return [i, query];
-			    });
-			   	InsightSimilarityStore.setQDatasetValues(endlist);
-					InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases													 //size of control panel, things need to be resized.
-			    InsightSimilarityStore.emitChange();
+		  	if (response.requestID != requestID.fromDataset) {
+					//its not smooth if you run on your own comp, but definitely need it
+					//if someone else is using this. ill add another loading thing to make it more clear
+					return;
+		    }
+
+		    var endlist = response.query.map(function(query, i) {
+		    	return [i, query];
+		    });
+		   	InsightStoreSimilarity.setQDatasetValues(endlist);
+				InsightStore.calculateDimensions();//TODO: remove this. increasing content, adds slider, increases													 //size of control panel, things need to be resized.
+		    InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -240,10 +219,40 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 	},
 
 	/**
+	 * requests server upload a file
+	 */
+	requestUploadQuery: function(files) {
+		var formData = new FormData();
+		$.each(files, function(key, value) {
+			formData.append('query', value);
+		})
+		$.ajax({
+			url: '/query/upload',
+			data: formData,
+			type: 'POST',
+			processData: false,
+			contentType: false,
+			//dataType: 'json',
+			success: function(response) {
+				var endlist = response.query.map(function(val, i) {
+					return [i, val];
+				});
+
+				InsightStoreSimilarity.setQUploadValues(endlist);
+				InsightStore.emitChange();
+			},
+			error: function(xhr) {
+				//TODO: later on, pop up a red message top-right corner that something failed
+				console.log("error in uploading query");
+			}
+		});
+	},
+
+	/**
 	 * requests server to find the answer
 	 */
 	requestFindMatch: function() {
-		var qStart, qEnd, qSeq, qTypeLocal, qType;
+		var qStart, qEnd, qSeq, qTypeLocal, qValues, qType;
 
 		//NOTE: we have the option of moving the values in similarityQueryInfo into upload
 		// and dataset and then we can decompose the values more neatly.
@@ -252,17 +261,21 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 			qStart = similarityQueryInfo.qDatasetStart;
 			qEnd = similarityQueryInfo.qDatasetEnd;
 			qSeq = similarityQueryInfo.qDatasetSeq;
+			qValues = similarityQueryInfo.qDatasetValues;
 			qType = 0;
 		} else {
 			qStart = similarityQueryInfo.qUploadStart;
 			qEnd = similarityQueryInfo.qUploadEnd;
 			qSeq = similarityQueryInfo.qUploadSeq;
+			qValues = similarityQueryInfo.qUploadValues;
 			qType = 1;
 		}
 
-		if ((InsightStore.getDSCollectionIndex() == null) || (qSeq == null) ||
-				(InsightStore.getDSCollectionIndex() < 0) || (qSeq < 0)){
-			console.log("dsCollectionIndex or qseq null, no need to req", qSeq, InsightStore.getDSCollectionIndex());
+		var dsCollectionIndex = InsightStore.getDSCollectionIndex();
+
+		if ((dsCollectionIndex == null) || (qSeq == null) ||
+				(dsCollectionIndex < 0) || (qSeq < 0)){
+			console.log("dsCollectionIndex or qseq null, no need to req", qSeq, dsCollectionIndex);
 			return;
 		}
 
@@ -280,7 +293,7 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 		$.ajax({
 			url: '/query/find/',
 			data: {
-			    dsCollectionIndex: InsightStore.getDSCollectionIndex(), //the index of the ds in memory on the server we querying
+			    dsCollectionIndex: dsCollectionIndex, //the index of the ds in memory on the server we querying
 			    qType: qType, //the type of query, 0->dataset, 1->from file
 			    qSeq: qSeq, //the index of q in its ds
 			    qStart: qStart,
@@ -295,7 +308,7 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 				qEnd: qEnd,
 				qValues: qValues,
 				threshold: InsightStore.getThresholdCurrent(),
-				qDsCollectionIndex: InsightStore.getDSCollectionIndex()
+				qDsCollectionIndex: dsCollectionIndex
 			},
 			success: function(response) {
 			    if (response.requestID != requestID.findMatch){
@@ -326,8 +339,8 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 						warpingPath: response.warpingPath,
 						similarityValue: response.dist
 					}
-					InsightSimilarityStore.addQueryResultPair(result);//response.result.warpingPath,
-				  InsightSimilarityStore.emitChange();
+					InsightStoreSimilarity.addQueryResultPair(result);//response.result.warpingPath,
+				  InsightStore.emitChange();
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -336,93 +349,80 @@ var InsightSimilarityStore = assign({}, EventEmitter.prototype, {
 		});
 	},
 
-	/**
-	 * requests server upload a file
-	 */
-	requestUploadQuery: function(files) {
-		var formData = new FormData();
-		$.each(files, function(key, value) {
-			formData.append('query', value);
-		})
-		$.ajax({
-			url: '/query/upload',
-			data: formData,
-			type: 'POST',
-			processData: false,
-			contentType: false,
-			//dataType: 'json',
-			success: function(response) {
-					var endlist = response.query.map(function(val, i) {
-						return [i, val];
-					});
 
-			    InsightSimilarityStore.setQUploadValues(endlist);
-			    InsightSimilarityStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in uploading query");
-			}
-		});
-	},
 });
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
 	switch(action.actionType) {
+		case InsightConstants.SELECT_DS_INDEX:
+			InsightStoreSimilarity.clearLiveView();
+			break;
+		case InsightConstants.REQUEST_DATA_INIT:
+			InsightStoreSimilarity.clearLiveView();
+			if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SIMILARITY) {
+				InsightStore.requestDatasetInit(function() {
+					InsightStoreSimilarity.setQDatasetSeq(0);
+					InsightStoreSimilarity.requestQueryFromDataset();
+				});
+			}
+			break;
+		case InsightConstants.SELECT_THRESHOLD:
+			InsightStoreSimilarity.clearLiveView();
+			break;
 		case InsightConstants.FIND_MATCH:
-			InsightSimilarityStore.requestFindMatch();
+			InsightStoreSimilarity.requestFindMatch();
 			break;
 		case InsightConstants.SELECT_QUERY:
-			InsightSimilarityStore.clearLiveView();
-			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-				InsightSimilarityStore.setQDatasetSeq(action.id)
-			}	else {
-				InsightSimilarityStore.setQUploadSeq(action.id)
+			InsightStoreSimilarity.clearLiveView();
+			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
+				InsightStoreSimilarity.setQDatasetSeq(action.id)
+			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
+				InsightStoreSimilarity.setQUploadSeq(action.id)
 			}
-			InsightSimilarityStore.emitChange();
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.LOAD_QUERY:
-			InsightSimilarityStore.requestQueryFromDataset();
+			InsightStoreSimilarity.requestQueryFromDataset();
 			break;
 		case InsightConstants.SELECT_END_Q:
-			InsightSimilarityStore.clearLiveView();
+			InsightStoreSimilarity.clearLiveView();
 			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-				InsightSimilarityStore.setQDatasetEnd(action.id);
-			}	else {
-				InsightSimilarityStore.setQUploadEnd(action.id)
+				InsightStoreSimilarity.setQDatasetEnd(action.id);
+			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
+				InsightStoreSimilarity.setQUploadEnd(action.id)
 			}
-			InsightSimilarityStore.emitChange();
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.SELECT_START_Q:
-			InsightSimilarityStore.clearLiveView();
+			InsightStoreSimilarity.clearLiveView();
 			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-				InsightSimilarityStore.setQDatasetStart(action.id);
-			}	else {
-				InsightSimilarityStore.setQUploadStart(action.id)
+				InsightStoreSimilarity.setQDatasetStart(action.id);
+			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
+				InsightStoreSimilarity.setQUploadStart(action.id)
 			}
-			InsightSimilarityStore.emitChange();
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.QUERY_TYPE_UPLOAD:
-			InsightSimilarityStore.clearLiveView();
-			InsightSimilarityStore.setQueryType(action.actionType);
-			InsightSimilarityStore.emitChange();
+			InsightStoreSimilarity.clearLiveView();
+			InsightStoreSimilarity.setQueryType(action.actionType);
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.QUERY_TYPE_DATASET:
-			InsightSimilarityStore.clearLiveView();
-			InsightSimilarityStore.setQueryType(action.actionType);
-			InsightSimilarityStore.emitChange();
+			InsightStoreSimilarity.clearLiveView();
+			InsightStoreSimilarity.setQueryType(action.actionType);
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.UPLOAD_QUERY_FILE:
-			InsightSimilarityStore.clearLiveView();
-			InsightSimilarityStore.requestUploadQuery(action.id);
+			InsightStoreSimilarity.clearLiveView();
+			InsightStoreSimilarity.requestUploadQuery(action.id);
 			break;
 		case InsightConstants.SELECT_DTW_BIAS:
-			InsightSimilarityStore.setDTWBias(action.id);
-			InsightSimilarityStore.emitChange();
+			InsightStoreSimilarity.setDTWBias(action.id);
+			InsightStore.emitChange();
 		default:
 		  // no op
 	}
 });
 
-module.exports = InsightSimilarityStore;
+module.exports = InsightStoreSimilarity;

@@ -76,9 +76,6 @@ var InsightPlatform = React.createClass({
     this.setState(getState());
   },
   componentWillMount: function() {
-    console.log(InsightStore.getDSCollectionIndex(), InsightStoreSimilarity.getSimilarityQueryInfo());
-
-
     //set initial state values
     InsightStore.init();
     this.setState(getState());

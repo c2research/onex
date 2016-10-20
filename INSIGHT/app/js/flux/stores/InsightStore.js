@@ -4,11 +4,8 @@ var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
 var $ = require('jquery');
 
-var InsightStoreSimilarity = require('./InsightStoreSimilarity');
-
 var CHANGE_EVENT = 'change';
 
-// TODO: how about moving these objects into the Store object?
 var data = {
 
 	//the information on all the datasets
@@ -224,7 +221,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	 * initial request to the server for information on
 	 * a dataset
 	 */
-	requestDatasetInit: function() {
+	requestDatasetInit: function(callback) {
 		if ((data.dsCollectionIndex == null) || (data.thresholdCurrent == null) ){
 			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_NULL);
 			InsightStore.emitChange();
@@ -249,9 +246,9 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 				data.dsCurrentLength = response.dsLength;
 				InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
 				InsightStore.emitChange();
-				console.log('hello');
-				InsightStoreSimilarity.setQDatasetSeq(0);//set off event seq to default query
-				InsightStoreSimilarity.requestQueryFromDataset();
+
+				callback();
+
 			},
 			error: function(xhr) {
 				//TODO: later on, pop up a red message top-right corner that something failed
@@ -269,18 +266,14 @@ AppDispatcher.register(function(action) {
 			InsightStore.emitChange();
 			break;
 		case InsightConstants.SELECT_DS_INDEX:
-			InsightStoreSimilarity.clearLiveView();
 			InsightStore.setDSCollectionIndex(action.id);
-			InsightStore.emitChange();//we want the list to update
+			InsightStore.emitChange();
 			break;
 		case InsightConstants.REQUEST_DATA_INIT:
-			InsightStoreSimilarity.clearLiveView();
 			InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADING);
 			InsightStore.emitChange();
-			InsightStore.requestDatasetInit();//we should add in a loading icon
 			break;
 		case InsightConstants.SELECT_THRESHOLD:
-			InsightStoreSimilarity.clearLiveView();
 			InsightStore.setThresholdCurrent(action.id);
 			InsightStore.emitChange();
 			break;

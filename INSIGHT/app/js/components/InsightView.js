@@ -46,9 +46,19 @@ var InsightView = React.createClass({
   },
   render: function() {
     var similarityQueryInfo = this.props.similarityQueryInfo;
-    var values = similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET ? similarityQueryInfo.qDatasetValues:
-                 similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD  ? similarityQueryInfo.qUploadValues : similarityQueryInfo.qBuildValues;
-
+    var values = [], qStart = 0, qEnd = -1;
+    
+    if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
+      values = similarityQueryInfo.qDatasetValues;
+      qStart = similarityQueryInfo.qDatasetStart;
+      qEnd = similarityQueryInfo.qDatasetEnd;
+    }
+    else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
+      values = similarityQueryInfo.qUploadValues;
+      qStart = similarityQueryInfo.qUploadStart;
+      qEnd = similarityQueryInfo.qUploadEnd;
+    }
+    
     var InsightViewGraphJSX = this.props.results.viewLiveIndices.length > 0 ?
       this.generateViews(this.props.results) :
       <InsightViewGraphs viewingResults={false}
@@ -56,8 +66,8 @@ var InsightView = React.createClass({
                         width={this.props.width - menuWidth}
                         height={this.props.height - tableHeight}
                         qValues={values}
-                        qStart={similarityQueryInfo.qStart}
-                        qEnd={similarityQueryInfo.qEnd}
+                        qStart={qStart}
+                        qEnd={qEnd}
                         dtwBiasValue={this.props.dtwBiasValue}/>
 
     var InsightViewTableJSX =
