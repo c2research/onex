@@ -12,7 +12,7 @@ var tableHeight = 200;
 /**
  * This is a prototype for an initial view
  */
-var InsightView = React.createClass({
+var InsightViewSimilarity = React.createClass({
   generateViews: function(results){
     var keepList = [];
     var val;
@@ -109,4 +109,4 @@ var InsightView = React.createClass({
    }
 });
 
-module.exports = InsightView;
+module.exports = InsightViewSimilarity;

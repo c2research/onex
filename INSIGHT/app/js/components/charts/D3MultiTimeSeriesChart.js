@@ -12,7 +12,8 @@ Example props:
 Example data:
 {
   series: [{ values: [[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]],
-             color: 'red'
+             color: 'red',
+             strokeWidth: 3
            },
            { values: [[0, 0.03], [1, 0.07], [2, 0.08], [3, 0.09], [4, 0.1], [5, 0.11], [6, 0.1], [7, 0.1], [8, 0.07], [9, 0.05], [10, 0.04], [11, 0.03], [12, 0.02], [13, 0.01], [14, 0.0]],
              color: 'blue'
@@ -181,7 +182,7 @@ D3MultiTimeSeriesChart.prototype._drawLines = function(svg, data) {
        .merge(paths)
        .attr('d', function(d) { return lineFunc(d.values); })
        .attr('stroke', function(d) { return d.color || 'black'; })
-       .attr('stroke-width', strokeWidth)
+       .attr('stroke-width', function(d) { return d.strokeWidth || strokeWidth })
        .attr('fill', 'none');
        
   // exit

@@ -10,6 +10,7 @@ var InsightActions = require('./../flux/actions/InsightActions');
 var InsightBanner = require('./InsightBanner');
 var InsightControlPanel = require('./InsightControlPanel');
 var InsightViewSimilarity = require('./InsightViewSimilarity');
+var InsightViewSeasonal = require('./InsightViewSeasonal');
 
 var resizeId;
 
@@ -41,14 +42,14 @@ function getState() {
     /* ### similarity state ### */
 
     similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
-    results: InsightStoreSimilarity.getResults(),
+    similarityResults: InsightStoreSimilarity.getResults(),
 
     //dtw bias & menu options
-    dtwBiasValue: InsightStoreSimilarity.getDTWBias()
+    dtwBiasValue: InsightStoreSimilarity.getDTWBias(),
 
     /* ### seasonal state ### */
-
-
+    seasonalQueryInfo: InsightStoreSeasonal.getSeasonalQueryInfo(),
+    seasonalResults: InsightStoreSeasonal.getResults(),
 
     // //future
     // distanceList: InsightStore.getDistanceList(),
@@ -94,6 +95,25 @@ var InsightPlatform = React.createClass({
     InsightStore.removeChangeListener(this._onChange);
   },
   render: function() {
+    var insightViewJSX;
+    if (this.state.viewMode == InsightConstants.VIEW_MODE_SIMILARITY) {
+      insightViewJSX =  <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
+                                               width={this.state.sizing.displayWidth}
+                                               height={this.state.sizing.displayHeight}
+                                               similarityQueryInfo={this.state.similarityQueryInfo}
+                                               results={this.state.similarityResults}
+                                               dtwBiasValue={this.state.dtwBiasValue}
+                        />
+    }
+    else if (this.state.viewMode == InsightConstants.VIEW_MODE_SEASONAL) {
+      insightViewJSX = <InsightViewSeasonal marginLeft={this.state.sizing.controlPanelWidth}
+                                            width={this.state.sizing.displayWidth}
+                                            height={this.state.sizing.displayHeight}
+                                            seasonalQueryInfo={this.state.seasonalQueryInfo}
+                                            results={this.state.seasonalResults}
+                       />
+    }
+
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="insight" />
@@ -110,13 +130,7 @@ var InsightPlatform = React.createClass({
                              distanceList={this.state.distanceList}
                              distanceCurrentIndex={this.state.distanceCurrentIndex}
         />
-        <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
-                               width={this.state.sizing.displayWidth}
-                               height={this.state.sizing.displayHeight}
-                               similarityQueryInfo={this.state.similarityQueryInfo}
-                               results={this.state.results}
-                               dtwBiasValue={this.state.dtwBiasValue}
-        />
+        {insightViewJSX}
        </div>
     );
   },

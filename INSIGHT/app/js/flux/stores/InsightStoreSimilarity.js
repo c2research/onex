@@ -320,9 +320,6 @@ var InsightStoreSimilarity = assign({}, {
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
 	switch(action.actionType) {
-		case InsightConstants.SELECT_DS_INDEX:
-			InsightStoreSimilarity.clearLiveView();
-			break;
 		case InsightConstants.REQUEST_DATA_INIT:
 			InsightStoreSimilarity.clearLiveView();
 			if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SIMILARITY) {
@@ -331,9 +328,6 @@ AppDispatcher.register(function(action) {
 					InsightStoreSimilarity.requestQueryFromDataset();
 				});
 			}
-			break;
-		case InsightConstants.SELECT_THRESHOLD:
-			InsightStoreSimilarity.clearLiveView();
 			break;
 		case InsightConstants.FIND_MATCH:
 			InsightStoreSimilarity.requestFindMatch();
