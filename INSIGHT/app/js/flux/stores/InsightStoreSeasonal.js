@@ -9,15 +9,22 @@ var CHANGE_EVENT = 'change';
 var seasonalQueryInfo = {
   qSeq: 0,
   qLength: 1,
-  currentPatternIndex: 0
+  qValues: []
 };
 
-var seasonalResult = [];
+var seasonalResult = {
+  patterns: [],
+  showingPatternIndex: 0
+};
 
 var InsightStoreSeasonal = assign({}, {
 
   getSeasonalQueryInfo: function() {
     return seasonalQueryInfo;
+  },
+
+  getResults: function() {
+    return seasonalResult;
   },
 
   setQSeq: function(seq) {
@@ -28,8 +35,24 @@ var InsightStoreSeasonal = assign({}, {
     seasonalQueryInfo.qLength = length;
   },
 
-  setCurrentPatternIndex: function(index) {
-    seasonalQueryInfo.currentPatternIndex = index;
+  setQValues: function(values) {
+    seasonalQueryInfo.qValues = values;
+  },
+
+  setShowingPatternIndex: function(index) {
+    if (0 <= index && index < seasonalResult.patterns.length) {
+      seasonalResult.showingPatternIndex = index;
+    }
+  },
+
+  requestQueryFromDataset: function() {
+    InsightStore.requestSequenceFromDataset(seasonalQueryInfo.qSeq, 
+      function(endlist) {
+        InsightStoreSeasonal.setQValues(endlist);
+        InsightStore.calculateDimensions();
+        InsightStore.emitChange();
+       }
+    );
   },
 
   requestSeasonal: function() {
@@ -64,19 +87,21 @@ AppDispatcher.register(function(action) {
     case InsightConstants.REQUEST_DATA_INIT:
       if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SEASONAL) {
         InsightStore.requestDatasetInit(function() {
+          InsightStoreSeasonal.setQSeq(0);
+          InsightStoreSeasonal.requestQueryFromDataset();
         });
       }
       break;
     case InsightConstants.SEASONAL_SELECT_QUERY:
       InsightStoreSeasonal.setQSeq(action.id);
-      InsightStore.emitChange();
+      InsightStoreSeasonal.requestQueryFromDataset();
       break;
     case InsightConstants.SEASONAL_SELECT_LENGTH:
       InsightStoreSeasonal.setQLength(action.id);
       InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_SELECT_PATTERN_INDEX:
-      InsightStoreSeasonal.setCurrentPatternIndex(action.id);
+      InsightStoreSeasonal.setShowingPatternIndex(action.id);
       InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_REQUEST:
