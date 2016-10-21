@@ -3,16 +3,6 @@ var InsightConstants = require('./../constants/InsightConstants');
 
 var InsightActions = {
   /**
-   * @param {number} index
-   * example function
-   */
-  displayTimeSeries: function(index) {
-	  AppDispatcher.dispatch({
-		  actionType: InsightConstants.DISPLAY_TS,
-		  id: index
-	  });
-  },
-  /**
    * calls to resize the app
    */
   resizeApp: function() {
@@ -20,15 +10,6 @@ var InsightActions = {
 		  actionType: InsightConstants.RESIZE_APP,
 		  id: 1
 	  });
-  },
-  /**
-   * initiates function seq to get a new random query
-   */
-  requestRandomQuery: function() {
-    AppDispatcher.dispatch({
-      actionType: InsightConstants.REQUEST_RANDOM,
-      id: 1
-    });
   },
   /**
    * initiates function seq to get a new random query
@@ -51,18 +32,18 @@ var InsightActions = {
   /**
    * change the current selected query
    */
-  selectQuery: function(index) {
+  selectSimilarityQuery: function(index) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SELECT_QUERY,
+      actionType: InsightConstants.SIMILARITY_SELECT_QUERY,
       id: index
     });
   },
   /**
    * load the current selected query
    */
-  loadQuery: function() {
+  loadSimilarityQuery: function() {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.LOAD_QUERY
+      actionType: InsightConstants.SIMILARITY_LOAD_QUERY
     })
   },
   /**
@@ -86,18 +67,18 @@ var InsightActions = {
   /**
    * initiates function seq to set the start range of a query
    */
-  selectStartQ: function(val) {
+  selectSimilarityStartQ: function(val) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SELECT_START_Q,
+      actionType: InsightConstants.SIMILARITY_SELECT_START_Q,
       id: val
     });
   },
   /**
    * initiates function seq to set the end range of a query
    */
-  selectEndQ: function(val) {
+  selectSimilarityEndQ: function(val) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SELECT_END_Q,
+      actionType: InsightConstants.SIMILARITY_SELECT_END_Q,
       id: val
     });
   },

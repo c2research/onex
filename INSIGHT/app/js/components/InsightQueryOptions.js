@@ -53,19 +53,17 @@ var InsightQueryOptions = React.createClass({
    _handleClickEnd: function(e){
      resizeId = setTimeout(this._onResizeEndAction(e), 75);
    },
-
-
    /**
     * fire event when start is chosen!
     */
    _onResizeStartAction: function(e){
-     InsightActions.selectStartQ(parseInt(e.target.value, 10));
+     InsightActions.selectSimilarityStartQ(parseInt(e.target.value, 10));
    },
    /**
     * fire event when end is chosen!
     */
    _onResizeEndAction: function(e){
-     InsightActions.selectEndQ(parseInt(e.target.value, 10));
+     InsightActions.selectSimilarityEndQ(parseInt(e.target.value, 10));
    }
 });
 

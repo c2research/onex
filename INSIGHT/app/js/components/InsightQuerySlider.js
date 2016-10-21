@@ -29,12 +29,12 @@ var InsightQuerySlider = React.createClass({
      return panelJSX;
    },
    _eventListenerThreshold: function(e) {
-    InsightActions.selectQuery(parseInt(e.target.value, 10));
+    InsightActions.selectSimilarityQuery(parseInt(e.target.value, 10));
     clearTimeout(this._resizeId);
     this._resizeId = setTimeout(this._handleQueryChange(e), 200);
    },
    _handleQueryChange: function( e ) {
-     InsightActions.loadQuery();
+     InsightActions.loadSimilarityQuery();
    }
 });
 

@@ -344,7 +344,7 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.FIND_MATCH:
 			InsightStoreSimilarity.requestFindMatch();
 			break;
-		case InsightConstants.SELECT_QUERY:
+		case InsightConstants.SIMILARITY_SELECT_QUERY:
 			InsightStoreSimilarity.clearLiveView();
 			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
 				InsightStoreSimilarity.setQDatasetSeq(action.id)
@@ -353,10 +353,10 @@ AppDispatcher.register(function(action) {
 			}
 			InsightStore.emitChange();
 			break;
-		case InsightConstants.LOAD_QUERY:
+		case InsightConstants.SIMILARITY_LOAD_QUERY:
 			InsightStoreSimilarity.requestQueryFromDataset();
 			break;
-		case InsightConstants.SELECT_END_Q:
+		case InsightConstants.SIMILARITY_SELECT_END_Q:
 			InsightStoreSimilarity.clearLiveView();
 			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
 				InsightStoreSimilarity.setQDatasetEnd(action.id);
@@ -365,7 +365,7 @@ AppDispatcher.register(function(action) {
 			}
 			InsightStore.emitChange();
 			break;
-		case InsightConstants.SELECT_START_Q:
+		case InsightConstants.SIMILARITY_SELECT_START_Q:
 			InsightStoreSimilarity.clearLiveView();
 			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
 				InsightStoreSimilarity.setQDatasetStart(action.id);
