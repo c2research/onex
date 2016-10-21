@@ -1,6 +1,6 @@
 var React = require('react');
-var InsightConstants = require('./../flux/constants/InsightConstants');
-var TimeSeriesDifferenceChart = require('./charts/TimeSeriesDifferenceChart');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
+var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 

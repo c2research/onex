@@ -1,6 +1,6 @@
 var React = require('react');
-var InsightActions = require('./../flux/actions/InsightActions');
-var InsightButton = require('./InsightButton');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var InsightButton = require('./../InsightButton');
 
 var resizeId;
 

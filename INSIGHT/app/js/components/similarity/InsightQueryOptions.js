@@ -1,7 +1,7 @@
 var React = require('react');
-var InsightActions = require('./../flux/actions/InsightActions');
-var InsightConstants = require('./../flux/constants/InsightConstants');
-var AnnotatedSlider = require('./AnnotatedSlider');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
+var AnnotatedSlider = require('./../AnnotatedSlider');
 
 var resizeId;
 

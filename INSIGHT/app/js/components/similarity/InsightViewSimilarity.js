@@ -4,7 +4,7 @@ var InsightViewGraphs = require('./InsightViewGraphs');
 var InsightViewTable = require('./InsightViewTable');
 var InsightMenuBar = require('./InsightMenuBar');
 
-var InsightConstants = require('./../flux/constants/InsightConstants');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 var menuWidth = 25;
 var tableHeight = 200;

@@ -1,9 +1,9 @@
 var React = require('react');
 
 var InsightDatasetSection = require('./InsightDatasetSection');
-var InsightSimilarityQuery = require('./InsightSimilarityQuery');
+var InsightSimilarityQuery = require('./similarity/InsightSimilarityQuery');
 var InsightTab = require('./InsightTab');
-var InsightFind = require('./InsightFind');
+var InsightFind = require('./similarity/InsightFind');
 
 var InsightConstants = require('./../flux/constants/InsightConstants');
 

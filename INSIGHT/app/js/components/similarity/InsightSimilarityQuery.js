@@ -1,8 +1,8 @@
 var React = require('react');
 var InsightQuerySlider = require('./InsightQuerySlider');
 var InsightQueryOptions = require('./InsightQueryOptions');
-var InsightActions = require('./../flux/actions/InsightActions');
-var InsightConstants = require('./../flux/constants/InsightConstants');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 /**
  * This dropdown will have all the pre-existing queries

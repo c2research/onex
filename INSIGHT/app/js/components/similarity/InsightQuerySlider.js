@@ -1,7 +1,7 @@
 var React = require('react');
 var Select = require('react-select');
-var InsightActions = require('./../flux/actions/InsightActions');
-var AnnotatedSlider = require('./AnnotatedSlider');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var AnnotatedSlider = require('./../AnnotatedSlider');
 
 // var resizeId;
 

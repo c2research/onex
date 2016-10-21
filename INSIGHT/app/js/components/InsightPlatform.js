@@ -9,8 +9,8 @@ var InsightActions = require('./../flux/actions/InsightActions');
 
 var InsightBanner = require('./InsightBanner');
 var InsightControlPanel = require('./InsightControlPanel');
-var InsightViewSimilarity = require('./InsightViewSimilarity');
-var InsightViewSeasonal = require('./InsightViewSeasonal');
+var InsightViewSimilarity = require('./similarity/InsightViewSimilarity');
+var InsightViewSeasonal = require('./seasonal/InsightViewSeasonal');
 
 var resizeId;
 

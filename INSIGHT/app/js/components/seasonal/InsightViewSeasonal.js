@@ -1,8 +1,8 @@
 var React = require('react');
-var InsightConstants = require('./../flux/constants/InsightConstants');
-var InsightActions = require('./../flux/actions/InsightActions');
-var MultiTimeSeriesChart = require('./charts/MultiTimeSeriesChart');
-var AnnotatedSlider = require('./AnnotatedSlider');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
+var AnnotatedSlider = require('./../AnnotatedSlider');
 
 /**
  * This is a prototype for an initial view

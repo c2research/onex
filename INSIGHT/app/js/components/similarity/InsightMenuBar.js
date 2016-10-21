@@ -1,6 +1,6 @@
 var React = require('react');
-var InsightActions = require('./../flux/actions/InsightActions');
-var InsightConstants = require('./../flux/constants/InsightConstants');
+var InsightActions = require('./../../flux/actions/InsightActions');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 
 var MenuIcon = React.createClass({

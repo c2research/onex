@@ -1,7 +1,7 @@
 var React = require('react');
 var d3 = require('d3');
-var InsightConstants = require('./../flux/constants/InsightConstants');
-var MultiTimeSeriesChart = require('./charts/MultiTimeSeriesChart');
+var InsightConstants = require('./../../flux/constants/InsightConstants');
+var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 /**
  * This is a prototype for an initial view for the graphs
