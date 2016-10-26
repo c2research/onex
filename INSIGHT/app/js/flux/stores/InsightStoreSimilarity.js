@@ -187,7 +187,7 @@ var InsightStoreSimilarity = assign({}, {
 	},
 
 	requestQueryFromDataset: function() {
-		InsightStore.requestSequenceFromDataset(similarityQueryInfo.qDatasetSeq, 
+		InsightStore.requestSequenceFromDataset(similarityQueryInfo.qDatasetSeq,
 			function(endlist) {
 		   	InsightStoreSimilarity.setQDatasetValues(endlist);
 				InsightStore.calculateDimensions();

@@ -2,6 +2,7 @@ var React = require('react');
 var d3 = require('d3');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
+var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
 
 /**
  * This is a prototype for an initial view for the graphs
@@ -42,18 +43,23 @@ var InsightViewGraphs = React.createClass({
     }
 
     totalData.series.push({ values: qValues, color: 'black'});
+
     if (qValuesSelection.length > 0) {
       var offsetSelection = qValuesSelection[0][0];
       var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
 
       subData.series.push({ values: selectionLeftAligned, color: 'black'});
-
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
     if (this.props.viewingResults) {
       //for now I just move the
-      var biasQuery = 0.05 * this.props.dtwBiasValue;
+      //TODO(charlie) move this funcitonality elsewhere once the graph types are set up
+
+      var biasQuery = 0;
+      if (this.props.graphType == InsightConstants.GRAPH_TYPE_WARP){
+        biasQuery = 0.05 * this.props.dtwBiasValue;
+      }
 
       var offsetResult = rValues[0][0];
       var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]; });
@@ -66,15 +72,28 @@ var InsightViewGraphs = React.createClass({
       totalData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], rValues[rValues.length - 1][0])]
     }
 
-    var subD3JSX = <MultiTimeSeriesChart
-                     margins={subMargins}
-                     width={this.props.width - subMargins.left - subMargins.right}
-                     height={subHeight - subMargins.top - subMargins.bottom}
-                     data={subData}
-                     strokeWidth={3}
-                   />;
+    var subD3JSX, totalD3JSX;
 
-    var totalD3JSX = <MultiTimeSeriesChart
+    switch(this.props.graphType) {
+      case InsightConstants.GRAPH_TYPE_CONNECTED:
+        //break;
+      case InsightConstants.GRAPH_TYPE_HORIZON:
+        //break;
+      case InsightConstants.GRAPH_TYPE_WARP:
+        subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
+        break;
+      case InsightConstants.GRAPH_TYPE_LINE:
+        subData.warpingPath = null;
+        subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
+        break;
+      case InsightConstants.GRAPH_TYPE_ERROR:
+        subD3JSX =  this.generateErrorChart(qValuesSelection, rValues, warpingPath, subMargins, subHeight);
+        break;
+      default:
+        console.log('case: ', this.props.graphType);
+    }
+
+    totalD3JSX = <MultiTimeSeriesChart
                        margins={totalMargins}
                        width={this.props.width - totalMargins.left - totalMargins.right}
                        height={totalHeight - totalMargins.top - totalMargins.bottom}
@@ -86,6 +105,29 @@ var InsightViewGraphs = React.createClass({
               {subD3JSX}
               {totalD3JSX}
             </div>
+   },
+   generateMultiLineChart: function(subData, subMargins, subHeight){
+      return <MultiTimeSeriesChart
+                      margins={subMargins}
+                      width={this.props.width - subMargins.left - subMargins.right}
+                      height={subHeight - subMargins.top - subMargins.bottom}
+                      data={subData}
+                      strokeWidth={3}
+                    />;
+   },
+   generateErrorChart: function(querySelection, result, warpingPath, subMargins, subHeight){
+     var chartData = {
+       series: [{values: querySelection}, {values: result}],
+       warpingPath: warpingPath,
+       maxDomainY: 0.2
+     };
+
+     return <TimeSeriesDifferenceChart width={this.props.width - subMargins.left - subMargins.right}
+                                            height={subHeight - subMargins.top - subMargins.bottom}
+                                            margins={subMargins}
+                                            data={chartData}
+                                            strokeWidth={1}
+                                            color={'blue'} />
    }
 });
 

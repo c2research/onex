@@ -2,7 +2,7 @@ var React = require('react');
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
-
+//TODO(charlie): add tooltips
 var MenuIcon = React.createClass({
   render: function(){
     var type = this.props.type;
