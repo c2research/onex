@@ -1,6 +1,6 @@
 var React = require('react');
-var InsightQuerySlider = require('./InsightQuerySlider');
-var InsightQueryOptions = require('./InsightQueryOptions');
+var InsightQuerySlider = require('./../InsightQuerySlider');
+var InsightSimilarityQueryOptions = require('./InsightSimilarityQueryOptions');
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
@@ -11,27 +11,13 @@ var InsightSimilarityQuery = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
 
-     var queryList=this.props.queryList;
-     var queryCurrentIndex=this.props.queryCurrentIndex;
-
-     var distanceJSX = null; /*this.props.viewMode == InsightConstants.VIEW_MODE_SIMILARITY || this.props.viewMode == InsightConstants.VIEW_MODE_SEASONAL ?
-     <InsightDistanceDropdown distanceList={this.props.distanceList}
-                              distanceCurrentIndex={this.props.distanceCurrentIndex}/> : null;
-     */
-
-     /*
-     <div className="options">
-       <div className="iconWrapper"> <i className="fa fa-upload" aria-hidden="false"></i></div>
-       <h3 className="options"> Load query from File  </h3>
-     </div>
-     <div  className="options">
-     <div className="iconWrapper"> <i className="fa fa-gears" aria-hidden="false"></i></div>
-       <h3 className="options"> Interative Query Building </h3>
-     </div>
-     */
+     var distanceJSX = null;
 
      var querySlider = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET && 
-                       <InsightQuerySlider qSeq={this.props.qSeq} dsCurrentLength={this.props.dsCurrentLength} />
+                       <InsightQuerySlider
+                          qSeq={this.props.qSeq}
+                          dsCurrentLength={this.props.dsCurrentLength}
+                          onChange={this._handleQueryChange} />
 
 
      var panelJSX = this.props.dsCurrentLength > 0 &&
@@ -41,12 +27,19 @@ var InsightSimilarityQuery = React.createClass({
         <UploadQuery />
         <div>
           {querySlider}
-          <InsightQueryOptions qValues={this.props.qValues} qStart={this.props.qStart} qEnd={this.props.qEnd} />
+          <InsightSimilarityQueryOptions qValuesLength={this.props.qValues.length} qStart={this.props.qStart} qEnd={this.props.qEnd} />
         </div>
      </div>;
 
      return <div> {panelJSX} </div>;
+   },
+
+   _handleQueryChange: function(e) {
+    InsightActions.selectSimilarityQuery(parseInt(e.target.value, 10));
+    clearTimeout(this._queryChangedId);
+    this._queryChangedId = setTimeout(InsightActions.loadSimilarityQuery, 50);
    }
+
 });
 
 var QueryTypeRadio = React.createClass({

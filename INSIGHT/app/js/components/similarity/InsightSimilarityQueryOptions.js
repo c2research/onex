@@ -9,7 +9,7 @@ var resizeId;
  * This is for the start and end
  * TODO: implement
  */
-var InsightQueryOptions = React.createClass({
+var InsightSimilarityQueryOptions = React.createClass({
    render: function() {
 
      var startSliderJSX =
@@ -19,7 +19,7 @@ var InsightQueryOptions = React.createClass({
           <AnnotatedSlider
             value={this.props.qStart}
             min={0}
-            max={this.props.qValues.length - 1}
+            max={this.props.qValuesLength - 1}
             realMax={this.props.qEnd}
             step={1}
             onChange={this._handleClickStart}/>
@@ -33,13 +33,13 @@ var InsightQueryOptions = React.createClass({
             value={this.props.qEnd}
             min={0}
             realMin={this.props.qStart}
-            max={this.props.qValues.length - 1}
+            max={this.props.qValuesLength - 1}
             step={1}
             onChange={this._handleClickEnd}/>
          </div>
      </div>;
 
-     var queryOptionsJSX = this.props.qValues.length > 0 ?
+     var queryOptionsJSX = this.props.qValuesLength > 0 ?
      <div id="optionsContainer">
       {startSliderJSX}
       {endSliderJSX}
@@ -67,4 +67,4 @@ var InsightQueryOptions = React.createClass({
    }
 });
 
-module.exports = InsightQueryOptions;
+module.exports = InsightSimilarityQueryOptions;
