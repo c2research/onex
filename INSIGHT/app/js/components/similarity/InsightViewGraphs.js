@@ -43,15 +43,11 @@ var InsightViewGraphs = React.createClass({
     totalData.series.push({ values: qValues, color: 'black'});
 
     if (qValuesSelection.length > 0) {
-      var offsetSelection = qValuesSelection[0][0];
-      var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
-
       subData.series.push({ values: qValuesSelection, color: 'black'});
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
     if (this.props.viewingResults) {
-      //for now I just move the
       //TODO(charlie) move this funcitonality elsewhere once the graph types are set up
 
       var biasQuery = 0;
@@ -59,11 +55,9 @@ var InsightViewGraphs = React.createClass({
         biasQuery = 0.05 * this.props.dtwBiasValue;
       }
 
-      var offsetResult = rValues[0][0];
-      var resultLeftAligned = rValues.map(function(x) { return [x[0] - offsetResult, x[1] + biasQuery]; });
-
-      subData.series.push({ values: resultLeftAligned, color: biasQuery == 0 ? 'green' : 'magenta'});
-      subData.domains.x = [0, Math.max(qValuesSelection.length, rValues.length)];
+      var biasedRValues = rValues.map(function(x) { return [x[0], x[1] + biasQuery]; });
+      subData.series.push({ values: biasedRValues, color: biasQuery == 0 ? 'green' : 'magenta'});
+      subData.domains.x = [Math.min(qStart, rValues[0][0]), Math.max(qEnd, rValues[rValues.length - 1][0])];
       subData.warpingPath = warpingPath;
 
       totalData.series.push({values: rValues, color: 'green'});
