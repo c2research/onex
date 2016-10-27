@@ -18,35 +18,63 @@ var InsightViewSeasonal = React.createClass({
 
     var margins = {left: 35, right: 15, top: 20, bottom: 20};
 
-    var data = {
-      series: [{ values: values, strokeWidth: 2 }],
-      domains: { x: [0, values.length], y: [0, 1]},
-    };
+    var data = this._buildData();
 
     var seasonalGraphJXS = <MultiTimeSeriesChart
                             margins={margins}
                             width={width - margins.left - margins.right}
-                            height={height / 4}
+                            height={height / 3}
                             data={data}
                             strokeWidth={3}
-                           />
+                           />;
 
-    if (patterns && patterns.length > 0) {
-      var patternSelector = <PatternSelector
-                              max={patterns.length - 1}
-                              min={0}
-                              value={showingPatternIndex}
-                            />
-    }
+    var patternSelector = patterns && (patterns.length > 1) && 
+                          <PatternSelector
+                            max={patterns.length - 1}
+                            width={300}
+                            min={0}
+                            value={showingPatternIndex}
+                          />;
 
-    var divStyle = {
+    var viewAreaStyle = {
       width: width,
       height: height,
       marginLeft: this.props.marginLeft
-    }
-    return <div className='insightView' style={divStyle}>
+    };
+
+    var selectorStyle = {
+      width: 300,
+      marginLeft: 'auto',
+      marginRight: 'auto'
+    };
+
+    return <div className='insightView' style={viewAreaStyle}>
       {seasonalGraphJXS}
+      <div style={selectorStyle}>
+        {patternSelector}
+      </div>
     </div>;
+  },
+
+  _buildData: function() {
+    var values = this.props.seasonalQueryInfo.qValues;
+    var data = {
+      series: [{ values: values, strokeWidth: 2 }],
+      domains: { x: [0, values.length], y: [0, 1]},
+    }
+
+    var showingPatternIndex = this.props.results.showingPatternIndex;
+    var currentPattern = this.props.results.patterns[showingPatternIndex];
+    if (currentPattern) {
+      for (var i = 0; i < currentPattern.length; i++) {
+        var begin = currentPattern[i][0];
+        var end = currentPattern[i][1];
+        var currentColor = i % 2 == 0 ? 'blue' : 'green';
+        data.series.push({ values: values.slice(begin, end + 1), strokeWidth: 5, color: currentColor});
+      }
+    }
+
+    return data;
   }
 
 });
@@ -62,8 +90,7 @@ var PatternSelector = React.createClass({
   },
 
   _changeShowingPattern: function(e) {
-    clearTimeout(this._changeId);
-    this._changeId = setTimeout(InsightActions.selectSeasonalPatternIndex(e.target.value), 100);
+    InsightActions.selectSeasonalPatternIndex(parseInt(e.target.value), 10);
   }
 })
 

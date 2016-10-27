@@ -8,7 +8,7 @@ var AnnotatedSlider = require('./AnnotatedSlider');
  */
 var InsightQuerySlider = React.createClass({
    render: function() {
-    
+
      var panelJSX = this.props.dsCurrentLength > 0 ?
      <div className="panel">
        <h4 className="options"> Select a Query From Current Dataset  </h4>

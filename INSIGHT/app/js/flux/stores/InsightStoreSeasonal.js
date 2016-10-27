@@ -8,7 +8,7 @@ var CHANGE_EVENT = 'change';
 
 var seasonalQueryInfo = {
   qSeq: 0,
-  qLength: 1,
+  qLength: 3,
   qValues: []
 };
 
@@ -39,6 +39,11 @@ var InsightStoreSeasonal = assign({}, {
     seasonalQueryInfo.qValues = values;
   },
 
+  clearResult: function() {
+    seasonalResult.patterns = [];
+    seasonalResult.showingPatternIndex = 0;
+  },
+
   setShowingPatternIndex: function(index) {
     if (0 <= index && index < seasonalResult.patterns.length) {
       seasonalResult.showingPatternIndex = index;
@@ -61,15 +66,13 @@ var InsightStoreSeasonal = assign({}, {
       data: {
         dsCollectionIndex: InsightStore.getDSCollectionIndex(),
         qSeq: seasonalQueryInfo.qSeq,
-        length: seasonalQueryInfo.length,
+        length: seasonalQueryInfo.qLength,
         requestID: -1
       },
       dataType: 'json',
       success: function(response) {
-        if (response.requestID != requestID.datasetInit) {
-            console.log(requestID, response.requestID);
-        }
-        seasonalResult = response.seasonal;
+        seasonalResult.patterns = response.seasonal;
+        seasonalResult.showingPatternIndex = 0;
         InsightStore.emitChange();
       },
       error: function(xhr) {
@@ -87,13 +90,18 @@ AppDispatcher.register(function(action) {
     case InsightConstants.REQUEST_DATA_INIT:
       if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SEASONAL) {
         InsightStore.requestDatasetInit(function() {
+          InsightStoreSeasonal.clearResult();
           InsightStoreSeasonal.setQSeq(0);
           InsightStoreSeasonal.requestQueryFromDataset();
         });
       }
       break;
     case InsightConstants.SEASONAL_SELECT_QUERY:
+      InsightStoreSeasonal.clearResult();
       InsightStoreSeasonal.setQSeq(action.id);
+      InsightStore.emitChange();
+      break;
+    case InsightConstants.SEASONAL_LOAD_QUERY:
       InsightStoreSeasonal.requestQueryFromDataset();
       break;
     case InsightConstants.SEASONAL_SELECT_LENGTH:
@@ -105,7 +113,7 @@ AppDispatcher.register(function(action) {
       InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_REQUEST:
-      InsightStore.requestSeasonal();
+      InsightStoreSeasonal.requestSeasonal();
       break;
     default:
       // no op

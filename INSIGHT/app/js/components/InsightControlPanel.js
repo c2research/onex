@@ -2,6 +2,7 @@ var React = require('react');
 
 var InsightDatasetSection = require('./InsightDatasetSection');
 var InsightSimilarityQuery = require('./similarity/InsightSimilarityQuery');
+var InsightSeasonalQuery = require('./seasonal/InsightSeasonalQuery');
 var InsightTab = require('./InsightTab');
 var InsightFind = require('./similarity/InsightFind');
 
@@ -88,8 +89,7 @@ var InsightControlPanel = React.createClass({
       values = similarityQueryInfo.qBuildValues;
     }
 
-    var queryJSX = <InsightSimilarityQuery viewMode={this.props.viewMode}
-                                           dsCurrentLength={this.props.dsCurrentLength}
+    var queryJSX = <InsightSimilarityQuery dsCurrentLength={this.props.dsCurrentLength}
                                            qTypeLocal={qTypeLocal}
                                            qValues={values}
                                            qStart={qStart}
@@ -106,10 +106,17 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSeasonalQueryControls: function() {
-    //var findButtonJSX = <InsightFind show={values.length > 0}
-    //                                 viewMode={this.props.viewMode}/>;
-
-    return null;
+    var seasonalQueryInfo = this.props.seasonalQueryInfo;
+    var qSeq = seasonalQueryInfo.qSeq;
+    var qLength = seasonalQueryInfo.qLength;
+    var qValues = seasonalQueryInfo.qValues;
+    var queryJSX = <InsightSeasonalQuery dsCurrentLength={this.props.dsCurrentLength}
+                                         qValues={qValues}
+                                         qSeq={qSeq}
+                                         qLength={qLength}/>;
+    return <div>
+      {queryJSX}
+    </div>;
   },
 
   _getClusterQueryControls: function() {

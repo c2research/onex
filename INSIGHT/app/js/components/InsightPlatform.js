@@ -136,6 +136,7 @@ var InsightPlatform = React.createClass({
                              thresholdCurrent={this.state.thresholdCurrent}
                              thresholdStep={this.state.thresholdStep}
                              similarityQueryInfo={this.state.similarityQueryInfo}
+                             seasonalQueryInfo={this.state.seasonalQueryInfo}
                              distanceList={this.state.distanceList}
                              distanceCurrentIndex={this.state.distanceCurrentIndex}
         />

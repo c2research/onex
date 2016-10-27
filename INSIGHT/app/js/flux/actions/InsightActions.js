@@ -133,11 +133,15 @@ var InsightActions = {
       id: value
     });
   },
-
   selectSeasonalQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_SELECT_QUERY,
       id: index
+    });
+  },
+  loadSeasonalQuery: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEASONAL_LOAD_QUERY
     });
   },
   selectSeasonalLength: function(value) {
