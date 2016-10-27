@@ -3,6 +3,7 @@ var d3 = require('d3');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
+var ConnectedScatterPlot = require('./../charts/ConnectedScatterPlot');
 
 /**
  * This is a prototype for an initial view for the graphs
@@ -76,7 +77,10 @@ var InsightViewGraphs = React.createClass({
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
-        //break;
+        subData.color = 'blue';
+        subData.strokeWidth = '1.5';
+        subD3JSX = this.generateConnectedScatterPlot(subData, subMargins, subHeight);
+        break;
       case InsightConstants.GRAPH_TYPE_HORIZON:
         //break;
       case InsightConstants.GRAPH_TYPE_WARP:
@@ -105,6 +109,16 @@ var InsightViewGraphs = React.createClass({
               {subD3JSX}
               {totalD3JSX}
             </div>
+   },
+   generateConnectedScatterPlot: function(subData, subMargins, subHeight){
+      return <ConnectedScatterPlot
+                      margins={subMargins}
+                      width={this.props.width - subMargins.left - subMargins.right}
+                      height={subHeight - subMargins.top - subMargins.bottom}
+                      data={subData}
+                      strokeWidth={3}
+                      color={'green'}
+                    />;
    },
    generateMultiLineChart: function(subData, subMargins, subHeight){
       return <MultiTimeSeriesChart
