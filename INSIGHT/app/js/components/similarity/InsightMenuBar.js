@@ -45,7 +45,7 @@ var MenuIcon = React.createClass({
  */
 var InsightMenuBar = React.createClass({
   renderDTWSlider: function() {
-    var style =  {
+    var style = {
       slider: {
         marginRight: 7,
         marginLeft: 10,
@@ -55,7 +55,8 @@ var InsightMenuBar = React.createClass({
         WritingMode: 'bt-lr' //ie lol
         //orient=vertical //firefox (html not css)
       }
-    }
+    };
+
     return <div style={style.icon}>
             <input
               type="range"
@@ -63,9 +64,9 @@ var InsightMenuBar = React.createClass({
               max={5}
               min={-5}
               step={1}
-              value={this.props.DTWBias}
+              value={this.props.dtwBiasValue}
               onChange={this._updateDTWBias}/>
-           </div>
+           </div>;
    },
    render: function() {
      var style = {

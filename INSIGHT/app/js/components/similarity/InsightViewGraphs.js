@@ -18,9 +18,6 @@ var InsightViewGraphs = React.createClass({
         pair! (And thus should render the result).
       */
 
-    //if (this.props.qValues.length < 1) return null; //TODO: a plain area is not great
-    //maybe we should expand initial options to full page at first??
-
     var qValues = this.props.qValues;
     var qStart = this.props.qStart;
     var qEnd = this.props.qEnd;
