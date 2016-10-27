@@ -35,12 +35,12 @@ var InsightViewGraphs = React.createClass({
 
     var subData = {
       series: [],
-      domains: { x: [0, qValuesSelection.length], y: [0, 1]},
+      domains: { x: [qStart, qEnd], y: [0, 1]},
     }
 
     var totalData = {
       series: [],
-      domains: { x: [0, qValues.length], y: [0,1] }
+      domains: { x: [0, qValues.length], y: [0, 1] }
     }
 
     totalData.series.push({ values: qValues, color: 'black'});
@@ -49,7 +49,7 @@ var InsightViewGraphs = React.createClass({
       var offsetSelection = qValuesSelection[0][0];
       var selectionLeftAligned = qValuesSelection.map(function(x) { return [x[0] - offsetSelection, x[1]]});
 
-      subData.series.push({ values: selectionLeftAligned, color: 'black'});
+      subData.series.push({ values: qValuesSelection, color: 'black'});
       totalData.series.push({ values: qValuesSelection, color: 'red'});
     }
 
