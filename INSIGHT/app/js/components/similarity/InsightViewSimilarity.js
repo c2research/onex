@@ -6,7 +6,7 @@ var InsightMenuBar = require('./InsightMenuBar');
 
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
-var menuWidth = 25;
+var menuWidth = 50;
 var tableHeight = 200;
 
 /**

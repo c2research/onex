@@ -18,7 +18,7 @@ body {
  /* ---------->>> BANNER <<<-----------*/
 div.insightBanner {
   position: relative;
-  z-index: 9999;
+  z-index: 5;
   width: 100%;
   left: 0;
   background-color: rgba(230, 230, 230, 0.35);
@@ -183,6 +183,7 @@ i.menu {
 i.focus {
   color: #7c63d8;
   opacity: .75;
+  padding-top: 10 10 10 0;
 }
 i.menu:hover {
   opacity: 1;
@@ -190,3 +191,28 @@ i.menu:hover {
 i.menu:active {
   color: #ff921a;
 }
+/*div.menuIconSpacer {
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+}*/
+/* ---------->>> TOOLTIPS <<<-----------*/
+/* Tooltip arrow
+.tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+/*
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+*/
