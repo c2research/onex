@@ -81,6 +81,10 @@ var InsightViewGraphs = React.createClass({
         subData.warpingPath = null;
         subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
         break;
+      case InsightConstants.GRAPH_TYPE_SPLIT:
+        subData.warpingPath = null;
+        subD3JSX = this.generateSplitChart(subData, subMargins, subHeight);
+        break;
       case InsightConstants.GRAPH_TYPE_ERROR:
         subD3JSX =  this.generateErrorChart(qValuesSelection, rValues, warpingPath, subMargins, subHeight);
         break;
@@ -95,7 +99,6 @@ var InsightViewGraphs = React.createClass({
                        data={totalData}
                        strokeWidth={3}
                      />;
-
      return <div>
               {subD3JSX}
               {totalD3JSX}
@@ -119,6 +122,35 @@ var InsightViewGraphs = React.createClass({
                       data={subData}
                       strokeWidth={3}
                     />;
+   },
+   generateSplitChart: function(subData, subMargins, subHeight){
+
+
+      var querySubData = {
+        series: [subData.series[0]],
+        domains: subData.domains
+      };
+      var resultSubData = {
+        series: (subData.series.length > 1) && [subData.series[1]] || [{ values: [], color: 'black'}],
+        domains: subData.domains
+      };
+
+      return <div>
+        <MultiTimeSeriesChart
+                        margins={subMargins}
+                        width={this.props.width - subMargins.left - subMargins.right}
+                        height={(subHeight / 2) - subMargins.top - subMargins.bottom}
+                        data={querySubData}
+                        strokeWidth={3}
+                      />
+        <MultiTimeSeriesChart
+                        margins={subMargins}
+                        width={this.props.width - subMargins.left - subMargins.right}
+                        height={(subHeight / 2) - subMargins.top - subMargins.bottom}
+                        data={resultSubData}
+                        strokeWidth={3}
+                      />
+      </div>;
    },
    generateErrorChart: function(querySelection, result, warpingPath, subMargins, subHeight){
      var chartData = {

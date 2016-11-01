@@ -32,8 +32,8 @@ var D3MultiTimeSeriesChart = function() {
 D3MultiTimeSeriesChart.prototype = new D3BaseChart;
 D3MultiTimeSeriesChart.prototype.constructor = D3MultiTimeSeriesChart;
 
-// Append a new chart within a given DOM element. The props and data used 
-// to drawn the chart are kept inside the current object. 
+// Append a new chart within a given DOM element. The props and data used
+// to drawn the chart are kept inside the current object.
 D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
   this.props = props;
 
@@ -109,7 +109,7 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
 
 // Update the current chart with new data.
 D3MultiTimeSeriesChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.multi-time-series-chart'); 
+  var svg = d3.select(el).select('svg.multi-time-series-chart');
 
   this._drawAxis(svg, data);
   this._drawLines(svg, data);
@@ -157,8 +157,8 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
 // Return a list of points which is a merge of all series in a list of series.
 D3MultiTimeSeriesChart.prototype._extractRawPointCoords = function(series) {
   var flatten = series.map(function(s) { return s.values; })
-                      .reduce(function(prev, cur) { 
-                        return prev.concat(cur); 
+                      .reduce(function(prev, cur) {
+                        return prev.concat(cur);
                       }, []);
   return flatten;
 };
@@ -184,7 +184,7 @@ D3MultiTimeSeriesChart.prototype._drawLines = function(svg, data) {
        .attr('stroke', function(d) { return d.color || 'black'; })
        .attr('stroke-width', function(d) { return d.strokeWidth || strokeWidth })
        .attr('fill', 'none');
-       
+
   // exit
   paths.exit().remove();
 
@@ -246,8 +246,8 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
                   .y(function(d) { return scales.y(d[1]); })
                   .extent([[0, 0], [width, height]]);
 
-  var voronoiGroup = svg.select('g.voronoiWrapper')             
-  
+  var voronoiGroup = svg.select('g.voronoiWrapper')
+
   // Get an array of polygon. Each polygon is itself a array of points
   var polygons = voronoi(points).polygons();
 
@@ -256,8 +256,8 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
   voronoiPaths.enter()
               .append('path')
               .merge(voronoiPaths)
-              .attr('d', function(d) { 
-                return d && ('M' + d.join('L') + 'Z'); 
+              .attr('d', function(d) {
+                return d && ('M' + d.join('L') + 'Z');
               })
               .style('stroke', 'none')
               .style('fill', 'none')

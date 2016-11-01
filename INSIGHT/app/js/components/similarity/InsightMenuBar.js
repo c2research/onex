@@ -75,7 +75,8 @@ var InsightMenuBar = React.createClass({
            </div>;
    },
    render: function() {
-     var h = this.props.results && (this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? (75+150) : 150;
+     //TODO(charlie) : 185 = the size of the menuBar (make it dynamic or calculated)
+     var h = this.props.results && (this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? (75+185) : 185;
 
      var style = {
        //height: this.props.height,
@@ -95,7 +96,8 @@ var InsightMenuBar = React.createClass({
      var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
                           InsightConstants.GRAPH_TYPE_WARP,
                           InsightConstants.GRAPH_TYPE_CONNECTED,
-                          InsightConstants.GRAPH_TYPE_ERROR];
+                          InsightConstants.GRAPH_TYPE_ERROR,
+                          InsightConstants.GRAPH_TYPE_SPLIT];
 
      var that = this;
      var IconsJSX = graphTypeList.map(function(i) {
@@ -147,14 +149,20 @@ var getTypeInfo = function(type) {
        icon = "line-chart"
        className = "fa fa-line-chart fa-2x";
        title = 'Line Chart';
-       message =  'The simple line chart that plots data over time';
+       message =  'plots data over time';
        break;
     case InsightConstants.GRAPH_TYPE_WARP:
        icon = "connectdevelop";
        className = "fa fa-connectdevelop fa-2x";
        title = 'Warped Line Chart';
-       message =  'Warped Line Charts show the connections between the matched points';
+       message =  'connects the matched points';
        break;
+    case InsightConstants.GRAPH_TYPE_SPLIT:
+       icon = "list";
+       className = "fa fa-list fa-2x";
+       title = 'Layered Line Chart';
+       message =  'Layers the query and result';
+      break;
   }
 
   return [icon, className, title, message];
