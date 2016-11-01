@@ -39,18 +39,16 @@ var InsightBanner = React.createClass({
 
      return (
        <div className="insightBanner">
-        <div style={style.wrapper}>
-            <div style={style.float}>
-
-                <img src='static/resources/images/icon.png' style={style.icon} alt=""></img>
-
+          <div style={style.wrapper}>
+              <div style={style.float}>
+                  <img src='static/resources/images/icon.png' style={style.icon} alt=""></img>
+              </div>
+              <div style={style.floatR}>
+                <h1 style={style.title}>
+                  {title}
+                </h1>
+              </div>
           </div>
-          <div style={style.floatR}>
-            <h1 style={style.title}>
-              {title}
-            </h1>
-          </div>
-        </div>
       </div>
       );
    }

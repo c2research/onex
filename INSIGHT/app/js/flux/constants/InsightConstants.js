@@ -11,6 +11,8 @@ var InsightConstants = keyMirror({
 	ICON_DATASET_INIT_LOADED: null,
 	ICON_DATASET_INIT_NULL: null,
 
+	SEND_MESSAGE: null,
+
 	VIEW_MODE_SIMILARITY: null,
 	VIEW_MODE_SEASONAL: null,
 	VIEW_MODE_CLUSTER: null,

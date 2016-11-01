@@ -27,6 +27,9 @@ var data = {
 	//icon modes
 	datasetIconMode: InsightConstants.ICON_DATASET_INIT_NULL,
 
+	//message
+	message: {}
+
 };
 
 /*
@@ -157,11 +160,33 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 	getDatasetIconMode: function() {
 		return data.datasetIconMode;
 	},
+
 	/**
 	 * @return {Number} - the index of the current dataset
 	 */
 	getDSCollectionIndex: function() {
 		return data.dsCollectionIndex;
+	},
+
+	/**
+	 * @return {Object} - returns all the message data
+	 */
+	getMessage: function() {
+		return data.message;
+	},
+
+	/**
+	 * @param {Object} - sets all the message data
+	 */
+	setMessage: function(title,icon,iconColor,color,message,visibility) {
+		data.message = {
+			title: title,
+			icon: icon,
+			iconColor: iconColor,
+			color: color,
+			message: message,
+			visibility: visibility
+		}
 	},
 
 	/**
@@ -330,6 +355,10 @@ AppDispatcher.register(function(action) {
 			break;
 		case InsightConstants.VIEW_MODE_CLUSTER:
 			InsightStore.setViewMode(action.actionType);
+			InsightStore.emitChange();
+			break;
+		case InsightConstants.SEND_MESSAGE:
+			InsightStore.setMessage(action.id[0], action.id[1], action.id[2], action.id[3], action.id[4], action.id[5]);
 			InsightStore.emitChange();
 			break;
 		default:

@@ -11,6 +11,7 @@ var InsightBanner = require('./InsightBanner');
 var InsightControlPanel = require('./InsightControlPanel');
 var InsightViewSimilarity = require('./similarity/InsightViewSimilarity');
 var InsightViewSeasonal = require('./seasonal/InsightViewSeasonal');
+var InsightMessage = require('./InsightMessage');
 
 var resizeId;
 
@@ -35,6 +36,7 @@ function getState() {
     // meta
     viewMode: InsightStore.getViewMode(),
     sizing: InsightStore.getSizing(),
+    message: InsightStore.getMessage(),
 
     //icon modes
     datasetIconMode: InsightStore.getDatasetIconMode(),
@@ -56,6 +58,8 @@ function getState() {
     // distanceCurrentIndex: InsightStore.getDistanceCurrentIndex(),
   };
 }
+
+
 
 /**
  * The InsightPlatform will layout the framework of the app, and action
@@ -126,6 +130,12 @@ var InsightPlatform = React.createClass({
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="nsight" />
+        <InsightMessage title={this.state.message.title}
+                        color={this.state.message.color}
+                        iconColor={this.state.message.iconColor}
+                        icon={this.state.message.icon}
+                        message={this.state.message.message}
+                        visibility={this.state.message.visibility}/>
         <InsightControlPanel width={this.state.sizing.controlPanelWidth}
                              viewMode={this.state.viewMode}
                              dsCollectionList={this.state.dsCollectionList}

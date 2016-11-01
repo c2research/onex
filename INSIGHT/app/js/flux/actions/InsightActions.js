@@ -160,6 +160,12 @@ var InsightActions = {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_REQUEST
     });
+  },
+  sendMessage: function(message) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SEND_MESSAGE,
+      id: message
+    })
   }
 
 };

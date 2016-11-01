@@ -14,13 +14,13 @@ var InsightProcess = React.createClass({
 
      var style = {
        loading: {
-         color: "Red"
+         color: "#e2b6b3"  //red
        },
        loaded: {
-         color: "Green"
+         color: "#2daf89"  //green
        },
        ready: {
-         color: "Blue"
+         color: "#a3cfec"  //blue
        },
        notReady: {
          color: "Gray"
