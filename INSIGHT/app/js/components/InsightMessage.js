@@ -100,7 +100,7 @@ var InsightMessage = React.createClass({
                 </div>
             </div>
         </div>
-     </div>;
+     </div>
    },
    _closeMessage: function() {
      InsightActions.sendMessage(['','','','','', false]);

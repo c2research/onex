@@ -22,11 +22,11 @@ var MenuIcon = React.createClass({
     var SliderJSX = (this.props.results && active && this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? this.props.renderDTWSlider : null;
 
     return (
-    <div key={type}
-         onMouseEnter={(event) => this._handleEnter(active, title, message, icon)}
-         onMouseLeave={(event) => this._handleLeave(active)}>
+    <div key={type}>
          <i className={className}
-            onClick={this.props.onClick}>
+            onClick={this.props.onClick}
+            onMouseEnter={(event) => this._handleEnter(active, title, message, icon)}
+            onMouseLeave={(event) => this._handleLeave(active)}>
          </i>
          {SliderJSX}
     </div>);
@@ -36,12 +36,13 @@ var MenuIcon = React.createClass({
     InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
   },
   _handleLeave: function(active){
-    if (active){
-      return;
-    } else if (this.props.graphType) {
-      var [icon, className, title, message] = getTypeInfo(this.props.graphType);
-      InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
-    }
+    InsightActions.sendMessage(['', '', '', '', '', false]);
+    // if (active){
+    //   return;
+    // } else if (this.props.graphType) {
+    //   var [icon, className, title, message] = getTypeInfo(this.props.graphType);
+    //   InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
+    // }
   }
 });
 
