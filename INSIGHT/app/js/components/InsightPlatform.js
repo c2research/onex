@@ -125,7 +125,7 @@ var InsightPlatform = React.createClass({
 
     return (
       <div className="insightPlatform">
-        <InsightBanner baseTitle="insight" />
+        <InsightBanner baseTitle="nsight" />
         <InsightControlPanel width={this.state.sizing.controlPanelWidth}
                              viewMode={this.state.viewMode}
                              dsCollectionList={this.state.dsCollectionList}

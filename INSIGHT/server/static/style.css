@@ -26,13 +26,6 @@ div.insightBanner {
   -moz-box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
   box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
 }
-h1.insightBanner {
-  text-align: center;
-  font-size: 3em;
-  font-weight: lighter;
-  border-bottom: none;
-  margin: 0;
-}
  /* ---------->>> CONTROLPANEL <<<-----------*/
 div.controlPanel {
   position: fixed;
