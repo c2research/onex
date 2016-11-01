@@ -65,7 +65,7 @@ div.tabSingleWrapper {
   transform-origin:left;
   -webkit-transition: all 0.4 s; /* For Safari 3.1 to 6.0 */
   transition: box-shadow 0.4s, color 0.4s, width 0.4s, background 0.4s, font-size 0.4s;
-  box-shadow: inset 0 0 0 0 #2daf89;
+  box-shadow: inset 0 0 0 0 #a3cfec;
 }
 div.tabSingleWrapper.selected {
   width: 50%;
@@ -153,7 +153,7 @@ input {
 }
 
 .insightButton:active {
-  background-image: -webkit-linear-gradient(top, #2daf89, #a9a9a9);
+  background-image: -webkit-linear-gradient(top, #a3cfec, #a9a9a9);
 }
 
 /* ---------->>> CHARTS <<<-----------*/
@@ -174,7 +174,7 @@ i.menu {
   opacity: .55;
 }
 i.focus {
-  color: #2daf89;
+  color: #a3cfec;
   opacity: .75;
 }
 i.menu:hover {
