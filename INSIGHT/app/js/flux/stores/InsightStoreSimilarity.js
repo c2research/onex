@@ -411,6 +411,11 @@ AppDispatcher.register(function(action) {
 		case InsightConstants.GRAPH_TYPE_SPLIT:
 			InsightStoreSimilarity.setGraphType(action.actionType);
 			InsightStore.emitChange();
+			break;
+		case InsightConstants.GRAPH_TYPE_RADIAL:
+			InsightStoreSimilarity.setGraphType(action.actionType);
+			InsightStore.emitChange();
+			break;
 		case InsightConstants.GRAPH_TYPE_WARP:
 			InsightStoreSimilarity.setGraphType(action.actionType);
 			InsightStore.emitChange();

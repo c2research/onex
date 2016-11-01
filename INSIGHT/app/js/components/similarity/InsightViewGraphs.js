@@ -81,6 +81,9 @@ var InsightViewGraphs = React.createClass({
         subData.warpingPath = null;
         subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
         break;
+      case InsightConstants.GRAPH_TYPE_RADIAL:
+        subD3JSX =  this.generateRadialChart(subData, subMargins, subHeight);
+        break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
         subData.warpingPath = null;
         subD3JSX = this.generateSplitChart(subData, subMargins, subHeight);
@@ -123,9 +126,10 @@ var InsightViewGraphs = React.createClass({
                       strokeWidth={3}
                     />;
    },
+   generateRadialChart: function(subData, subMargins, subHeight){
+      return null; //TODO(cuong): implement/fill in outline
+   },
    generateSplitChart: function(subData, subMargins, subHeight){
-
-
       var querySubData = {
         series: [subData.series[0]],
         domains: subData.domains

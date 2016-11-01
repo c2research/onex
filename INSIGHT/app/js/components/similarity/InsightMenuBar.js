@@ -76,7 +76,7 @@ var InsightMenuBar = React.createClass({
    },
    render: function() {
      //TODO(charlie) : 185 = the size of the menuBar (make it dynamic or calculated)
-     var h = this.props.results && (this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? (75+185) : 185;
+     var h = this.props.results && (this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? (75+200) : 200;
 
      var style = {
        //height: this.props.height,
@@ -96,6 +96,7 @@ var InsightMenuBar = React.createClass({
      var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
                           InsightConstants.GRAPH_TYPE_WARP,
                           InsightConstants.GRAPH_TYPE_CONNECTED,
+                          InsightConstants.GRAPH_TYPE_RADIAL,
                           InsightConstants.GRAPH_TYPE_ERROR,
                           InsightConstants.GRAPH_TYPE_SPLIT];
 
@@ -162,7 +163,13 @@ var getTypeInfo = function(type) {
        className = "fa fa-list fa-2x";
        title = 'Layered Line Chart';
        message =  'Layers the query and result';
-      break;
+       break;
+    case InsightConstants.GRAPH_TYPE_RADIAL:
+       icon = "sun-o";
+       className = "fa fa-sun-o fa-2x";
+       title = 'Radial Chart';
+       message =  'Plots data around a single circle';
+       break;
   }
 
   return [icon, className, title, message];

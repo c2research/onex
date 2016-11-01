@@ -32,6 +32,7 @@ var InsightConstants = keyMirror({
 	GRAPH_TYPE_ERROR: null,
 	GRAPH_TYPE_WARP: null,
 	GRAPH_TYPE_SPLIT: null,
+	GRAPH_TYPE_RADIAL: null,
 	SELECT_DTW_BIAS: null,
 
 	SEASONAL_SELECT_QUERY: null,
