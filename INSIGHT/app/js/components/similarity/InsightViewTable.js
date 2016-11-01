@@ -59,6 +59,7 @@ var OverviewCell = function({rowIndex, data, ...props}) {
  */
 var InsightViewTable = React.createClass({
   render: function() {
+    var totalWidth = 820;
     var resultData = this.props.results;
     var QueryGroup =
       <ColumnGroup
@@ -69,7 +70,7 @@ var InsightViewTable = React.createClass({
           width={150}
         />
         <Column
-          header={<Cell>From same dataset?</Cell>}
+          header={<Cell>Same dataset?</Cell>}
           cell={<SameDataset data={resultData} />}
           width={170}
         />
@@ -120,13 +121,20 @@ var InsightViewTable = React.createClass({
         />
       </ColumnGroup>
 
+    var width = 1020 < this.props.width ? 1020 : this.props.width;
+    var margin = width < this.props.width ? (this.props.width - width) / 2 : 0;
+    var style = {
+      marginLeft: margin,
+      marginRight: margin,
+      marginBottom: 10
+    }
     var tableJSX =
-    <div className="viewTable">
+    <div className="viewTable" style={style}>
       <Table
         rowHeight={50}
         rowsCount={resultData.length}
-        width={this.props.width}
-        height={200}
+        width={width}
+        height={190}
         groupHeaderHeight={40}
         headerHeight={40}>
        {QueryGroup}

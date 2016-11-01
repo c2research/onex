@@ -79,7 +79,7 @@ var MenuIcon = React.createClass({
          break;
     }
 
-    var SliderJSX = this.props.results && active ? this.props.renderDTWSlider : null;
+    var SliderJSX = (this.props.results && active && this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? this.props.renderDTWSlider : null;
     var toolTipJSX = this.state.visibility ?
     <div style={style.tooltipcontainertext}>
       <div>
