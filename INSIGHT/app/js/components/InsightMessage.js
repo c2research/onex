@@ -13,7 +13,7 @@ var InsightMessage = React.createClass({
    componentWillMount: function() {
      this.setState({ focused: false });
    },
-   willRecieveProps: function(){
+   componentWillReceiveProps: function(){
      this.setState({ focused: false });
    },
    getDefaultProps: function(){
