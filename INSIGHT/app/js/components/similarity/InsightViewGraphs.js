@@ -4,7 +4,7 @@ var InsightConstants = require('./../../flux/constants/InsightConstants');
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
 var ConnectedScatterPlot = require('./../charts/ConnectedScatterPlot');
-
+var RadialChart = require('./../charts/RadialChart');
 /**
  * This is a prototype for an initial view for the graphs
  */
@@ -127,7 +127,12 @@ var InsightViewGraphs = React.createClass({
                     />;
    },
    generateRadialChart: function(subData, subMargins, subHeight){
-      return null; //TODO(cuong): implement/fill in outline
+      return <RadialChart
+                      margins={subMargins}
+                      width={this.props.width - subMargins.left - subMargins.right}
+                      height={subHeight - subMargins.top - subMargins.bottom}
+                      data={subData}
+              />;
    },
    generateSplitChart: function(subData, subMargins, subHeight){
       var querySubData = {
