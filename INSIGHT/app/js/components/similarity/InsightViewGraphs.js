@@ -27,7 +27,7 @@ var InsightViewGraphs = React.createClass({
 
     var subHeight = (4.0/5.0) * this.props.height - 30;
     var totalHeight = this.props.height - subHeight - 30;
-    var subMargins = {left: 35, right: 15, top: 20, bottom: 20};
+    var subMargins = {left: 35, right: 15, top: 25, bottom: 20};
     var totalMargins = {left: 35, right: 15, top: 5, bottom: 20};
 
     var subData = {
@@ -131,6 +131,7 @@ var InsightViewGraphs = React.createClass({
                       margins={subMargins}
                       width={this.props.width - subMargins.left - subMargins.right}
                       height={subHeight - subMargins.top - subMargins.bottom}
+                      strokeWidth={3}
                       data={subData}
               />;
    },

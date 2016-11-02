@@ -43,7 +43,7 @@ D3RadialChart.prototype.create = function(el, props, data) {
   // Append a drawing area. The use of margins follows the convention in:
   // http://bl.ocks.org/mbostock/3019563
   var svg = d3.select(el).append('svg')
-              .classed('Radial-chart', true)
+              .classed('d3-radial-chart', true)
               .attr('width', width + margins.left + margins.right)
               .attr('height', height + margins.top + margins.bottom);
 
@@ -91,7 +91,7 @@ D3RadialChart.prototype.create = function(el, props, data) {
 
 // Update the current chart with new data.
 D3RadialChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.Radial-chart'); 
+  var svg = d3.select(el).select('svg.d3-radial-chart'); 
 
   this._drawRadialAxis(svg, data);
   this._drawLines(svg, data);
@@ -100,7 +100,7 @@ D3RadialChart.prototype.update = function(el, data) {
 
 // Remove the current chart
 D3RadialChart.prototype.destroy = function(el) {
-  d3.select(el).select('svg.Radial-chart').remove();
+  d3.select(el).select('svg.d3-radial-chart').remove();
 };
 
 D3RadialChart.prototype._center = function() {
@@ -151,6 +151,9 @@ D3RadialChart.prototype._drawRadialAxis = function(svg, data) {
   for (var i = 0; i < tickNum; i++) {
     angles.push(i * 2 * Math.PI / tickNum);
   }
+
+  axesGroup.attr('font-size', 12);
+
   var lines = axesGroup.selectAll('line').data(angles);
   lines.enter()
        .append('line')
@@ -160,12 +163,11 @@ D3RadialChart.prototype._drawRadialAxis = function(svg, data) {
        .attr('x2', function(d) { return that._polarToRect(maxRadius, d, center).x; })
        .attr('y2', function(d) { return that._polarToRect(maxRadius, d, center).y; })
        .attr('stroke', 'gray')
+       .attr('opacity', 0.5)
        .attr('stroke-width', 1);
   lines.exit().remove();
 
-
-
-  var padding = 14;
+  var padding = 10;
   var texts = axesGroup.selectAll('text').data(angles);
   texts.enter()
        .append('text')
