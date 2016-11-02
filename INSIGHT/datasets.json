@@ -14,5 +14,9 @@
   {
     "name": "ShapesAll",
     "path": "datasets/ShapesAll.txt"
+  },
+    {
+    "name": "SwedishLeaf",
+    "path": "datasets/SwedishLeaf.txt"
   }
 ]
