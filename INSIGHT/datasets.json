@@ -4,6 +4,10 @@
     "path": "datasets/ECG.txt"
   },
   {
+    "name": "Leaf",
+    "path": "datasets/Leaf.txt"
+  },
+  {
     "name": "ItalyPower",
     "path": "datasets/ItalyPower.txt"
   },
@@ -15,7 +19,7 @@
     "name": "ShapesAll",
     "path": "datasets/ShapesAll.txt"
   },
-    {
+  {
     "name": "SwedishLeaf",
     "path": "datasets/SwedishLeaf.txt"
   }
