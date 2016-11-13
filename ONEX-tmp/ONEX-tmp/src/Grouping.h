@@ -2,9 +2,7 @@
 #define GROUPING_H
 
 #include "TimeSeries.h"
-
 #include <vector>
-
 #include <stdint.h>
 
 using namespace std;
@@ -29,6 +27,7 @@ struct kBest
             dist = other.dist;
         }
     }
+
 };
 
 // A centroid for a time series interval. Efficient centroid calculation.
@@ -86,6 +85,8 @@ public:
     seqitem_t keoghDist(TimeSeriesIntervalEnvelope &other, int warps=5, double dropout=INF);
     seqitem_t crossKeoghDist(TimeSeriesIntervalEnvelope &other, int warps=5, double dropout=INF);
     seqitem_t cascadeDist(TimeSeriesIntervalEnvelope &other, int warps=5, double dropout=INF);
+
+
 };
 
 // A group of similar TimeSeriesIntervals from a database, all of the same length.
@@ -124,7 +125,9 @@ public:
     TimeSeriesIntervalEnvelope &getEnvelope(void);
     void genEnvelope(void);
 
+    // primary similarity functions
     kBest getBestMatch(TimeSeriesIntervalEnvelope query, int warps=-1, double dropout=INF);
+    kBest getBestDistinctMatch(TimeSeriesIntervalEnvelope query, int warps=-1, double dropout=INF, int qSeq=-1);
     vector<kBest> getSeasonal(int);
 
     vector<seqitem_t> &getCentroid(void);
@@ -170,7 +173,7 @@ public:
 };
 
 // Strategy when searching for similar representatives.
-// Hitting good best-so-fars early go a long way in faster queries. 
+// Hitting good best-so-fars early go a long way in faster queries.
 enum SearchStrategy
 {
     EINTERMIX     = 0, // Start at same length, check 1up, check 1down, check 2up, ....
@@ -213,6 +216,11 @@ public:
     int group(void);
     void genEnvelopes(void);
 
+    kBest getBestDistinctInterval(int len,
+                                 seqitem_t *data,
+                                 SearchStrategy strat=EHIGHER_LOWER,
+                                 int warps=-1,
+                                 int qSeq=-1);
     kBest getBestInterval(int len, seqitem_t *data, SearchStrategy strat=EHIGHER_LOWER, int warps=-1);
 };
 

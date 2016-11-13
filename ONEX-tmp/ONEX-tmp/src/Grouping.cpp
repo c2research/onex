@@ -398,11 +398,73 @@ kBest TimeSeriesGroup::getBestMatch(TimeSeriesIntervalEnvelope query, int warps,
     return bsf;
 }
 
+
+/**
+ * Gets the best match, within a group thats not from the original TimeSeries
+ * (if there are only seq from the same ts, it will choose the best one.)
+ *
+ * \param query the query we're matching
+ * \param warps ...
+ * \param dropout a pruning optimization TODO(charlie): confirm
+ * \return {kBest} - the index of the closest match in the group
+ */
+kBest TimeSeriesGroup::getBestDistinctMatch(TimeSeriesIntervalEnvelope query, int warps, double dropout, int qSeq)
+{
+    if (warps < 0)
+        warps = query.interval.length() * 2;
+
+    kBest bsf = {
+        .seq = -1,
+        .interval = TimeInterval(-1, -1),
+        .dist = dropout
+    };
+
+    kBest curr;
+
+    for (int seq = 0; seq < dataset->getSeqCount(); seq++) {
+
+        if (seq == qSeq) {
+          // skip all seqs from the same TS
+          continue;
+        }
+
+        curr.seq = seq;
+
+        for (int start = 0; start < perSeq; start++) {
+
+            curr.interval.start = start;
+
+            if (!members[seq * perSeq + start]) {
+                curr.dist = INF;
+            } else {
+                TimeSeriesIntervalEnvelope env(dataset->getInterval(seq, TimeInterval(start, start + length - 1)));
+                curr.dist = env.cascadeDist(query, warps, bsf.dist);
+                bsf.min(curr);
+            }
+
+            if (bsf.dist == 0.0)
+                break;
+        }
+
+        if (bsf.dist == 0.0)
+            break;
+    }
+
+    bsf.interval.end = bsf.interval.start + length - 1;
+
+    if (bsf.seq == -1) {
+        // allow finding original TS if it fails to find a distinct one
+        return this->getBestMatch(query, warps, dropout);
+    }
+
+    return bsf;
+}
+
 vector<kBest> TimeSeriesGroup::getSeasonal(int seq)
 {
     vector<kBest> TSubseq;
     for (int start = 0; start < perSeq; start++) {
-        if (members[seq * perSeq + start]) 
+        if (members[seq * perSeq + start])
         {
             kBest sub = {
                 .seq = seq,
@@ -628,7 +690,7 @@ int *genOrder(SearchStrategy strat, int top, int bottom, int center)
 
              if (order[i] >= top || order[i] < bottom) // Off by one... len may not be odd.
                  order[i] = center + (((i&1) != 0)? -((i + 2)/2) : ((i + 2)/2));
- 
+
             break;
 
         default:
@@ -763,6 +825,53 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
 
     for (int i = 0; i < count; i++) {
 
+        seqitem_t dist;
+        int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+
+        if ((dist < bsf) || (bsf == INF)) {
+            bsf = dist;
+            bsfGroup = g;
+            bsfLen = order[i] + 1;
+        }
+
+        if (bsf == 0.0)
+            break;
+    }
+
+    free(order);
+
+    cout << "rld " << endl;
+
+    return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestMatch(qenv, groups.size()*2);
+}
+
+kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, SearchStrategy strat, int warps, int qSeq)
+{
+
+    TimeSeriesIntervalEnvelope qenv(TimeSeriesInterval(data, TimeInterval(0, len - 1)));
+
+    int bottom, top; // Bottom: First to search. Top: last to search + 1
+    int center = len - 1;
+
+    if (warps < 0)
+        warps = groups.size() * 2;
+
+    bottom = std::max(0, center - warps);
+    top = std::min((int)groups.size(), center + warps + 1);
+
+    center = (bottom + top - 1) / 2;
+
+    int count = top - bottom;
+
+    int *order = genOrder(strat, top, bottom, center);
+
+
+    seqitem_t bsf = INF;
+    int bsfGroup = -1;
+    int bsfLen = -1;
+
+    for (int i = 0; i < count; i++) {
+
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
         seqitem_t dist;
         int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
@@ -777,12 +886,11 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
             break;
     }
 
- //   cout << "Found best group. index@length: distance: "
- //        << bsfGroup << "@" <<bsfLen << ": " << bsf << endl;
-
     free(order);
 
-    return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestMatch(qenv, groups.size()*2);
+    cout << "rld " << endl;
+
+    return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestDistinctMatch(qenv, groups.size()*2, INF, qSeq);
 }
 
 int TimeSeriesSetGrouping::fromFile(const char *path)

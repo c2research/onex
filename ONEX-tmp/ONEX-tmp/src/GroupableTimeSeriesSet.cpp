@@ -29,7 +29,7 @@ GroupableTimeSeriesSet::~GroupableTimeSeriesSet(void)
         delete grouping;
 }
 
-int GroupableTimeSeriesSet::getSeqCount(void) 
+int GroupableTimeSeriesSet::getSeqCount(void)
 {
     return dataset->getSeqCount();
 }
@@ -198,7 +198,7 @@ warping_path_t GroupableTimeSeriesSet::warping_path(int seq, TimeInterval interv
 
     warping_path_t path = metric->getWarpingPath(a, b);
 
-    return path;  
+    return path;
 }
 
 vector< vector<kBest> > GroupableTimeSeriesSet::seasonalSimilarity(int TSIndex, int length)
@@ -229,13 +229,17 @@ kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSe
         return best;
     }
 
-    best = grouping->getBestInterval(otherInt.length(),
+#ifdef FIND_DISTINCT
+    best = grouping->getBestDistinctInterval(otherInt.length(),
                                            other->dataset->getRawData(otherSeq, otherInt.start),
-                                           strat, warps);
+                                           strat, warps, otherSeq);
+#else
+    best = grouping->getBestInterval(otherInt.length(),
+                                       other->dataset->getRawData(otherSeq, otherInt.start),
+                                       strat, warps);
+#endif
+
     return best;
-  //  cout << "Found most similar interval." << endl;
- //   cout << "Sequence number and interval: " << best.seq << "@"
-   //                   << "[" << best.interval.start << ", " << best.interval.end << "]." << endl;
 }
 
 void GroupableTimeSeriesSet::outlier(int length)

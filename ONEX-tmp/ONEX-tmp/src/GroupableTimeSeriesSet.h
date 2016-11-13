@@ -1,14 +1,17 @@
 /**
  * \class GroupableTimeSeriesSet
  * \brief A set of groupable time series data.
- * 
- * This class is a wrapper of a set of time series data. It provides functions for 
- * grouping the subsequences in the dataset, and performing similarity searches 
+ *
+ * This class is a wrapper of a set of time series data. It provides functions for
+ * grouping the subsequences in the dataset, and performing similarity searches
  * on them.
- * 
+ *
  */
 #ifndef GROUPABLETIMESRIESSET_H
 #define GROUPABLETIMESRIESSET_H
+
+#define FIND_DISTINCT 1
+//set to 0 to revert to original similar function
 
 #include "TimeSeries.h"
 #include "Grouping.h"
@@ -51,7 +54,7 @@ public:
     /**
      * Load dataset from a file into the current instance.
      *
-     * \param path path to the file containing the dataset. 
+     * \param path path to the file containing the dataset.
      * \return 0 if the operation is successful, -1 otherwise.
      */
     int dbFromFile(const char *path);
@@ -59,14 +62,14 @@ public:
     /**
      * Save current dataset to a file.
      *
-     * \param path path of the 
+     * \param path path of the
      * \return 0 if the operation is successful, -1 otherwise.
-     */   
+     */
     int dbToFile(const char *path);
 
     /**
      * Load dataset from a file with provided parameters.
-     * 
+     *
      * \param seqCount number of sequences in the dataset.
      * \param seqLength length of each sequence in the dataset.
      * \del if set to 1, remove the first value of every row in the dataset.
@@ -79,7 +82,7 @@ public:
      *
      * \param path path of the file containing the dataset.
      * \return 0 if the operation is successful, -1 otherwise.
-     */   
+     */
     int odbToFile(const char *path);
 
    /**
@@ -87,13 +90,13 @@ public:
      *
      * \param path path of the file containing the groups.
      * \return 0 if the operation is successful, -1 otherwise.
-     */   
+     */
     int groupsToFile(const char *path);
 
     /**
      * Load groups from a file into the current instance.
      *
-     * \param path path to the file containing the groups. 
+     * \param path path to the file containing the groups.
      * \return 0 if the operation is successful, -1 otherwise.
      */
     int groupsFromFile(const char *path);
@@ -148,10 +151,10 @@ public:
                   SeriesDistanceMetric *metric);
 
     /**
-     * Find a subsequence in this dataset that best-matches with a subsequence in 
+     * Find a subsequence in this dataset that best-matches with a subsequence in
      * another dataset.
      *
-     * \param other pointer to another dataset. 
+     * \param other pointer to another dataset.
      * \param otherSeq index of a sequenc in the other dataset.
      * \param otherInt an interval in the selected sequence in the other dataset.
      * \param strat search strategy.
