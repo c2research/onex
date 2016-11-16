@@ -68,14 +68,12 @@ D3OverviewChart.prototype.create = function(el, props, data) {
                 .extent( function() { return [[0,0 ], [width, height]]; })
                 .on( "end", onBrush)
 
-  svg.append("g")
+  var brushWrapper = svg.append("g")
       .attr("class", "brush")
       .attr('transform', this._translate())
       .attr('clip-path', 'url(#mainClip)')
       .call( brush ); //function () { xScale.domain(viewport.empty() ? xScale.domain() : viewport.extent()); ));
 
-
-  this.brush = brush;
   // Call update to initiate the first rendering.
   this.update(el, data);
 };
@@ -86,6 +84,7 @@ D3OverviewChart.prototype.update = function(el, data) {
 
   this._drawAxis(svg, data);
   this._drawHorizonArea(svg, data);
+//  brushWrapper.call(brush.move, [data.viewRange[0], data.viewRange[1]].map(function(x){ return xScale(x);}));
 };
 
 // Remove the current chart

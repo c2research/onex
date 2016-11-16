@@ -23,6 +23,7 @@ var InsightViewGraphs = React.createClass({
 
     //TODO(charlie): clean this up (a lot). logic has become, not the best.
 
+    // VARIABLES
     var viewStart = this.props.viewRange[0];
     var viewEnd = this.props.viewRange[1];
 
@@ -30,38 +31,54 @@ var InsightViewGraphs = React.createClass({
     var qStart = this.props.qStart;
     var qEnd = this.props.qEnd;
 
-    var qValuesSelection = qValues.slice(viewStart, viewEnd + 1);
-    //var qValuesSelection = qValues.slice(qStart, qEnd + 1);
+    // THE TOP - DETAIL CHART
 
-    var rValues = this.props.rValues && this.props.rValues.filter(function(x) {
-      return (x[0] >= viewStart && x[1] <= viewEnd);
+    var detailQViewValuesSelection = qValues.slice(viewStart, viewEnd + 1);
+    var detailQSelectedValuesSelection = qValues.slice(qStart, qEnd + 1);
+
+    //only show match on the top that is in view.
+    var detailRValues = this.props.rValues && this.props.rValues.filter(function(x) {
+      return (x[0] >= viewStart && x[0] < viewEnd);
     });
 
-    var warpingPath = this.props.warpingPath;
+    //take only those which are in the current view
+    var detailWarpingPath = this.props.warpingPath && this.props.warpingPath.filter(function(x) {
+      return (x[0] >= viewStart && x[0] < viewEnd) && (x[1] >= viewStart && x[1] < viewEnd);
+    });
+    //shift them to mark appropriate points
+    detailWarpingPath = this.props.warpingPath && detailWarpingPath.map(function(x) {
+      return [x[0]-viewStart, x[1]-viewStart];
+    });
+
+    //THE BOT - OVERVIEW CHART
+    var overviewRValues = this.props.rValues;
+
+    // DIMENSIONS && MARGINS
 
     var subHeight = (4.0/5.0) * this.props.height - 30;
     var totalHeight = this.props.height - subHeight - 30;
     var subMargins = {left: 35, right: 15, top: 25, bottom: 20};
     var totalMargins = {left: 35, right: 15, top: 5, bottom: 20};
 
-    var subData = {
+    var detailData = {
       series: [],
       domains: { x: [viewStart, viewEnd], y: [0, 1]},
       //domains: { x: [qStart, qEnd], y: [0, 1]},
     }
 
-    var totalData = {
+    var overviewData = {
       series: [],
       domains: { x: [0, qValues.length], y: [0, 1] },
-      viewRange: this.props.viewRange
+      viewRange: [viewStart, viewEnd]
     }
 
-    totalData.series.push({ values: qValues, color: 'black'});
+    overviewData.series.push({ values: qValues, color: 'black'});
 
-    if (qValuesSelection.length > 0) {
-      subData.series.push({ values: qValuesSelection, color: 'black'});
-      totalData.series.push({ values: qValuesSelection, color: 'red'});
+    if (detailQViewValuesSelection.length > 0) {
+      detailData.series.push({ values: detailQViewValuesSelection, color: 'black'});
+      overviewData.series.push({ values: detailQViewValuesSelection, color: 'red'});
     }
+
 
     if (this.props.viewingResults) {
       //TODO(charlie) move this functionality elsewhere once the graph types are set up
@@ -70,43 +87,42 @@ var InsightViewGraphs = React.createClass({
       if (this.props.graphType == InsightConstants.GRAPH_TYPE_WARP){
         biasQuery = 0.05 * this.props.dtwBiasValue;
       }
+      var biasedRValues = detailRValues.map(function(x) { return [x[0], x[1] + biasQuery]; });
+      detailData.series.push({ values: biasedRValues, color: biasQuery == 0 ? 'green' : 'magenta'});
+      //detailData.domains.x = [Math.min(qStart, rValues[0][0]), Math.max(qEnd, rValues[rValues.length - 1][0])];
+      //detailData.domains.
+      detailData.warpingPath = detailWarpingPath;
 
-      var biasedRValues = rValues.map(function(x) { return [x[0], x[1] + biasQuery]; });
-      subData.series.push({ values: biasedRValues, color: biasQuery == 0 ? 'green' : 'magenta'});
-      //subData.domains.x = [Math.min(qStart, rValues[0][0]), Math.max(qEnd, rValues[rValues.length - 1][0])];
-      //subData.domains.
-      subData.warpingPath = warpingPath;
-
-      totalData.series.push({values: rValues, color: 'green'});
-      totalData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], rValues[rValues.length - 1][0])]
+      overviewData.series.push({values: overviewRValues, color: 'green'});
+      overviewData.domains.x = [0, Math.max(qValues[qValues.length - 1][0], overviewRValues[overviewRValues.length - 1][0])]
     }
 
     var subD3JSX, totalD3JSX;
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
-        subData.color = 'blue';
-        subData.strokeWidth = '1.5';
-        subD3JSX = this.generateConnectedScatterPlot(subData, subMargins, subHeight);
+        detailData.color = 'blue';
+        detailData.strokeWidth = '1.5';
+        subD3JSX = this.generateConnectedScatterPlot(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_HORIZON:
         //break;
       case InsightConstants.GRAPH_TYPE_WARP:
-        subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
+        subD3JSX = this.generateMultiLineChart(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_LINE:
-        subData.warpingPath = null;
-        subD3JSX = this.generateMultiLineChart(subData, subMargins, subHeight);
+        detailData.warpingPath = null;
+        subD3JSX = this.generateMultiLineChart(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_RADIAL:
-        subD3JSX =  this.generateRadialChart(subData, subMargins, subHeight);
+        subD3JSX =  this.generateRadialChart(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
-        subData.warpingPath = null;
-        subD3JSX = this.generateSplitChart(subData, subMargins, subHeight);
+        detailData.warpingPath = null;
+        subD3JSX = this.generateSplitChart(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_ERROR:
-        subD3JSX =  this.generateErrorChart(qValuesSelection, rValues, warpingPath, subMargins, subHeight);
+        subD3JSX =  this.generateErrorChart(detailQSelectedValuesSelection, detailRValues, detailWarpingPath, subMargins, subHeight);
         break;
       default:
         console.log('case: ', this.props.graphType);
@@ -116,7 +132,7 @@ var InsightViewGraphs = React.createClass({
                        margins={totalMargins}
                        width={this.props.width - totalMargins.left - totalMargins.right}
                        height={totalHeight - totalMargins.top - totalMargins.bottom}
-                       data={totalData}
+                       data={overviewData}
                        strokeWidth={3}
                        onBrushSelection={this._onViewPointSelectionOverview}
                        viewRange={this.props.viewRange}
@@ -126,42 +142,42 @@ var InsightViewGraphs = React.createClass({
               {totalD3JSX}
             </div>
    },
-   generateConnectedScatterPlot: function(subData, subMargins, subHeight){
+   generateConnectedScatterPlot: function(detailData, subMargins, subHeight){
       return <ConnectedScatterPlot
                       margins={subMargins}
                       width={this.props.width - subMargins.left - subMargins.right}
                       height={subHeight - subMargins.top - subMargins.bottom}
-                      data={subData}
+                      data={detailData}
                       strokeWidth={3}
                       color={'green'}
                     />;
    },
-   generateMultiLineChart: function(subData, subMargins, subHeight){
+   generateMultiLineChart: function(detailData, subMargins, subHeight){
       return <MultiTimeSeriesChart
                       margins={subMargins}
                       width={this.props.width - subMargins.left - subMargins.right}
                       height={subHeight - subMargins.top - subMargins.bottom}
-                      data={subData}
+                      data={detailData}
                       strokeWidth={3}
                     />;
    },
-   generateRadialChart: function(subData, subMargins, subHeight){
+   generateRadialChart: function(detailData, subMargins, subHeight){
       return <RadialChart
                       margins={subMargins}
                       width={this.props.width - subMargins.left - subMargins.right}
                       height={subHeight - subMargins.top - subMargins.bottom}
                       strokeWidth={3}
-                      data={subData}
+                      data={detailData}
               />;
    },
-   generateSplitChart: function(subData, subMargins, subHeight){
-      var querySubData = {
-        series: [subData.series[0]],
-        domains: subData.domains
+   generateSplitChart: function(detailData, subMargins, subHeight){
+      var querydetailData = {
+        series: [detailData.series[0]],
+        domains: detailData.domains
       };
-      var resultSubData = {
-        series: (subData.series.length > 1) && [subData.series[1]] || [{ values: [], color: 'black'}],
-        domains: subData.domains
+      var resultdetailData = {
+        series: (detailData.series.length > 1) && [detailData.series[1]] || [{ values: [], color: 'black'}],
+        domains: detailData.domains
       };
 
       return <div>
@@ -169,14 +185,14 @@ var InsightViewGraphs = React.createClass({
                         margins={subMargins}
                         width={this.props.width - subMargins.left - subMargins.right}
                         height={(subHeight / 2) - subMargins.top - subMargins.bottom}
-                        data={querySubData}
+                        data={querydetailData}
                         strokeWidth={3}
                       />
         <MultiTimeSeriesChart
                         margins={subMargins}
                         width={this.props.width - subMargins.left - subMargins.right}
                         height={(subHeight / 2) - subMargins.top - subMargins.bottom}
-                        data={resultSubData}
+                        data={resultdetailData}
                         strokeWidth={3}
                       />
       </div>;
