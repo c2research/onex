@@ -38,7 +38,8 @@ var InsightViewSimilarity = React.createClass({
                               warpingPath={resultQueryPair.warpingPath}
                               rStart={resultQueryPair.rStart}
                               rEnd={resultQueryPair.rEnd}
-                              dtwBiasValue={that.props.dtwBiasValue}/> //warpingPath={resultQueryPair.result.warpingPath}
+                              dtwBiasValue={that.props.dtwBiasValue}
+                              viewRange={that.props.viewRange}/> //warpingPath={resultQueryPair.result.warpingPath}
         );
     });
 
@@ -48,6 +49,7 @@ var InsightViewSimilarity = React.createClass({
     var similarityQueryInfo = this.props.similarityQueryInfo;
     var values = [], qStart = 0, qEnd = -1;
 
+    //TODO(charlie): move this to the store, this 'logic' does not need to be so deep in
     if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
       values = similarityQueryInfo.qDatasetValues;
       qStart = similarityQueryInfo.qDatasetStart;
@@ -68,7 +70,8 @@ var InsightViewSimilarity = React.createClass({
                         qValues={values}
                         qStart={qStart}
                         qEnd={qEnd}
-                        dtwBiasValue={this.props.dtwBiasValue}/>
+                        dtwBiasValue={this.props.dtwBiasValue}
+                        viewRange={this.props.viewRange}/>
 
     var InsightViewTableJSX =
     <div className="viewTable">

@@ -13,7 +13,7 @@ var InsightSimilarityQuery = React.createClass({
 
      var distanceJSX = null;
 
-     var querySlider = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET && 
+     var querySlider = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET &&
                        <InsightQuerySlider
                           qSeq={this.props.qSeq}
                           dsCurrentLength={this.props.dsCurrentLength}
@@ -27,10 +27,9 @@ var InsightSimilarityQuery = React.createClass({
         <UploadQuery />
         <div>
           {querySlider}
-          <InsightSimilarityQueryOptions qValuesLength={this.props.qValues.length} qStart={this.props.qStart} qEnd={this.props.qEnd} />
         </div>
      </div>;
-
+     //<InsightSimilarityQueryOptions qValuesLength={this.props.qValues.length} qStart={this.props.qStart} qEnd={this.props.qEnd} />
      return <div> {panelJSX} </div>;
    },
 

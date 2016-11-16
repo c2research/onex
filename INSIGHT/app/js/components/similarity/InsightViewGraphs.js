@@ -1,10 +1,13 @@
 var React = require('react');
-var d3 = require('d3');
+
 var InsightConstants = require('./../../flux/constants/InsightConstants');
+var InsightActions = require('./../../flux/actions/InsightActions');
+
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
 var ConnectedScatterPlot = require('./../charts/ConnectedScatterPlot');
 var RadialChart = require('./../charts/RadialChart');
+var OverviewChart = require('./../charts/OverviewChart');
 /**
  * This is a prototype for an initial view for the graphs
  */
@@ -18,11 +21,22 @@ var InsightViewGraphs = React.createClass({
         pair! (And thus should render the result).
       */
 
+    //TODO(charlie): clean this up (a lot). logic has become, not the best.
+
+    var viewStart = this.props.viewRange[0];
+    var viewEnd = this.props.viewRange[1];
+
     var qValues = this.props.qValues;
     var qStart = this.props.qStart;
     var qEnd = this.props.qEnd;
-    var qValuesSelection = qValues.slice(qStart, qEnd + 1);
-    var rValues = this.props.rValues;
+
+    var qValuesSelection = qValues.slice(viewStart, viewEnd + 1);
+    //var qValuesSelection = qValues.slice(qStart, qEnd + 1);
+
+    var rValues = this.props.rValues && this.props.rValues.filter(function(x) {
+      return (x[0] >= viewStart && x[1] <= viewEnd);
+    });
+
     var warpingPath = this.props.warpingPath;
 
     var subHeight = (4.0/5.0) * this.props.height - 30;
@@ -32,12 +46,14 @@ var InsightViewGraphs = React.createClass({
 
     var subData = {
       series: [],
-      domains: { x: [qStart, qEnd], y: [0, 1]},
+      domains: { x: [viewStart, viewEnd], y: [0, 1]},
+      //domains: { x: [qStart, qEnd], y: [0, 1]},
     }
 
     var totalData = {
       series: [],
-      domains: { x: [0, qValues.length], y: [0, 1] }
+      domains: { x: [0, qValues.length], y: [0, 1] },
+      viewRange: this.props.viewRange
     }
 
     totalData.series.push({ values: qValues, color: 'black'});
@@ -48,7 +64,7 @@ var InsightViewGraphs = React.createClass({
     }
 
     if (this.props.viewingResults) {
-      //TODO(charlie) move this funcitonality elsewhere once the graph types are set up
+      //TODO(charlie) move this functionality elsewhere once the graph types are set up
 
       var biasQuery = 0;
       if (this.props.graphType == InsightConstants.GRAPH_TYPE_WARP){
@@ -57,7 +73,8 @@ var InsightViewGraphs = React.createClass({
 
       var biasedRValues = rValues.map(function(x) { return [x[0], x[1] + biasQuery]; });
       subData.series.push({ values: biasedRValues, color: biasQuery == 0 ? 'green' : 'magenta'});
-      subData.domains.x = [Math.min(qStart, rValues[0][0]), Math.max(qEnd, rValues[rValues.length - 1][0])];
+      //subData.domains.x = [Math.min(qStart, rValues[0][0]), Math.max(qEnd, rValues[rValues.length - 1][0])];
+      //subData.domains.
       subData.warpingPath = warpingPath;
 
       totalData.series.push({values: rValues, color: 'green'});
@@ -95,12 +112,14 @@ var InsightViewGraphs = React.createClass({
         console.log('case: ', this.props.graphType);
     }
 
-    totalD3JSX = <MultiTimeSeriesChart
+    totalD3JSX = <OverviewChart
                        margins={totalMargins}
                        width={this.props.width - totalMargins.left - totalMargins.right}
                        height={totalHeight - totalMargins.top - totalMargins.bottom}
                        data={totalData}
                        strokeWidth={3}
+                       onBrushSelection={this._onViewPointSelectionOverview}
+                       viewRange={this.props.viewRange}
                      />;
      return <div>
               {subD3JSX}
@@ -175,6 +194,12 @@ var InsightViewGraphs = React.createClass({
                                             data={chartData}
                                             strokeWidth={1}
                                             color={'blue'} />
+   },
+   /**
+    * selects the view to be the given range
+    */
+   _onViewPointSelectionOverview: function(range) {
+     InsightActions.selectSimilarityViewPoints(range);
    }
 });
 

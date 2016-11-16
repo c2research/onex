@@ -45,6 +45,7 @@ function getState() {
     graphType: InsightStoreSimilarity.getGraphType(),
     similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
     similarityResults: InsightStoreSimilarity.getResults(),
+    viewRange: InsightStoreSimilarity.getViewRange(),
 
     //dtw bias & menu options
     dtwBiasValue: InsightStoreSimilarity.getDTWBias(),
@@ -110,6 +111,7 @@ var InsightPlatform = React.createClass({
                                                  results={this.state.similarityResults}
                                                  dtwBiasValue={this.state.dtwBiasValue}
                                                  graphType={this.state.graphType}
+                                                 viewRange={this.state.viewRange}
                                                  />
         break;
       case InsightConstants.VIEW_MODE_SEASONAL:

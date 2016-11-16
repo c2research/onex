@@ -10,6 +10,8 @@ var data = {
 
 	//state
 	graphType: InsightConstants.GRAPH_TYPE_WARP,
+	datasetViewRange: [],
+	uploadViewRange: [],
 
 	//dtw bias
 	dtwBias: 0
@@ -93,6 +95,14 @@ var InsightStoreSimilarity = assign({}, {
 		return data.graphType;
 	},
 
+	getViewRange: function() {
+		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
+			return data.datasetViewRange;
+		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
+			return data.uploadViewRange;
+		}
+	},
+
 	/**
 	 * @param {InsightConstant} - the current query type
 	 */
@@ -153,6 +163,8 @@ var InsightStoreSimilarity = assign({}, {
 		similarityQueryInfo.qUploadValues = qValues;
 		similarityQueryInfo.qUploadStart = 0;
 		similarityQueryInfo.qUploadEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+
+		data.uploadViewRange = [similarityQueryInfo.qDatasetStart, similarityQueryInfo.qDatasetEnd];
 	},
 
 	/**
@@ -162,6 +174,8 @@ var InsightStoreSimilarity = assign({}, {
 		similarityQueryInfo.qDatasetValues = qValues;
 		similarityQueryInfo.qDatasetStart = 0;
 		similarityQueryInfo.qDatasetEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+
+		data.datasetViewRange = [similarityQueryInfo.qDatasetStart, similarityQueryInfo.qDatasetEnd];
 	},
 
 	/**
@@ -179,6 +193,26 @@ var InsightStoreSimilarity = assign({}, {
 		data.graphType = type;
 	},
 
+	setViewRange: function(array) {
+		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
+			data.datasetViewRange = array;
+		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
+			data.uploadViewRange = array;
+		}
+	},
+
+	/**
+	 * current view is selected for the query start and end
+	 */
+	selectCurrentRange: function() {
+		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
+			this.setQDatasetStart(data.datasetViewRange[0]);
+			this.setQDatasetEnd(data.datasetViewRange[1]);
+		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
+			this.setQUploadStart(data.datasetViewRange[0]);
+			this.setQUploadEnd(data.uploadViewRange[1]);
+		}
+	},
 	/**
 	 * gets the dtw bias
 	 */
@@ -420,6 +454,12 @@ AppDispatcher.register(function(action) {
 			InsightStoreSimilarity.setGraphType(action.actionType);
 			InsightStore.emitChange();
 			break;
+		case InsightConstants.SELECT_VIEW_POINTS:
+			InsightStoreSimilarity.setViewRange(action.id);
+			InsightStore.emitChange();
+		case InsightConstants.SELECT_CURRENT_RANGE:
+			InsightStoreSimilarity.selectCurrentRange();
+			InsightStore.emitChange();
 		default:
 		  // no op
 	}

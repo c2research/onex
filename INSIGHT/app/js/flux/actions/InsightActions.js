@@ -133,6 +133,18 @@ var InsightActions = {
       id: value
     });
   },
+  selectCurrentRange: function(){
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_CURRENT_RANGE,
+      id: 1
+    });
+  },
+  selectSimilarityViewPoints: function(array) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_VIEW_POINTS,
+      id: array
+    })
+  },
   selectSeasonalQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_SELECT_QUERY,
