@@ -23,9 +23,6 @@ var InsightTab = React.createClass({
        case InsightConstants.VIEW_MODE_SEASONAL:
          title = "Seasonal"
          break;
-       case InsightConstants.VIEW_MODE_CLUSTER:
-         title = "Clustering"
-         break;
        default:
          //no op - mode not supported
      }

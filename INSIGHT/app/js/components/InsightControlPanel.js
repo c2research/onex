@@ -23,11 +23,8 @@ var InsightControlPanel = React.createClass({
       }
     }
 
-    //TODO: generalize this (probably)
     var modeList = [InsightConstants.VIEW_MODE_SIMILARITY,
-                   InsightConstants.VIEW_MODE_SEASONAL,
-                   InsightConstants.VIEW_MODE_CLUSTER];
-
+                   InsightConstants.VIEW_MODE_SEASONAL];
     var that = this;
     var tabList = modeList.map(function(mode) {
       return <InsightTab type={mode} current={that.props.viewMode} width={that.props.width / 3 - 10} key={mode} />;
