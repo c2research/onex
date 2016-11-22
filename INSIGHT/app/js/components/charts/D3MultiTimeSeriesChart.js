@@ -104,6 +104,7 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
                 .style('text-anchor', 'middle');
 
   // Call update to initiate the first rendering.
+  this._addTitle(svg);
   this.update(el, data);
 };
 

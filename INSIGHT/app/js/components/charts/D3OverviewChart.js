@@ -14,7 +14,6 @@ D3OverviewChart.prototype.constructor = D3OverviewChart;
 // to drawn the chart are kept inside the current object.
 D3OverviewChart.prototype.create = function(el, props, data) {
   this.props = props;
-  this.domains = data.domains;
 
   var width = props.width;
   var height = props.height;
@@ -49,12 +48,13 @@ D3OverviewChart.prototype.create = function(el, props, data) {
     .attr('transform', this._translate())
     .attr('clip-path', 'url(#mainClip)');
 
-  var brushWrapper = svg.append("g")
-      .attr("class", "brush")
-      .attr('transform', this._translate())
-      .attr('clip-path', 'url(#mainClip)');
-
-  // Call update to initiate the first rendering.
+ // add the brush group
+ svg.append("g")
+    .attr("class", "brush")
+    .attr('transform', this._translate())
+    .attr('clip-path', 'url(#mainClip)');
+  
+  this._addTitle(svg);
   this.update(el, data);
 };
 

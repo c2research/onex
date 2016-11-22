@@ -7,7 +7,8 @@ var MultiTimeSeriesChart = React.createClass({
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     margins: React.PropTypes.object,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   // TODO(Cuong): consider this to be a mixin so that it can be reused in other charts
@@ -30,7 +31,8 @@ var MultiTimeSeriesChart = React.createClass({
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     }
     this.d3MultiTimeSeriesChart.create(el, this.nonDataProps, this.props.data);
   },
@@ -41,7 +43,8 @@ var MultiTimeSeriesChart = React.createClass({
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     };
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3MultiTimeSeriesChart.destroy(el);

@@ -7,7 +7,8 @@ var ConnectedScatterPlot = React.createClass({
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     margins: React.PropTypes.object,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   _detectChangeAndUpdateNonDataProps: function(newNonDataProps) {
@@ -29,7 +30,8 @@ var ConnectedScatterPlot = React.createClass({
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     }
     //what should it show with no warping path?
     this.d3ConnectedScatterPlot.create(el, this.nonDataProps, this.props.data);
@@ -41,7 +43,8 @@ var ConnectedScatterPlot = React.createClass({
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     };
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3ConnectedScatterPlot.destroy(el);

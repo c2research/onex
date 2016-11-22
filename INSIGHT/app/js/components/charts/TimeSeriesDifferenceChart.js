@@ -8,7 +8,8 @@ var TimeSeriesDifferenceChart = React.createClass({
     height: React.PropTypes.number,
     margins: React.PropTypes.object,
     color: React.PropTypes.string,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   componentDidMount: function() {
@@ -19,7 +20,8 @@ var TimeSeriesDifferenceChart = React.createClass({
       height: this.props.height,
       margins: this.props.margins,
       color: this.props.color,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     }, this.props.data);
   },
 

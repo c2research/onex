@@ -122,7 +122,7 @@ D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
                 .style('font-family', 'sans-serif')
                 .style('text-anchor', 'middle');
 
-
+  this._addTitle(svg);
   this.update(el, data);
 };
 

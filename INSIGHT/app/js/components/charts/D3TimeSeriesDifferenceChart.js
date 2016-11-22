@@ -29,8 +29,8 @@ var D3TimeSeriesDifferenceChart = function() {
 D3TimeSeriesDifferenceChart.prototype = new D3BaseChart;
 D3TimeSeriesDifferenceChart.prototype.constructor = D3TimeSeriesDifferenceChart;
 
-// Append a new chart within a given DOM element. The props and data used 
-// to drawn the chart are kept inside the current object. 
+// Append a new chart within a given DOM element. The props and data used
+// to drawn the chart are kept inside the current object.
 D3TimeSeriesDifferenceChart.prototype.create = function(el, props, data) {
   this.props = props;
 
@@ -52,17 +52,18 @@ D3TimeSeriesDifferenceChart.prototype.create = function(el, props, data) {
                     .attr('y2', height / 2 + margins.top)
                     .attr('stroke', 'black')
                     .attr('stroke-width', 1)
-                    .style('opacity', 0.2); 
+                    .style('opacity', 0.2);
 
   svg.append('g').classed('bar-wrapper', true).attr('transform', this._translate());
-  
+
   // Call update to initiate the first rendering.
+  this._addTitle(svg);
   this.update(el, data);
 };
 
 // Update the current chart with new data.
 D3TimeSeriesDifferenceChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.time-series-difference-chart'); 
+  var svg = d3.select(el).select('svg.time-series-difference-chart');
 
   this._drawBars(svg, data);
 };
@@ -106,7 +107,7 @@ D3TimeSeriesDifferenceChart.prototype._drawBars = function(svg, data) {
       .attr('y2', function(d, i) { return scales.y(d); })
       .attr('stroke', this.props.color)
       .attr('stroke-width', strokeWidth)
-       
+
   // exit
   bars.exit().remove();
 

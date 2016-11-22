@@ -61,6 +61,8 @@ var InsightSimilarityResultsView = React.createClass({
       domains: { x: [qStart, qEnd], y: [0, 1]},
     }
     if (this.props.viewingResults) {
+      var resultTitle = 'Similarity Results';
+
       //only show if we're viewing results
       var resultQValuesSelection = qValues.slice(qStart, qEnd + 1);
       resultData.series.push({ values: resultQValuesSelection, color: '#e2b6b3'});
@@ -84,33 +86,33 @@ var InsightSimilarityResultsView = React.createClass({
           resultData.color = 'blue';
           resultData.strokeWidth = '1.5';
           resultData.domains.x = [0,1];
-          resultD3JSX = this.generateConnectedScatterPlot(resultData, resultMargins, resultHeight);
+          resultD3JSX = this.generateConnectedScatterPlot(resultData, resultMargins, resultHeight, resultTitle);
           break;
         case InsightConstants.GRAPH_TYPE_HORIZON:
           //break;
         case InsightConstants.GRAPH_TYPE_WARP:
-          resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight);
+          resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight, resultTitle);
           break;
         case InsightConstants.GRAPH_TYPE_LINE:
           resultData.warpingPath = null;
-          resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight);
+          resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight, resultTitle);
           break;
         case InsightConstants.GRAPH_TYPE_RADIAL:
-          resultD3JSX =  this.generateRadialChart(resultData, resultMargins, resultHeight);
+          resultD3JSX =  this.generateRadialChart(resultData, resultMargins, resultHeight, resultTitle);
           break;
         case InsightConstants.GRAPH_TYPE_SPLIT:
           resultData.warpingPath = null;
-          resultD3JSX = this.generateSplitChart(resultData, resultMargins, resultHeight);
+          resultD3JSX = this.generateSplitChart(resultData, resultMargins, resultHeight, resultTitle);
           break;
         case InsightConstants.GRAPH_TYPE_ERROR:
-          resultD3JSX =  this.generateErrorChart(resultQValuesSelection, resultRValues, this.props.warpingPath, resultMargins, resultHeight);
+          resultD3JSX =  this.generateErrorChart(resultQValuesSelection, resultRValues, this.props.warpingPath, resultMargins, resultHeight, resultTitle);
           break;
         default:
           console.log('case: ', this.props.graphType);
       }
 
     } else {
-      resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight);
+      resultD3JSX = this.generateMultiLineChart(resultData, resultMargins, resultHeight, 'Find the Most Similar Time Series to View Results');
     }
 
     //THE MIDDLE - SELECTED CHART
@@ -120,7 +122,7 @@ var InsightSimilarityResultsView = React.createClass({
     }
     var selectedQValues = qValues.slice(viewStart, viewEnd + 1);
     selectedViewData.series.push({values: selectedQValues, color: '#e2b6b3'});
-    selectedD3JSX = this.generateMultiLineChart(selectedViewData, selectedMargins, selectedHeight);
+    selectedD3JSX = this.generateMultiLineChart(selectedViewData, selectedMargins, selectedHeight, 'Selected Subesequence');
 
     //THE BOT - OVERVIEW CHART
     var overviewData = {
@@ -136,6 +138,7 @@ var InsightSimilarityResultsView = React.createClass({
                        data={overviewData}
                        strokeWidth={3}
                        onBrushSelection={this._onViewPointSelectionOverview}
+                       title={'Brush a Subesequence'}
                      />;
      return <div>
               {resultD3JSX}
@@ -143,7 +146,7 @@ var InsightSimilarityResultsView = React.createClass({
               {overviewD3JSX}
             </div>
    },
-   generateConnectedScatterPlot: function(resultData, resultMargins, resultHeight){
+   generateConnectedScatterPlot: function(resultData, resultMargins, resultHeight, title){
       return <ConnectedScatterPlot
                       margins={resultMargins}
                       width={this.props.width - resultMargins.left - resultMargins.right}
@@ -151,27 +154,31 @@ var InsightSimilarityResultsView = React.createClass({
                       data={resultData}
                       strokeWidth={3}
                       color={'green'}
+                      title={title}
                     />;
    },
-   generateMultiLineChart: function(resultData, resultMargins, resultHeight){
+   generateMultiLineChart: function(resultData, resultMargins, resultHeight, title){
       return <MultiTimeSeriesChart
                       margins={resultMargins}
                       width={this.props.width - resultMargins.left - resultMargins.right}
                       height={resultHeight - resultMargins.top - resultMargins.bottom}
                       data={resultData}
                       strokeWidth={3}
+                      title={title}
                     />;
    },
-   generateRadialChart: function(resultData, resultMargins, resultHeight){
+   generateRadialChart: function(resultData, resultMargins, resultHeight, title){
       return <RadialChart
                       margins={resultMargins}
                       width={this.props.width - resultMargins.left - resultMargins.right}
                       height={resultHeight - resultMargins.top - resultMargins.bottom}
                       strokeWidth={3}
                       data={resultData}
+                      title={title}
+
               />;
    },
-   generateSplitChart: function(resultData, resultMargins, resultHeight){
+   generateSplitChart: function(resultData, resultMargins, resultHeight, title){
       var queryresultData = {
         series: [resultData.series[0]],
         domains: resultData.domains
@@ -189,6 +196,7 @@ var InsightSimilarityResultsView = React.createClass({
                         height={(resultHeight / 2) - resultMargins.top - resultMargins.bottom}
                         data={queryresultData}
                         strokeWidth={3}
+                        title={title}
                       />
         <MultiTimeSeriesChart
                         margins={splitResultMargins}
@@ -199,7 +207,7 @@ var InsightSimilarityResultsView = React.createClass({
                       />
       </div>;
    },
-   generateErrorChart: function(querySelection, result, warpingPath, resultMargins, resultHeight){
+   generateErrorChart: function(querySelection, result, warpingPath, resultMargins, resultHeight, title){
      var chartData = {
        series: [{values: querySelection}, {values: result}],
        warpingPath: warpingPath,
@@ -211,7 +219,8 @@ var InsightSimilarityResultsView = React.createClass({
                                             margins={resultMargins}
                                             data={chartData}
                                             strokeWidth={1}
-                                            color={'blue'} />
+                                            color={'blue'}
+                                            title={title} />
    },
    /**
     * selects the view to be the given range

@@ -8,7 +8,8 @@ var RadialChart = React.createClass({
     height: React.PropTypes.number,
     strokeWidth: React.PropTypes.number,
     margins: React.PropTypes.object,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    title: React.PropTypes.string
   },
 
   componentDidMount: function() {
@@ -18,7 +19,8 @@ var RadialChart = React.createClass({
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth
+      strokeWidth: this.props.strokeWidth,
+      title: this.props.title
     }, this.props.data);
   },
 

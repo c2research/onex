@@ -8,7 +8,8 @@ var OverviewChart = React.createClass({
     height: React.PropTypes.number,
     margins: React.PropTypes.object,
     data: React.PropTypes.object,
-    onBrushSelection: React.PropTypes.func
+    onBrushSelection: React.PropTypes.func,
+    title: React.PropTypes.string
   },
 
   _recursiveEqualityCheck: function(fieldOld, fieldNew) {
@@ -84,7 +85,8 @@ var OverviewChart = React.createClass({
       height: this.props.height,
       margins: this.props.margins,
       strokeWidth: this.props.strokeWidth,
-      onBrushSelection: this.props.onBrushSelection
+      onBrushSelection: this.props.onBrushSelection,
+      title: this.props.title
     }
     this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
   },
@@ -95,7 +97,8 @@ var OverviewChart = React.createClass({
       height: this.props.height,
       margins: this.props.margins,
       strokeWidth: this.props.strokeWidth,
-      onBrushSelection: this.props.onBrushSelection
+      onBrushSelection: this.props.onBrushSelection,
+      title: this.props.title
     };
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3OverviewChart.destroy(el);

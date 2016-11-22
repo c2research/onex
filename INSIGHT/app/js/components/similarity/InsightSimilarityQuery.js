@@ -19,12 +19,13 @@ var InsightSimilarityQuery = React.createClass({
                           dsCurrentLength={this.props.dsCurrentLength}
                           onChange={this._handleQueryChange} />
 
+     var uploadQueryJSX = (this.props.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) && <UploadQuery />;
 
      var panelJSX = this.props.dsCurrentLength > 0 &&
      <div className="section">
         <h2> Query </h2>
         <QueryTypeRadio qTypeLocal={this.props.qTypeLocal}/>
-        <UploadQuery />
+        {uploadQueryJSX}
         <div>
           {querySlider}
         </div>

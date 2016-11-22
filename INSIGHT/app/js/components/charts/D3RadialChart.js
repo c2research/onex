@@ -30,8 +30,8 @@ var D3RadialChart = function() {
 D3RadialChart.prototype = new D3BaseChart;
 D3RadialChart.prototype.constructor = D3RadialChart;
 
-// Append a new chart within a given DOM element. The props and data used 
-// to drawn the chart are kept inside the current object. 
+// Append a new chart within a given DOM element. The props and data used
+// to drawn the chart are kept inside the current object.
 D3RadialChart.prototype.create = function(el, props, data) {
   this.props = props;
 
@@ -86,12 +86,13 @@ D3RadialChart.prototype.create = function(el, props, data) {
                 .style('text-anchor', 'middle');
 
   // Call update to initiate the first rendering.
+  this._addTitle(svg);
   this.update(el, data);
 };
 
 // Update the current chart with new data.
 D3RadialChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.d3-radial-chart'); 
+  var svg = d3.select(el).select('svg.d3-radial-chart');
 
   this._drawRadialAxis(svg, data);
   this._drawLines(svg, data);
@@ -191,7 +192,7 @@ D3RadialChart.prototype._drawLines = function(svg, data) {
                    .angle(function(d) { return scales.theta(d[0]); })
                    .radius(function(d) { return scales.r(d[1]); } )
                    .curve(d3.curveLinearClosed);
-  
+
   var pathGroup = svg.select('g.lines-wrapper');
   var paths = pathGroup.selectAll('path').data(series);
 
@@ -203,7 +204,7 @@ D3RadialChart.prototype._drawLines = function(svg, data) {
        .attr('stroke', function(d) { return d.color || 'black'; })
        .attr('stroke-width', function(d) { return d.strokeWidth || strokeWidth })
        .attr('fill', 'none');
-       
+
   // exit
   paths.exit().remove();
 
@@ -221,8 +222,8 @@ D3RadialChart.prototype._drawLines = function(svg, data) {
 //                   .y(function(d) { return scales.y(d[1]); })
 //                   .extent([[0, 0], [width, height]]);
 
-//   var voronoiGroup = svg.select('g.voronoiWrapper')             
-  
+//   var voronoiGroup = svg.select('g.voronoiWrapper')
+
 //   // Get an array of polygon. Each polygon is itself a array of points
 //   var polygons = voronoi(points).polygons();
 
@@ -231,8 +232,8 @@ D3RadialChart.prototype._drawLines = function(svg, data) {
 //   voronoiPaths.enter()
 //               .append('path')
 //               .merge(voronoiPaths)
-//               .attr('d', function(d) { 
-//                 return d && ('M' + d.join('L') + 'Z'); 
+//               .attr('d', function(d) {
+//                 return d && ('M' + d.join('L') + 'Z');
 //               })
 //               .style('stroke', 'none')
 //               .style('fill', 'none')
