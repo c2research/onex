@@ -73,13 +73,6 @@ var InsightViewSimilarity = React.createClass({
                         dtwBiasValue={this.props.dtwBiasValue}
                         viewRange={this.props.viewRange}/>
 
-    var InsightViewTableJSX = null;
-    // <div className="viewTable">
-    //   <InsightViewTable width={this.props.width}
-    //                     results={this.props.results.resultList}
-    //                     height={tableHeight}/>
-    // </div>
-
     var InsightMenuBarJSX = values.length > 0 ?
     <InsightMenuBar width={menuWidth}
                     height={this.props.height - tableHeight}
@@ -109,7 +102,6 @@ var InsightViewSimilarity = React.createClass({
                   {InsightMenuBarJSX}
                 </div>
               </div>
-              {InsightViewTableJSX}
             </div> );
    }
 });

@@ -158,10 +158,10 @@ input {
 
 /* ---------->>> CHARTS <<<-----------*/
 
-.viewTable {
+/*.viewTable {
   position: absolute;
   bottom: 0px;
-}
+}*/
 
 .legend {
   visibility: hidden;

@@ -151,6 +151,7 @@ var InsightPlatform = React.createClass({
                              seasonalQueryInfo={this.state.seasonalQueryInfo}
                              distanceList={this.state.distanceList}
                              distanceCurrentIndex={this.state.distanceCurrentIndex}
+                             results={this.state.similarityResults}
         />
         {insightViewJSX}
        </div>

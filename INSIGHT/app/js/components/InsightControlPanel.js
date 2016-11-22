@@ -5,6 +5,7 @@ var InsightSimilarityQuery = require('./similarity/InsightSimilarityQuery');
 var InsightSeasonalQuery = require('./seasonal/InsightSeasonalQuery');
 var InsightTab = require('./InsightTab');
 var InsightFind = require('./similarity/InsightFind');
+var InsightViewTable = require('./similarity/InsightViewTable');
 
 var InsightConstants = require('./../flux/constants/InsightConstants');
 
@@ -57,13 +58,24 @@ var InsightControlPanel = React.createClass({
         break;
     }
 
+    var viewTableJSX = (this.props.results.resultList.length > 0) && (
+         <div className="viewTable">
+             <div className='section'>
+               <h2> History </h2>
+             </div>
+            <InsightViewTable width={this.props.width}
+                        results={this.props.results.resultList}
+                        height={170}/>
+        </div>);
+
     var panelJSX =
     <div className="controlPanel" style={style.divStyle}>
       {tabsJSX}
       {datasetJSX}
       {queryControlJSX}
-      <div style={style.cheatingStyle}> </div>
-    </div>;
+      {viewTableJSX}
+    </div>;//
+
     return panelJSX;
   },
 
