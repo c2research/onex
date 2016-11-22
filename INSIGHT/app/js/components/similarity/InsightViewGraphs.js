@@ -33,7 +33,7 @@ var InsightViewGraphs = React.createClass({
     // the result is visible
     resultMargins = {left: 35, right: 15, top: 25, bottom: 20};
     selectedMargins = {left: 35, right: 15, top: 5, bottom: 20};
-    overviewMargins = {left: 35, right: 15, top: 5, bottom: 20};
+    overviewMargins = {left: 35, right: 15, top: 5, bottom: 35};
     resultHeight = (3.0/5.0) * this.props.height;
     selectedHeight = (1.0/5.0) * this.props.height; // - 30; (TODO(charlie): test this==)
     overviewHeight = (1.0/5.0) * this.props.height;
@@ -180,6 +180,7 @@ var InsightViewGraphs = React.createClass({
         series: (resultData.series.length > 1) && [resultData.series[1]] || [{ values: [], color: 'black'}],
         domains: resultData.domains
       };
+      var splitResultMargins = {left: 35, right: 15, top: 5, bottom: 20};
 
       return <div>
         <MultiTimeSeriesChart
@@ -190,7 +191,7 @@ var InsightViewGraphs = React.createClass({
                         strokeWidth={3}
                       />
         <MultiTimeSeriesChart
-                        margins={resultMargins}
+                        margins={splitResultMargins}
                         width={this.props.width - resultMargins.left - resultMargins.right}
                         height={(resultHeight / 2) - resultMargins.top - resultMargins.bottom}
                         data={resultresultData}

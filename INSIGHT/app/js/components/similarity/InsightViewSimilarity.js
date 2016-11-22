@@ -7,7 +7,7 @@ var InsightMenuBar = require('./InsightMenuBar');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 var menuWidth = 50;
-var tableHeight = 200;
+var tableHeight = 0;//200
 
 /**
  * This is a prototype for an initial view
@@ -73,12 +73,12 @@ var InsightViewSimilarity = React.createClass({
                         dtwBiasValue={this.props.dtwBiasValue}
                         viewRange={this.props.viewRange}/>
 
-    var InsightViewTableJSX =
-    <div className="viewTable">
-      <InsightViewTable width={this.props.width}
-                        results={this.props.results.resultList}
-                        height={tableHeight}/>
-    </div>
+    var InsightViewTableJSX = null;
+    // <div className="viewTable">
+    //   <InsightViewTable width={this.props.width}
+    //                     results={this.props.results.resultList}
+    //                     height={tableHeight}/>
+    // </div>
 
     var InsightMenuBarJSX = values.length > 0 ?
     <InsightMenuBar width={menuWidth}
