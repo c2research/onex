@@ -1,6 +1,6 @@
 var React = require('react');
 
-var InsightViewGraphs = require('./InsightViewGraphs');
+var InsightSimilarityResultsView = require('./InsightSimilarityResultsView');
 var InsightViewTable = require('./InsightViewTable');
 var InsightMenuBar = require('./InsightMenuBar');
 
@@ -26,7 +26,7 @@ var InsightViewSimilarity = React.createClass({
     return keepList.map(function(resultQueryPair, key){
         key += 1;
         return (
-          <InsightViewGraphs key={key}
+          <InsightSimilarityResultsView key={key}
                               viewingResults={true}
                               width={that.props.width - menuWidth}
                               height={height}
@@ -63,7 +63,7 @@ var InsightViewSimilarity = React.createClass({
 
     var InsightViewGraphJSX = this.props.results.viewLiveIndices.length > 0 ?
       this.generateViews(this.props.results) :
-      <InsightViewGraphs viewingResults={false}
+      <InsightSimilarityResultsView viewingResults={false}
                         graphType={this.props.graphType}
                         width={this.props.width - menuWidth}
                         height={this.props.height - tableHeight}

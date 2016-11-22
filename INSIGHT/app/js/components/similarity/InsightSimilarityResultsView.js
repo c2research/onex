@@ -11,7 +11,7 @@ var OverviewChart = require('./../charts/OverviewChart');
 /**
  * This is a prototype for an initial view for the graphs
  */
-var InsightViewGraphs = React.createClass({
+var InsightSimilarityResultsView = React.createClass({
    render: function() {
    /*
       This component will organize the graphs and act as a factory for different
@@ -221,4 +221,4 @@ var InsightViewGraphs = React.createClass({
    }
 });
 
-module.exports = InsightViewGraphs;
+module.exports = InsightSimilarityResultsView;
