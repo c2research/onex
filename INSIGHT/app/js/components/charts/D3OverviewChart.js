@@ -94,7 +94,7 @@ D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
 
   var brush = d3.brushX()
                 .extent( function() { return [[0,0], [width, height]]; })
-                .on( "end", _onBrush);
+                .on( "brush", _onBrush);
 
   g.call(brush);
 }
