@@ -11,11 +11,63 @@ var OverviewChart = React.createClass({
     onBrushSelection: React.PropTypes.func
   },
 
+  _recursiveEqualityCheck: function(fieldOld, fieldNew) {
+    var type = typeof fieldOld;
+    switch(type) {
+      case 'string':
+        return fieldOld === fieldNew;
+        break;
+      case 'object':
+        var val;
+        //array
+        if (Object.prototype.toString.call( fieldOld ) === '[object Array]'){
+          if (fieldOld.length != fieldNew.length) {
+            return false;
+          }
+          for (var i = 0; i < fieldOld.length; i++){
+            val = this._recursiveEqualityCheck(fieldOld[i], fieldNew[i]);
+            if (!val) {
+              return false;
+            }
+          }
+          return true;
+        } else {
+          //dictionary
+          try {
+            var val;
+            for (var f in fieldOld) {
+              val = this._recursiveEqualityCheck(fieldOld[f], fieldNew[f]);
+              if (!val){
+                return false;
+              }
+            }
+            return val;
+          }
+          catch(err) {
+              console.log('failed to parse object for equality');
+              return false;
+          }
+        }
+      case 'number':
+        return fieldOld === fieldNew;
+        break;
+      case 'boolean':
+        return fieldOld === fieldNew;
+        break;
+      case 'function':
+        return fieldOld === fieldNew;
+        break;
+      default:
+        console.log("Missing case from equality types: " + type);
+        return fieldOld === fieldNew;
+        break;
+    }
+  },
   // TODO(Cuong): consider this to be a mixin so that it can be reused in other charts
   _detectChangeAndUpdateNonDataProps: function(newNonDataProps) {
     var changed = false;
     for (var field in newNonDataProps) {
-      if (this.nonDataProps[field] !== newNonDataProps[field]) {
+      if(!this._recursiveEqualityCheck(this.nonDataProps[field], newNonDataProps[field])){
         changed = true;
         break;
       }
@@ -36,7 +88,6 @@ var OverviewChart = React.createClass({
     }
     this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
   },
-
   componentDidUpdate: function() {
     var el = ReactDOM.findDOMNode(this);
     var nonDataProps = {
@@ -49,8 +100,7 @@ var OverviewChart = React.createClass({
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3OverviewChart.destroy(el);
       this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
-    }
-    else {
+    } else {
       this.d3OverviewChart.update(el, this.props.data);
     }
   },

@@ -5,7 +5,6 @@ var InsightSimilarityQuery = require('./similarity/InsightSimilarityQuery');
 var InsightSeasonalQuery = require('./seasonal/InsightSeasonalQuery');
 var InsightTab = require('./InsightTab');
 var InsightFind = require('./similarity/InsightFind');
-var InsightSelectRangeButton = require('./similarity/InsightSelectRangeButton');
 
 var InsightConstants = require('./../flux/constants/InsightConstants');
 
@@ -93,13 +92,12 @@ var InsightControlPanel = React.createClass({
                                            qStart={qStart}
                                            qEnd={qEnd}
                                            qSeq={qSeq}/>;
-    var selectButtonJSX = <InsightSelectRangeButton show={values.length > 0} />;
+    //var selectButtonJSX = <InsightSelectRangeButton show={values.length > 0} />;
     var findButtonJSX = <InsightFind show={values.length > 0}
                                      viewMode={this.props.viewMode}/>;
 
     return <div>
       {queryJSX}
-      {selectButtonJSX}
       {findButtonJSX}
     </div>;
   },

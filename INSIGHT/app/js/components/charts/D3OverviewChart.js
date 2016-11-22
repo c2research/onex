@@ -14,6 +14,7 @@ D3OverviewChart.prototype.constructor = D3OverviewChart;
 // to drawn the chart are kept inside the current object.
 D3OverviewChart.prototype.create = function(el, props, data) {
   this.props = props;
+  this.domains = data.domains;
 
   var width = props.width;
   var height = props.height;
@@ -48,9 +49,36 @@ D3OverviewChart.prototype.create = function(el, props, data) {
     .attr('transform', this._translate())
     .attr('clip-path', 'url(#mainClip)');
 
+  var brushWrapper = svg.append("g")
+      .attr("class", "brush")
+      .attr('transform', this._translate())
+      .attr('clip-path', 'url(#mainClip)');
+
+  // Call update to initiate the first rendering.
+  this.update(el, data);
+};
+
+
+
+// Update the current chart with new data.
+D3OverviewChart.prototype.update = function(el, data) {
+  var svg = d3.select(el).select('svg.multi-time-series-chart');
+
+  this._updateBrushFunction(svg, data);
+  this._drawAxis(svg, data);
+  this._drawHorizonArea(svg, data);
+};
+
+//updates the brush function to have the appropriate domain
+D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
+  var g = svg.select('g.brush');
+  var props = this.props;
+  var width = props.width;
+  var height = props.height;
+
   var xScale = this._scales(data.domains).x;
 
-  var onBrush = function() {
+  var _onBrush = function(){
     var s = d3.event.selection;
     if (s) {
       var realStart = s[0];
@@ -65,27 +93,12 @@ D3OverviewChart.prototype.create = function(el, props, data) {
   }
 
   var brush = d3.brushX()
-                .extent( function() { return [[0,0 ], [width, height]]; })
-                .on( "end", onBrush)
+                .extent( function() { return [[0,0], [width, height]]; })
+                .on( "end", _onBrush);
 
-  var brushWrapper = svg.append("g")
-      .attr("class", "brush")
-      .attr('transform', this._translate())
-      .attr('clip-path', 'url(#mainClip)')
-      .call( brush ); //function () { xScale.domain(viewport.empty() ? xScale.domain() : viewport.extent()); ));
+  g.call(brush);
+}
 
-  // Call update to initiate the first rendering.
-  this.update(el, data);
-};
-
-// Update the current chart with new data.
-D3OverviewChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.multi-time-series-chart');
-
-  this._drawAxis(svg, data);
-  this._drawHorizonArea(svg, data);
-//  brushWrapper.call(brush.move, [data.viewRange[0], data.viewRange[1]].map(function(x){ return xScale(x);}));
-};
 
 // Remove the current chart
 D3OverviewChart.prototype.destroy = function(el) {
@@ -149,11 +162,11 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
     switch(i){
       case 0:
         // entire TS
-        color = 'black'
+        color = '#a3cfec'
         break;
       case 1:
         // selected area
-        color = 'blue'
+        color = '#e2b6b3'
         break;
       case 2:
         //match
@@ -173,7 +186,7 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
        .attr('d', function(d) { return areaFunc(d.values); })
        .style('fill', function(_,i){ return _color(i)})
        .style('stroke-width', 0)
-       .style('fill-opacity', 0.1)
+       .style('fill-opacity', 0.4)
   // exit
   paths.exit().remove();
 };
