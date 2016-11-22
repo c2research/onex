@@ -103,6 +103,7 @@ var InsightViewGraphs = React.createClass({
       case InsightConstants.GRAPH_TYPE_CONNECTED:
         detailData.color = 'blue';
         detailData.strokeWidth = '1.5';
+        detailData.domains.x = [0,1];
         subD3JSX = this.generateConnectedScatterPlot(detailData, subMargins, subHeight);
         break;
       case InsightConstants.GRAPH_TYPE_HORIZON:

@@ -130,17 +130,21 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   var domains = data.domains;
   var scales = this._scales(domains);
 
+  var p = d3.precisionFixed(0.5),
+      f = d3.format("." + p + "f");
+
   // The ticks are spaced with 40 pixels.
   // Set tickSizeInner to -width and -height to create a grid
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
-                       .ticks(Math.round(height / 40));
+                       .ticks(Math.round(height / 40))
+                       .tickFormat(f);
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)
                        .ticks(Math.min(Math.round(width / 40), domains.x[1]))
-                       .tickFormat(d3.format('d'));
+                       .tickFormat(f);
 
   // Actually draw the axes
   svg.select('g.xaxisWrapper')

@@ -38,10 +38,27 @@ D3ConnectedScatterPlot.prototype.constructor = D3ConnectedScatterPlot;
 //Does not use passed in domain - constructs it from given values
 D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
   this.props = props;
+  var width = props.width > 0.3 ? props.height : props.width;
+  var height = width;
 
-  var width = props.width;
-  var height = props.height;
+  //in order to keep it centered and have the axis 'correct' from 0 to 1
+  //we need to update the scales function.
+  this._scales = function(domains) {
+      var x = d3.scaleLinear()
+                .domain(domains.x)
+                .range([0, width]);
+
+      var y = d3.scaleLinear()
+                .domain(domains.y)
+                .range([height, 0]);
+      return {x: x, y: y};
+  }
+
   var margins = props.margins;
+
+  if (width < props.width) {
+      margins.left += ((props.width - width) / 2);
+  }
 
   // Append a drawing area. The use of margins follows the convention in:
   // http://bl.ocks.org/mbostock/3019563
@@ -127,12 +144,8 @@ D3ConnectedScatterPlot.prototype.update = function(el, d) {
 
   var color = d.color || 'red';
 
-  // Call update to initiate the first rendering.
-  var maxX =  1;  //Math.max( ...data.series[0].values );//max of x values
-  var maxY =  1;  //Math.max( ...data.series[1].values );//max of y values
-
   //All current values are
-  var domains = {x: [0, Math.max(1, maxX)], y: [0, Math.max(1, maxY)]}
+  var domains = {x: [0, 1], y: [0, 1]}
 
   var data = {
     values: values,
@@ -154,21 +167,26 @@ D3ConnectedScatterPlot.prototype.destroy = function(el) {
 
 // Draw axes
 D3ConnectedScatterPlot.prototype._drawAxis = function(svg, data) {
-  var height = this.props.height;
-  var width = this.props.width;
+  var width = this.props.width > this.props.height ? this.props.height : this.props.width;
+  var height = width;
   var scales = this._scales(data.domains);
 
   // The ticks are spaced with 40 pixels.
   // Set tickSizeInner to -width and -height to create a grid
+  var p = d3.precisionFixed(0.5),
+      f = d3.format("." + p + "f");
+
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
-                       .ticks(Math.round(height / 40));
+                       .ticks(10)
+                       .tickFormat(f);
+
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)
-                       .ticks(Math.min(Math.round(width / 40), data.domains.x[1]))
-                       .tickFormat(d3.format('d'));
+                       .ticks(10)
+                       .tickFormat(f);
 
   // Actually draw the axes
   svg.select('g.xaxisWrapper')
@@ -214,7 +232,7 @@ D3ConnectedScatterPlot.prototype._drawLines = function(svg, data) {
   //      return heatmapColour(colorScale(d));
   //
   //
-  // console.log(data);
+  // 0.3e.log(data);
 
   // enter + update
   paths.enter()
@@ -255,8 +273,9 @@ D3ConnectedScatterPlot.prototype._drawVoronoi = function(svg, data) {
   var scales = this._scales(data.domains);
 
   var points = data.values;
-  var width = this.props.width;
-  var height = this.props.height;
+  var width = this.props.width > this.props.height ? this.props.height : this.props.width;
+  var height = width;
+
   var voronoi = d3.voronoi()
                   .x(function(d) { return scales.x(d[0]); })
                   .y(function(d) { return scales.y(d[1]); })
