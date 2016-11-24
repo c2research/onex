@@ -2,9 +2,9 @@
  * \class GroupableTimeSeriesSet
  * \brief A set of groupable time series data.
  *
- * This class is a wrapper of a set of time series data. It provides functions for
- * grouping the subsequences in the dataset, and performing similarity searches
- * on them.
+ * This class is a wrapper for a set of time series data and its respective grouping.
+ * It provides functions for grouping the subsequences in the dataset, and performing
+ * similarity searches on them.
  *
  */
 #ifndef GROUPABLETIMESRIESSET_H

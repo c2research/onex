@@ -89,7 +89,13 @@ public:
 
 };
 
-// A group of similar TimeSeriesIntervals from a database, all of the same length.
+/**
+ * \class TimeSeriesGroup
+ * \brief Represents a group
+ *
+ * This class represents a group of time series.
+ *
+ */
 class TimeSeriesGroup
 {
 protected:
@@ -133,8 +139,14 @@ public:
     vector<seqitem_t> &getCentroid(void);
 };
 
-
-// A complete (disjoint) grouping for a TimeSeriesSet's subsequences of a set length.
+/**
+ * \class TimeSeriesGrouping
+ * \brief Represents a set of groups that have common subsequence length
+ *
+ * This class represents a collection of groups that have the same subsequence length.
+ * Each group in this collection is encapsulated by TimeSeriesGroup.
+ *
+ */
 class TimeSeriesGrouping
 {
 protected:
@@ -188,7 +200,15 @@ enum SearchStrategy
 
 int *genOrder(SearchStrategy strat, int top, int bottom, int center);
 
-// A grouping for every subinterval in a database. (All lengths are grouped.)
+/**
+ * \class TimeSeriesSetGrouping
+ * \brief Represents a grouping by subsequence length
+ *
+ * This class organizes the groups by their subsequence length. Giving a length to an object
+ * of this class, it will return a set of groups (encapsulated by TimeSeriesGrouping class)
+ * that has the same subsequence length.
+ *
+ */
 class TimeSeriesSetGrouping
 {
 protected:

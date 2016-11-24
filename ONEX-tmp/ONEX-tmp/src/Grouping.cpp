@@ -852,7 +852,6 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
 
         seqitem_t dist;
         int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
-
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
             bsfGroup = g;
