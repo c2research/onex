@@ -646,6 +646,21 @@ vector<vector<kBest>> TimeSeriesGrouping::getSeasonal(int seq)
 }
 
 /*
+ * \return vector of doubles (the values in)
+ */
+vector<vector<seqitem_t> > TimeSeriesGroup::getGroupValues(void)
+{
+  vector<vector<seqitem_t> > result;
+
+  //I'm unsure if this should instead be a vector of intervals or kBest
+  //and then we get the actual ts later. or if it should actually return
+  //the vector of doubles
+
+  return result;
+}
+
+
+/*
 
 void TimeSeriesGrouping::updateDiffs(void)
 {

@@ -165,6 +165,28 @@ vector<vector<seqitem_t> > OnlineSession::getGroupRepresentatives(int index)
     return representatives;
 }
 
+/**
+ * Get all the ts in (a group)
+ *
+ * \param dbIndex index of a dataset.
+ * \param groupIndex index of the group
+ * \return a list of vectors of doubles (each centroid) (of the largest size groups)
+ */
+vector<vector<seqitem_t> > OnlineSession::getGroupValues(int dbIndex, int groupIndex)
+{
+    //get the correct group, and currently we would only every
+    //be getting a group of max size so we get the 'full group'
+    GroupableTimeSeriesSet* step_1 = datasets[dbIndex];
+    TimeSeriesSetGrouping* step_2 = step_1->getGrouping();
+    TimeSeriesGrouping* step_3 = step_2->getFullGroup();
+    vector<TimeSeriesGroup*> groups = step_3->getGroups();
+
+    //select the group to get the values for
+    TimeSeriesGroup* tsg = groups[groupIndex];
+
+    return tsg->getGroupValues();
+}
+
 int OnlineSession::killdbgroups(int index)
 {
     datasets[index]->resetGrouping();

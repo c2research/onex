@@ -212,6 +212,37 @@ py::list getGroupRepresentatives(int dbIndex)
 }
 
 /**
+ * Get all the ts in a group
+ *
+ * \param dbIndex index of a dataset.
+ * \param groupIndex index of the group
+ * \return a list of lists of doubles
+ */
+py::list getGroupValues(int dbIndex, int groupIndex)
+{
+  //perhaps we should have os.getGroupValues get intervals instead
+  //of the actual values?
+  //the key function to fix is getGroupValues in Grouping.cpp.
+
+  //py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
+
+
+  vector<vector<double> > ts = os.getGroupValues(dbIndex, groupIndex);
+  py::list values;
+
+  BOOST_FOREACH(vector<double > group, ts ){
+    py::list ts;
+    BOOST_FOREACH(double datum, group){
+      ts.append(datum);
+    }
+    values.append(ts);
+  }
+
+  return values;
+}
+
+
+/**
  * Get the number of sequence in a dataset.
  *
  * \param dbIndex index of a dataset.
@@ -246,4 +277,5 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("getWarpingPath", getWarpingPath);
   py::def("getSeasonal", getSeasonal);
   py::def("getGroupRepresentatives", getGroupRepresentatives);
+  py::def("getGroupValues", getGroupValues);
 }

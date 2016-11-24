@@ -73,9 +73,11 @@ public:
     vector< vector<kBest> > seasonalSimilarity(int dbindex, int TSIndex, int length);
 
     int outlier(int dbindex, int length);
+
     //grouping
     vector<int> getGroupCounts(int index);
     vector<vector<seqitem_t> > getGroupRepresentatives(int index);
+    vector<vector<seqitem_t> > getGroupValues(int dbIndex, int groupIndex);
 
     // Meta and other commands.
     int setST(seqitem_t ST);

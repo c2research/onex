@@ -12,6 +12,11 @@ print 'Loaded dataset in {}, index = {}'.format(dataset, dbIndex)
 
 onex.groupDataset(dbIndex, ST)
 
+# v = onex.getGroupValues(dbIndex, 0)
+# for l in v:
+#     print 'ts:'
+#     print l
+
 #reps = onex.getGroupRepresentatives(dbIndex)
 #for reps, c in reps:
 #    print 'Group with {0} members'.format(c)
