@@ -117,6 +117,12 @@ int OnlineSession::initdbgroups(int index, seqitem_t ST)
     return datasets[index]->genGrouping(ST);
 }
 
+/**
+ * Get 'counts' of all the groups
+ *
+ * \param dbIndex index of a dataset.
+ * \return a list of counts (of the largest size groups)
+ */
 vector<int> OnlineSession::getGroupCounts(int index)
 {
   GroupableTimeSeriesSet* step_1 = datasets[index];
@@ -135,6 +141,12 @@ vector<int> OnlineSession::getGroupCounts(int index)
   return counts;
 }
 
+/**
+ * Get 'representatives' of all the groups (of max length)
+ *
+ * \param dbIndex index of a dataset.
+ * \return a list of vectors of doubles (each centroid) (of the largest size groups)
+ */
 vector<vector<seqitem_t> > OnlineSession::getGroupRepresentatives(int index)
 {
     GroupableTimeSeriesSet* step_1 = datasets[index];

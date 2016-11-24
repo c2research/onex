@@ -12,10 +12,10 @@ print 'Loaded dataset in {}, index = {}'.format(dataset, dbIndex)
 
 onex.groupDataset(dbIndex, ST)
 
-reps = onex.getGroupRepresentatives(dbIndex)
-for reps, c in reps:
-    print 'Group with {0} members'.format(c)
-    print reps 
+#reps = onex.getGroupRepresentatives(dbIndex)
+#for reps, c in reps:
+#    print 'Group with {0} members'.format(c)
+#    print reps
 
 qIndex = 0
 qSeqs  = [74, 1, 2, 3, 4, 5, 6, 7, 8, 9]
