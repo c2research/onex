@@ -33,6 +33,11 @@ public:
     int getSeqLength(void);
 
     /**
+     * gets the grouping
+     */
+    TimeSeriesSetGrouping* getGrouping();
+
+    /**
      * Clear all group and data in the dataset
      */
     void resetDB();

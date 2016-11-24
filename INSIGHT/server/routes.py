@@ -131,7 +131,7 @@ def api_find_best_match():
     if not (ds_collection_index == current_collection_index):
       raise InvalidUsage('Dataset {} is not loaded yet'.format(ds_collection_index))
 
-    # Index of the dataset containing the query, by default set to the same dataset 
+    # Index of the dataset containing the query, by default set to the same dataset
     # where the best match will be searched from
     q_ds_index = current_ds_index
     if q_find_with_custom_query:
@@ -158,14 +158,14 @@ def api_find_best_match():
     else:
       app.logger.debug('Look for best match with sequence %d (%d:%d) in dataset %d',
                        q_seq, q_start, q_end, current_collection_index)
- 
+
     r_dist, r_seq, r_start, r_end = \
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
     warpingPath = onex.getWarpingPath(current_ds_index, q_seq, q_start, q_end,
                                       q_ds_index, r_seq, r_start, r_end)
 
-    return jsonify(result=result, 
+    return jsonify(result=result,
                    warpingPath=warpingPath,
                    dist=r_dist,
                    dsName=datasets[current_collection_index],
@@ -225,6 +225,12 @@ def api_get_seasonal():
     seasonal = onex.getSeasonal(current_ds_index, q_seq, length)
     return jsonify(seasonal=seasonal, requestID=request_id)
 
+@app.route('/representatives')
+def api_get_representatives():
+    request_id = request.args.get('requestID', -1, type=int)
+    with lock:
+        representatives = onex.getGroupRepresentatives(current_ds_index)
+        return jsonify(representatives=representatives, requestID=request_id)
 
 def _allowed_file(filename):
   return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

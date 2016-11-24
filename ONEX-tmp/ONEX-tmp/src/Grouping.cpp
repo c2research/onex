@@ -540,6 +540,16 @@ TimeSeriesGroup *TimeSeriesGrouping::getGroup(int index)
     return groups[index];
 }
 
+vector<TimeSeriesGroup*> TimeSeriesGrouping::getGroups()
+{
+    return groups;
+}
+
+TimeSeriesGrouping *TimeSeriesSetGrouping::getFullGroup()
+{
+    return groups.back();
+}
+
 int TimeSeriesGrouping::getCount(void)
 {
     return groups.size();

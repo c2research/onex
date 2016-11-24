@@ -35,7 +35,7 @@ OnlineSession::~OnlineSession(void)
     datasets.clear();
 }
 
-int OnlineSession::_insertDataset(GroupableTimeSeriesSet* db) 
+int OnlineSession::_insertDataset(GroupableTimeSeriesSet* db)
 {
     int index = -1;
     _datasetCount++;
@@ -49,7 +49,7 @@ int OnlineSession::_insertDataset(GroupableTimeSeriesSet* db)
         datasets.push_back(db);
         index = datasets.size() - 1;
     }
-    return index; 
+    return index;
 }
 
 int OnlineSession::randdb(int range, int seqCount, int seqLength)
@@ -115,7 +115,42 @@ int OnlineSession::initdbgroups(int index, seqitem_t ST)
         ST = defaultST;
 
     return datasets[index]->genGrouping(ST);
+}
 
+vector<int> OnlineSession::getGroupCounts(int index)
+{
+  GroupableTimeSeriesSet* step_1 = datasets[index];
+  TimeSeriesSetGrouping* step_2 = step_1->getGrouping();
+  TimeSeriesGrouping* step_3 = step_2->getFullGroup();
+  vector<TimeSeriesGroup*> groups = step_3->getGroups();
+
+  vector<int> counts;
+
+  for(vector<TimeSeriesGroup*>::iterator it = groups.begin(); it != groups.end(); ++it) {
+    TimeSeriesGroup* tsg = *(it);
+    int count = tsg->getCount();
+    counts.push_back(count);
+  }
+
+  return counts;
+}
+
+vector<vector<seqitem_t> > OnlineSession::getGroupRepresentatives(int index)
+{
+    GroupableTimeSeriesSet* step_1 = datasets[index];
+    TimeSeriesSetGrouping* step_2 = step_1->getGrouping();
+    TimeSeriesGrouping* step_3 = step_2->getFullGroup();
+    vector<TimeSeriesGroup*> groups = step_3->getGroups();
+
+    vector<vector<seqitem_t>> representatives;
+
+    for(vector<TimeSeriesGroup*>::iterator it = groups.begin(); it != groups.end(); ++it) {
+      TimeSeriesGroup* tsg = *(it);
+      vector<seqitem_t> centroid = tsg->getCentroid(); //centroid.getCentroid();
+      representatives.push_back(centroid);
+    }
+
+    return representatives;
 }
 
 int OnlineSession::killdbgroups(int index)
@@ -189,7 +224,7 @@ int OnlineSession::printint(int index, int seq, TimeInterval interval)
     return 0;
 }
 
-TimeSeriesInterval OnlineSession::getinterval(int index, int seq, TimeInterval interval) 
+TimeSeriesInterval OnlineSession::getinterval(int index, int seq, TimeInterval interval)
 {
     return datasets[index]->getinterval(seq, interval);
 }
@@ -383,7 +418,7 @@ void _print_help(ostream &out)
 }
 
 static void _prepareCommands(map<string, int> &commands) {
-    
+
     commands["exit"] = _EXIT;
     commands["quit"] = _EXIT;
     commands["q"] = _EXIT;

@@ -29,6 +29,10 @@ GroupableTimeSeriesSet::~GroupableTimeSeriesSet(void)
         delete grouping;
 }
 
+TimeSeriesSetGrouping* GroupableTimeSeriesSet::getGrouping(){
+  return grouping;
+}
+
 int GroupableTimeSeriesSet::getSeqCount(void)
 {
     return dataset->getSeqCount();

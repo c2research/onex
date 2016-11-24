@@ -1,7 +1,7 @@
 import ONEXBindings as onex
 import matplotlib.pyplot as plt
 
-warp = 50 
+warp = 50
 ST = 0.2
 
 dataset = '../../ONEX-tmp/ONEX-tmp/ndata/ECG.txt'
@@ -12,23 +12,28 @@ print 'Loaded dataset in {}, index = {}'.format(dataset, dbIndex)
 
 onex.groupDataset(dbIndex, ST)
 
+reps = onex.getGroupRepresentatives(dbIndex)
+for reps, c in reps:
+    print 'Group with {0} members'.format(c)
+    print reps 
+
 qIndex = 0
 qSeqs  = [74, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 qStarts = [0, 2, 3, 20, 1, 1, 3, 3, 1, 1]
 qEnds = [95, 60, 50, 70, 80, 59, 99, 40 ,77, 100]
 
 #num_test = len(qSeqs)
-num_test = 4 
+num_test = 4
 
 for i in range(num_test):
   qSeq = qSeqs[i]
-  qStart = qStarts[i] 
-  qEnd = qEnds[i] 
+  qStart = qStarts[i]
+  qEnd = qEnds[i]
 
   dist, seq, start, end = onex.findSimilar(dbIndex, qIndex, qSeq, qStart, qEnd, 0, warp)
 
   print """Find subsequence in database {} that is similar to subsequence:
-  qIndex = {} 
+  qIndex = {}
   qSeq = {}
   qStart = {}
   qEnd = {}""".format(dbIndex, qIndex, qSeq, qStart, qEnd)
