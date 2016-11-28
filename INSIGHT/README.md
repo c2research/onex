@@ -135,7 +135,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 
 <br/>
 ### 5. Upload custom query
-Upload a custom query to the server.
+Upload a custom query file to the server.
 
 **HTTP method and URL**
 
@@ -161,7 +161,7 @@ Status: **200**
 + Content:
 ```
 { 
-  query: [<double>] # The uploaded query
+  queries: [[<double>]] # The uploaded queries
   requestID: <int>  # The requestID sent with the request
 }
 ```
