@@ -4,6 +4,8 @@ var InsightConstants = require('./../constants/InsightConstants');
 var assign = require('object-assign');
 var $ = require('jquery');
 
+var TimeSeries = require('./../../TimeSeries');
+
 var CHANGE_EVENT = 'change';
 
 var data = {
@@ -16,6 +18,8 @@ var data = {
 	//dtw bias
 	dtwBias: 0
 };
+
+var queries = [];
 
 var similarityQueryInfo = {
 	qTypeAPI: 0, //use this later for q from diff sets
@@ -31,7 +35,7 @@ var similarityQueryInfo = {
 }
 /*
  * This will hold all the data on results and formed queries
- * this can go into another Store eventaully
+ * this can go into another Store eventually
  */
 var results = {
 	viewLiveIndices: [],
@@ -245,7 +249,9 @@ var InsightStoreSimilarity = assign({}, {
 			contentType: false,
 			//dataType: 'json',
 			success: function(response) {
-				var endlist = response.query.map(function(val, i) {
+				queries = response.queries;
+
+				var endlist = response.queries[0].map(function(val, i) {
 					return [i, val];
 				});
 

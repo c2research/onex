@@ -110,6 +110,25 @@ py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
 }
 
 /**
+ * Get all sequences in a dataset.
+ *
+ * \param dbIndex index of a dataset in the dataset list.
+ * \return a list where each element is a Python list representing a sequence
+ *         in the dataset
+ */
+py::list getAllSequences(int dbIndex) 
+{
+  py::list result;
+  int seqCount = os.getdbseqcount(dbIndex);
+  int seqLength = os.getdbseqlength(dbIndex);
+  for (int i = 0; i < seqCount; i++) {
+    py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1);
+    result.append(ts);
+  }
+  return result;
+}
+
+/**
  * Get the warping path between two subsequence.
  *
  * \param dbIndexA index of the first dataset in memory
@@ -272,6 +291,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("groupDataset", groupDataset);
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
+  py::def("getAllSequences", getAllSequences);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
   py::def("getWarpingPath", getWarpingPath);

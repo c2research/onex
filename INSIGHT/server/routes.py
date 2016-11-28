@@ -207,10 +207,12 @@ def api_upload_query():
     current_q_index = onex.loadDataset(query_path)
     app.logger.debug('Loaded new custom query')
 
-    seq_length = onex.getDatasetSeqLength(current_q_index);
-    query = onex.getSubsequence(current_q_index, 0, 0, seq_length - 1)
+    #seq_count = onex.getDatasetSeqCount(current_q_index);
+    #seq_length = onex.getDatasetSeqLength(current_q_index);
+    queries = onex.getAllSequences(current_q_index);
+    #query = onex.getSubsequence(current_q_index, 0, 0, seq_length - 1)
 
-    return jsonify(query=query, requestID=request_id)
+    return jsonify(queries=queries, requestID=request_id)
 
 
 @app.route('/seasonal')
@@ -225,12 +227,14 @@ def api_get_seasonal():
     seasonal = onex.getSeasonal(current_ds_index, q_seq, length)
     return jsonify(seasonal=seasonal, requestID=request_id)
 
+
 @app.route('/representatives')
 def api_get_representatives():
-    request_id = request.args.get('requestID', -1, type=int)
-    with lock:
-        representatives = onex.getGroupRepresentatives(current_ds_index)
-        return jsonify(representatives=representatives, requestID=request_id)
+  request_id = request.args.get('requestID', -1, type=int)
+  with lock:
+    representatives = onex.getGroupRepresentatives(current_ds_index)
+    return jsonify(representatives=representatives, requestID=request_id)
+
 
 def _allowed_file(filename):
   return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
