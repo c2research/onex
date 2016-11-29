@@ -19,7 +19,8 @@ var data = {
 	dtwBias: 0
 };
 
-var queries = [];
+// An array of uploaded TimeSeries
+var uploadedQueries = [];
 
 var similarityQueryInfo = {
 	qTypeAPI: 0, //use this later for q from diff sets
@@ -249,7 +250,7 @@ var InsightStoreSimilarity = assign({}, {
 			contentType: false,
 			//dataType: 'json',
 			success: function(response) {
-				queries = response.queries;
+				uploadedQueries = response.queries;
 
 				var endlist = response.queries[0].map(function(val, i) {
 					return [i, val];

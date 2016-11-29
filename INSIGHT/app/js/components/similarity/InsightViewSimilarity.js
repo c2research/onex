@@ -1,7 +1,6 @@
 var React = require('react');
 
 var InsightSimilarityResultsView = require('./InsightSimilarityResultsView');
-var InsightViewTable = require('./InsightViewTable');
 var InsightMenuBar = require('./InsightMenuBar');
 
 var InsightConstants = require('./../../flux/constants/InsightConstants');
