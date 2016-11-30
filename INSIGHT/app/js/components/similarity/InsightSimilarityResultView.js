@@ -1,6 +1,6 @@
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
-var InsightMenuBar = require('./InsightMenuBar');
+var InsightMenuBarResult = require('./InsightMenuBarResult');
 
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
@@ -17,8 +17,8 @@ var InsightSimilarityResultView = React.createClass({
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
 
-    var InsightMenuBarJSX =
-      <InsightMenuBar
+    var InsightMenuBarResultJSX =
+      <InsightMenuBarResult
         width={menuWidth}
         height={height}
         dtwBias={dtwBias}
@@ -29,6 +29,7 @@ var InsightSimilarityResultView = React.createClass({
     var GraphJSX = this.generateGraph(graphWidth, height);
 
     var style = {
+      height: height,
       width: width, 
       overflow: 'hidden',
       borderLeft: '1px dashed gray',
@@ -40,7 +41,7 @@ var InsightSimilarityResultView = React.createClass({
           {GraphJSX}
         </div>
         <div style={{float: 'right'}}>
-          {InsightMenuBarJSX}
+          {InsightMenuBarResultJSX}
         </div>        
       </div>);
   },

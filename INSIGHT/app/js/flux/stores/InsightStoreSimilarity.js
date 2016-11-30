@@ -169,7 +169,10 @@ var InsightStoreSimilarity = assign({}, {
     qType = previewSequence.getLocation();
     qValues = previewSequence;
 
+    // Clear result view
     resultViewData.selectedSubsequence = previewSequence.slice(qStart, qEnd + 1);
+    resultViewData.selectedMatch = null;
+    InsightStore.emitChange();
 
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 

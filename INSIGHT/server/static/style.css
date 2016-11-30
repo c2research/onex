@@ -15,6 +15,7 @@ body {
   height: 100%;
   border: 0%;
   margin: 0;
+  overflow-y: hidden;
 }
  /* ---------->>> BANNER <<<-----------*/
 div.insightBanner {

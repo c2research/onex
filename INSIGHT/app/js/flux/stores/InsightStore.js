@@ -85,8 +85,8 @@ var InsightStore = assign({}, EventEmitter.prototype, {
     var body = document.body,
         html = document.documentElement;
 
-    var h = html.clientHeight;
-    var w = html.clientWidth;
+    var h = $(window).height();
+    var w = $(window).width();
 
     var controlPanelWidth = 301; //data.similarityQueryInfo.qDatasetValues.length > 0 || data.similarityQueryInfo.qUploadValues.length > 0 ? 301 : 275;//we will change this later when
             //we can resize this etc

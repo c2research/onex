@@ -1,7 +1,7 @@
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightActions = require('./../../flux/actions/InsightActions');
-
+var InsightMenuBarPreview = require('./InsightMenuBarPreview');
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var OverviewChart = require('./../charts/OverviewChart');
 
@@ -12,6 +12,14 @@ var InsightSimilarityPreview = React.createClass({
     }
     var height = this.props.height;
     var width = this.props.width;
+    var menuWidth = 40;
+    var graphWidth = this.props.width - menuWidth - 10;
+
+    var InsightMenuBarPreviewJSX =
+      <InsightMenuBarPreview
+        width={menuWidth}
+        height={height}
+      />;
 
     var previewSequence = this.props.previewSequence;
     var previewRange = this.props.previewRange;
@@ -24,9 +32,9 @@ var InsightSimilarityPreview = React.createClass({
     };
 
     var selectedMargins = {left: 35, right: 20, top: 20, bottom: 20};
-    var selectedD3JSX = <MultiTimeSeriesChart
+    var SelectedD3JSX = <MultiTimeSeriesChart
                           margins={selectedMargins}
-                          width={width - selectedMargins.left - selectedMargins.right}
+                          width={graphWidth - selectedMargins.left - selectedMargins.right}
                           height={0.7 * height - selectedMargins.top - selectedMargins.bottom}
                           data={selectedViewData}
                           strokeWidth={3}
@@ -38,9 +46,9 @@ var InsightSimilarityPreview = React.createClass({
       domains: { x: [previewSequence.getStart(), previewSequence.getEnd()], y: [0, 1] },
     }
     var overviewMargins = {left: 35, right: 20, top: 5, bottom: 35};
-    var overviewD3JSX = <OverviewChart
+    var OverviewD3JSX = <OverviewChart
                           margins={overviewMargins}
-                          width={width - overviewMargins.left - overviewMargins.right}
+                          width={graphWidth - overviewMargins.left - overviewMargins.right}
                           height={0.3 * height - overviewMargins.top - overviewMargins.bottom}
                           data={overviewData}
                           strokeWidth={3}
@@ -49,13 +57,20 @@ var InsightSimilarityPreview = React.createClass({
                         />;
 
     var style = {
+      height: height,
+      width: width,
       overflow: 'hidden',
       borderLeft: '1px dashed gray'
     };
     return (
       <div style={style}>
-        {selectedD3JSX}
-        {overviewD3JSX}
+        <div style={{float: 'left', width: graphWidth}}>
+          {SelectedD3JSX}
+          {OverviewD3JSX}
+        </div>
+        <div style={{float: 'right'}}>
+          {InsightMenuBarPreviewJSX}
+        </div>  
       </div>
     );
   }

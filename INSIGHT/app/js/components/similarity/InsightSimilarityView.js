@@ -11,7 +11,8 @@ var InsightSimilarityView = React.createClass({
     var divStyle = {
       width: this.props.width,
       height: this.props.height,
-      marginLeft: this.props.marginLeft
+      marginLeft: this.props.marginLeft,
+      overflow: 'scroll' 
     };
     var leftDimensions = {
       width: 0.4 * this.props.width,
@@ -21,7 +22,7 @@ var InsightSimilarityView = React.createClass({
       width: 0.6 * this.props.width,
       height: this.props.height
     }
-    var wrapperStyle = { overflow: 'hidden' };
+    var wrapperStyle = { overflow: 'scroll' };
     var floatStyle = { float: 'left' };
 
     return (

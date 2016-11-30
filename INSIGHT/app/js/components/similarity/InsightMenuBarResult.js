@@ -2,7 +2,7 @@ var React = require('react');
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
-var InsightMenuBar = React.createClass({
+var InsightMenuBarResult = React.createClass({
   
   render: function() {
     var menubarStyle = {
@@ -34,7 +34,6 @@ var InsightMenuBar = React.createClass({
               key={type}
               type={type}
               active={that.props.graphType === type}
-              results={that.props.results}
               onClick={(event) => InsightActions.selectGraphType(type)}
               more={moreJSX} />
     });
@@ -151,4 +150,4 @@ var getTypeInfo = function(type) {
 };
 
 
-module.exports = InsightMenuBar;
+module.exports = InsightMenuBarResult;
