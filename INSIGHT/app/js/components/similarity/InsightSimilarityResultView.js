@@ -15,6 +15,7 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 50;
     var graphWidth = this.props.width - menuWidth;
+
     var InsightMenuBarJSX =
       <InsightMenuBar
         width={menuWidth}
@@ -38,16 +39,23 @@ var InsightSimilarityResultView = React.createClass({
   generateGraph: function(width, height) {
     var selectedSubsequence = this.props.selectedSubsequence;
     var selectedMatch = this.props.selectedMatch;
+    var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) { 
+      return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]]; 
+    });
     var data = {};
     var margins = {left: 35, right: 15, top: 25, bottom: 20};
     var title = 'Similarity Results';
     var resultGraph = null;
-    //data.domains.x = [Math.min(qStart, biasedRValues[0][0]), Math.max(qEnd, biasedRValues[biasedRValues.length - 1][0])];
+    var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);
+    var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
+    var commonYDomain = [0, 1];
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'}],
+          series: [{ values: selectedSubsequence.getValues()},
+                   { values: alignedSelectedMatchValues}],
+          warpingPath: this.props.warpingPath,
           domains: { x: [0, 1], y: [0, 1] },
           color: 'blue',
           strokeWidth: '1.5'
@@ -56,11 +64,11 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_WARP:
         var bias = 0.05 * this.props.dtwBias;
-        var biasedMatchValues = selectedMatch.getValues().map(function(x) { return [x[0], x[1] + bias]});
+        var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
           series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
                    { values: biasedMatchValues, color: bias == 0 ? 'green' : 'magenta'}],
-          domains: { x: [], y: [0, 1] },
+          domains: { x: commonXDomain, y: commonYDomain },
           warpingPath: this.props.warpingPath
         }
         resultGraph = this.generateMultiLineChart(data, margins, width, height, title);
@@ -68,34 +76,36 @@ var InsightSimilarityResultView = React.createClass({
       case InsightConstants.GRAPH_TYPE_LINE:
         data = {
           series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: selectedMatch.getValues(), color: 'green'}],
-          domains: { x: [], y: [0, 1] },
+                   { values: alignedSelectedMatchValues, color: 'green'}],
+          domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateMultiLineChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_RADIAL:
         data = {
           series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: selectedMatch.getValues(), color: 'green'}],
-          domains: { x: [], y: [0, 1] },
+                   { values: alignedSelectedMatchValues, color: 'green'}],
+          domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateRadialChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: selectedMatch.getValues(), color: 'green'}],
-          domains: { x: [], y: [0, 1] },
-        }
+          seriesQ: { values: selectedSubsequence.getValues(), color: '#e2b6b3'},
+          seriesR: { values: selectedMatch.getValues(), color: 'green'},
+          domainsQ: { x: [selectedSubsequence.getStart(), selectedSubsequence.getEnd()], y: commonYDomain },
+          domainsR: { x: [selectedMatch.getStart(), selectedMatch.getEnd()], y: commonYDomain },
+        };
         resultGraph = this.generateSplitChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_ERROR:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: selectedMatch.getValues(), color: 'green'}],
-          domains: { x: [], y: [0, 1] },
-        }
-        resultGraph =  this.generateErrorChart(resultQValuesSelection, resultRValues, this.props.warpingPath, margins, height, title);
+          series: [{ values: selectedSubsequence.getValues() },
+                   { values: alignedSelectedMatchValues }],
+          warpingPath: this.props.warpingPath,
+          maxDomainY: 0.2
+        };
+        resultGraph =  this.generateErrorChart(data, margins, width, height, title);
         break;
       default:
         console.log('case: ', this.props.graphType);
@@ -140,13 +150,13 @@ var InsightSimilarityResultView = React.createClass({
   },
 
   generateSplitChart: function(data, margins, width, height, title){
-    var querydata = {
-      series: [data.series[0]],
-      domains: data.domains
+    var queryData = {
+      series: [data.seriesQ],
+      domains: data.domainsQ
     };
-    var resultdata = {
-      series: (data.series.length > 1) && [data.series[1]] || [{ values: [], color: 'black'}],
-      domains: data.domains
+    var resultData = {
+      series: [data.seriesR],
+      domains: data.domainsR
     };
     var splitmargins = {left: 35, right: 15, top: 5, bottom: 20};
 
@@ -155,7 +165,7 @@ var InsightSimilarityResultView = React.createClass({
         margins={margins}
         width={width - margins.left - margins.right}
         height={(height / 2) - margins.top - margins.bottom}
-        data={querydata}
+        data={queryData}
         strokeWidth={3}
         title={title}
       />
@@ -163,27 +173,21 @@ var InsightSimilarityResultView = React.createClass({
         margins={splitmargins}
         width={width - margins.left - margins.right}
         height={(height / 2) - margins.top - margins.bottom}
-        data={resultdata}
+        data={resultData}
         strokeWidth={3}
       />
     </div>;
    },
 
-  generateErrorChart: function(querySelection, result, warpingPath, margins, width, height, title) {
-    var chartData = {
-      series: [{values: querySelection}, {values: result}],
-      warpingPath: warpingPath,
-      maxDomainY: 0.2
-    };
-
+  generateErrorChart: function(data, margins, width, height, title) {
     return <TimeSeriesDifferenceChart
             width={width - margins.left - margins.right}
             height={height - margins.top - margins.bottom}
             margins={margins}
-            data={chartData}
+            data={data}
             strokeWidth={1}
             color={'blue'}
-            title={title} />
+            title={title} />;
   },
 
 });
