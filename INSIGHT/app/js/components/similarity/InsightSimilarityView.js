@@ -12,19 +12,17 @@ var InsightSimilarityView = React.createClass({
       width: this.props.width,
       height: this.props.height,
       marginLeft: this.props.marginLeft
-    }
-
-    var subDimensions = {
-      width: this.props.width / 2,
+    };
+    var leftDimensions = {
+      width: 0.4 * this.props.width,
       height: this.props.height
+    };
+    var rightDimensions = {
+      width: 0.6 * this.props.width,
+      height: this.props.height      
     }
-
-    var wrapperStyle = {
-      overflow: 'hidden'
-    }
-    var floatStyle = {
-      float: 'left'
-    }
+    var wrapperStyle = { overflow: 'hidden' };
+    var floatStyle = { float: 'left' };
 
     return (
     <div className="insightView" style={divStyle}>
@@ -32,12 +30,12 @@ var InsightSimilarityView = React.createClass({
         <div style={floatStyle}>
           <InsightSimilarityViewLeft groupViewData={this.props.groupViewData}
                                      queryListViewData={this.props.queryListViewData}
-                                     {...subDimensions}/>
+                                     {...leftDimensions}/>
         </div>
         <div style={floatStyle}>
           <InsightSimilarityViewRight resultViewData={this.props.resultViewData}
                                       previewData={this.props.previewData}
-                                      {...subDimensions}/>
+                                      {...rightDimensions}/>
         </div>
       </div>
     </div> );
