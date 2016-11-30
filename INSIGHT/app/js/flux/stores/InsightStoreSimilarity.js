@@ -23,8 +23,11 @@ var previewData = {
   previewRange: [0, 18]
 };
 
+//TODO: on a match switch showingRepresentatives to false,
+//      on dataset process switch showingRepresentatives to true
 var groupViewData = {
   // A list of TimeSeries
+  showingRepresentatives: true,
   groupList: [],
   groupSelectedIndex: -1
 };
@@ -83,7 +86,7 @@ var InsightStoreSimilarity = assign({}, {
         // TODO: Modify that server to support this
         querySetSize = response.querySetSize;
         for (var i = 0; i < querySetSize; i++) {
-          queryListViewData.queryNameListUpload.push("Sequence " + i);
+          queryListViewData.queryListDataset.push("Sequence " + i);
         }
         queryListViewData.querySelectedIndexUpload = -1;
         InsightStore.emitChange();
@@ -112,7 +115,7 @@ var InsightStoreSimilarity = assign({}, {
     var selectedQuery = fromDataset ? queryListViewData.querySelectedIndexDataset :
                                       queryListViewData.querySelectedIndexUpload;
     var queryName = fromDataset ? queryListViewData.queryListDataset[selectedQuery] :
-                                  queryListViewData.queryNameListUpload[selectedQuery];
+                                  queryListViewData.queryListDataset[selectedQuery];
     InsightStore.requestSequence(fromDataset, selectedQuery,
       function(endlist) {
         var newTimeSeries = new TimeSeries(endlist,
@@ -243,6 +246,10 @@ var InsightStoreSimilarity = assign({}, {
     groupViewData.groupSelectedIndex = i;
   },
 
+  getGroupViewData: function() {
+    return groupViewData;
+  },
+
   /**
    * gets the dtw bias
    */
@@ -274,6 +281,11 @@ AppDispatcher.register(function(action) {
 
     case InsightConstants.UPLOAD_QUERY_FILE:
       InsightStoreSimilarity.uploadQuery(action.id);
+      break;
+
+    case InsightConstants.SIMILARITY_SELECT_GROUP:
+      InsightStoreSimilarity.setGroupSelectedIndex(action.id);
+      InsightStore.emitChange();
       break;
 
     case InsightConstants.SIMILARITY_SELECT_QUERY:

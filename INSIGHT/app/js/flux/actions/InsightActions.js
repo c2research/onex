@@ -50,7 +50,6 @@ var InsightActions = {
       id: 1
     });
   },
-
   selectQueryLocation: function(value) {
     AppDispatcher.dispatch({
       actionType: value
@@ -65,6 +64,12 @@ var InsightActions = {
   selectSimilarityQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SIMILARITY_SELECT_QUERY,
+      id: index
+    });
+  },
+  selectSimilarityGroup: function(index) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SIMILARITY_SELECT_GROUP,
       id: index
     });
   },

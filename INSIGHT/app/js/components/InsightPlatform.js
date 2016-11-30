@@ -60,7 +60,7 @@ function getState() {
     previewData: InsightStoreSimilarity.getPreviewData(),
     resultViewData: InsightStoreSimilarity.getResultViewData(),
     queryListViewData: InsightStoreSimilarity.getQueryListViewData(),
-
+    groupViewData: InsightStoreSimilarity.getGroupViewData(),
 
 
     /* ### seasonal state ### */
@@ -120,7 +120,6 @@ var InsightPlatform = React.createClass({
         insightViewJSX =  <InsightSimilarityView marginLeft={this.state.metadata.sizing.controlPanelWidth}
                                                  width={this.state.metadata.sizing.displayWidth}
                                                  height={this.state.metadata.sizing.displayHeight}
-
                                                  previewData={this.state.previewData}
                                                  resultViewData={this.state.resultViewData}
                                                  groupViewData={this.state.groupViewData}

@@ -9,10 +9,12 @@ var InsightSimilarityViewLeft = React.createClass({
       width: this.props.width,
       height: this.props.height / 2
     }
-    return (<div style={{width: this.props.width}}>
+
+    return (
+      <div style={{width: this.props.width}}>
         <InsightSimilarityGroupView {...this.props.groupViewData} {...dimensions}/>
         <InsightSimilarityQueryView {...this.props.queryListViewData} {...dimensions}/>
-    </div>);
+      </div>);
   }
 });
 

@@ -25,20 +25,20 @@ var InsightSimilarityView = React.createClass({
     var floatStyle = { float: 'left' };
 
     return (
-    <div className="insightView" style={divStyle}>
-      <div style={wrapperStyle}>
-        <div style={floatStyle}>
-          <InsightSimilarityViewLeft groupViewData={this.props.groupViewData}
-                                     queryListViewData={this.props.queryListViewData}
-                                     {...leftDimensions}/>
+      <div className="insightView" style={divStyle}>
+        <div style={wrapperStyle}>
+          <div style={floatStyle}>
+            <InsightSimilarityViewLeft groupViewData={this.props.groupViewData}
+                                       queryListViewData={this.props.queryListViewData}
+                                       {...leftDimensions}/>
+          </div>
+          <div style={floatStyle}>
+            <InsightSimilarityViewRight resultViewData={this.props.resultViewData}
+                                        previewData={this.props.previewData}
+                                        {...rightDimensions}/>
+          </div>
         </div>
-        <div style={floatStyle}>
-          <InsightSimilarityViewRight resultViewData={this.props.resultViewData}
-                                      previewData={this.props.previewData}
-                                      {...rightDimensions}/>
-        </div>
-      </div>
-    </div> );
+      </div>);
    }
 });
 
