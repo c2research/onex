@@ -9,15 +9,24 @@ var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightSimilarityQuery = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
+     var uploadQueryJSX = <UploadQuery />;
+     var wrapperStyle = { overflow: 'hidden' };
+     var floatStyle = { float: 'left' };
 
-     var distanceJSX = null;
-     var uploadQueryJSX = (this.props.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) && <UploadQuery />;
+     var style = {
+       margin: 5
+     }
 
-     var panelJSX = this.props.dsCurrentLength > 0 &&
-     <div className="section">
-        <h5> Determine Query Location </h5>
-        <QueryTypeRadio qTypeLocal={this.props.qTypeLocal}/>
-        {uploadQueryJSX}
+     var panelJSX = <div className="panel" style={style}>
+        <h4> Determine Query Location </h4>
+        <div style={wrapperStyle}>
+          <div style={floatStyle}>
+            <QueryTypeRadio queryLocation={this.props.queryLocation}/>
+          </div>
+          <div style={floatStyle}>
+            {uploadQueryJSX}
+          </div>
+        </div>
      </div>;
      return <div> {panelJSX} </div>;
    }
@@ -26,16 +35,15 @@ var InsightSimilarityQuery = React.createClass({
 var QueryTypeRadio = React.createClass({
   render: function(){
     return (
-      <div className="panel" >
-        <h4> Choose which Query Type to Use </h4>
-          <input type="radio" value={InsightConstants.QUERY_TYPE_DATASET} checked={InsightConstants.QUERY_TYPE_DATASET == this.props.qTypeLocal} onChange={this.setQueryType}/> Dataset
-          <input type="radio" value={InsightConstants.QUERY_TYPE_UPLOAD} checked={InsightConstants.QUERY_TYPE_UPLOAD == this.props.qTypeLocal}  onChange={this.setQueryType}/> Upload
+      <div>
+          <input type="radio" value={InsightConstants.QUERY_LOCATION_DATASET} checked={InsightConstants.QUERY_LOCATION_DATASET == this.props.queryLocation} onChange={this.setQueryType}/> Dataset
+          <input type="radio" value={InsightConstants.QUERY_LOCATION_UPLOAD} checked={InsightConstants.QUERY_LOCATION_UPLOAD == this.props.queryLocation}  onChange={this.setQueryType}/> Upload
       </div>
     );
   },
   setQueryType: function(e){
-    if (this.props.qTypeLocal != e.target.value) {
-      InsightActions.selectQueryType(e.target.value);
+    if (this.props.queryLocation != e.target.value) {
+      InsightActions.selectQueryLocation(e.target.value);
     }
   }
 });
@@ -43,8 +51,7 @@ var QueryTypeRadio = React.createClass({
 var UploadQuery = React.createClass({
   render: function() {
     return (
-    <div className="panel" >
-      <h4> Upload a Query from File </h4>
+    <div>
       <input type="file" id="files" name="query" onChange={this.uploadQueryFile}/>
       <output id="list"></output>
     </div>);

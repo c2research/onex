@@ -12,7 +12,7 @@ var queryListViewData = {
   queryLocation: InsightConstants.QUERY_LOCATION_DATASET,
   // A list of names of the time series
   queryListDataset: [],
-  queryNameListUpload: [],
+  queryListUpload: [],
   querySelectedIndexDataset: -1,
   querySelectedIndexUpload: -1,
 };

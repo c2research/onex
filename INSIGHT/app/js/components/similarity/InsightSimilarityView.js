@@ -19,7 +19,7 @@ var InsightSimilarityView = React.createClass({
     };
     var rightDimensions = {
       width: 0.6 * this.props.width,
-      height: this.props.height      
+      height: this.props.height
     }
     var wrapperStyle = { overflow: 'hidden' };
     var floatStyle = { float: 'left' };

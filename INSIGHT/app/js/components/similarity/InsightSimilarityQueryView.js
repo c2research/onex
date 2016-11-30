@@ -1,7 +1,10 @@
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightActions = require('./../../flux/actions/InsightActions');
+
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
+var InsightSimilarityQuery = require('./InsightSimilarityQuery');
+
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
 
@@ -102,7 +105,7 @@ var InsightSimilarityQueryView = React.createClass({
           rowHeight={50}
           rowsCount={queryList.length}
           width={this.props.width}
-          height={this.props.height}
+          height={this.props.height - 45}
           groupHeaderHeight={40}
           headerHeight={40}
           onRowClick={this._selectQuery}>
@@ -111,7 +114,10 @@ var InsightSimilarityQueryView = React.createClass({
       </div>;
     //TODO(charlie):
 
-    return <div> {tableJSX} </div>;
+    return <div>
+            <InsightSimilarityQuery queryLocation={this.props.queryLocation}/>
+            {tableJSX}
+           </div>;
   },
   _selectQuery: function(e, rowIndex) {
     InsightActions.selectSimilarityQuery(rowIndex);
