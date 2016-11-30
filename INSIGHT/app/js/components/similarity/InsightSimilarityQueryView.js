@@ -65,7 +65,6 @@ var InsightSimilarityQueryView = React.createClass({
       ? [this.props.queryListDataset, this.props.querySelectedIndexDataset]
       : [this.props.queryListUpload, this.props.querySelectedIndexUpload];
 
-    console.log(queryList, this.props);
     var width = this.props.width / 2 ;
     var queryLocation = this.props.queryLocation;
     var QueriesJSX =
