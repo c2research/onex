@@ -32,8 +32,9 @@ var groupViewData = {
 var resultViewData = {
   graphType: InsightConstants.GRAPH_TYPE_WARP,
   dtwBias: 0,
-  selectedSubsequence: null,
-  selectedMatch: null
+  selectedSubsequence: new TimeSeries([[1, 0.5], [2, 0.2], [3, 0.5], [4, 0.2], [5, 0.5]], '', 2, 1, 5),
+  selectedMatch: new TimeSeries([[4, 0.5], [5, 0.1], [6, 0.4], [7, 0.3], [8, 0.5]], '', 2, 3, 7),
+  warpingPath: []
 };
 
 /*

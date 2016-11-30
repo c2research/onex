@@ -46,7 +46,7 @@ function getState() {
     // message: InsightStore.getMessage(),
     // datasetIconMode: InsightStore.getDatasetIconMode(),
 
-    data: InsightStore.getData(),
+    metadata: InsightStore.getData(),
 
     /* ### similarity state ### */
     // graphType: InsightStoreSimilarity.getGraphType(),
@@ -115,11 +115,11 @@ var InsightPlatform = React.createClass({
   render: function() {
     var insightViewJSX;
 
-    switch (this.state.data.viewMode) {
+    switch (this.state.metadata.viewMode) {
       case InsightConstants.VIEW_MODE_SIMILARITY:
-        insightViewJSX =  <InsightSimilarityView marginLeft={this.state.data.sizing.controlPanelWidth}
-                                                 width={this.state.data.sizing.displayWidth}
-                                                 height={this.state.data.sizing.displayHeight}
+        insightViewJSX =  <InsightSimilarityView marginLeft={this.state.metadata.sizing.controlPanelWidth}
+                                                 width={this.state.metadata.sizing.displayWidth}
+                                                 height={this.state.metadata.sizing.displayHeight}
 
                                                  previewData={this.state.previewData}
                                                  resultViewData={this.state.resultViewData}
@@ -128,9 +128,9 @@ var InsightPlatform = React.createClass({
                                                  />
         break;
       case InsightConstants.VIEW_MODE_SEASONAL:
-        insightViewJSX = <InsightSeasonalView marginLeft={this.state.data.sizing.controlPanelWidth}
-                                              width={this.state.data.sizing.displayWidth}
-                                              height={this.state.data.sizing.displayHeight}
+        insightViewJSX = <InsightSeasonalView marginLeft={this.state.metadata.sizing.controlPanelWidth}
+                                              width={this.state.metadata.sizing.displayWidth}
+                                              height={this.state.metadata.sizing.displayHeight}
                                               seasonalQueryInfo={this.state.seasonalQueryInfo}
                                               results={this.state.seasonalResults}
                                               />
@@ -145,10 +145,10 @@ var InsightPlatform = React.createClass({
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="nsight" />
-        <InsightMessage {...this.state.data.message}/>
-        <InsightControlPanel width={this.state.data.sizing.controlPanelWidth}
-                             viewMode={this.state.data.viewMode}
-                             datasetIconMode={this.state.data.datasetIconMode}
+        <InsightMessage {...this.state.metadata.message}/>
+        <InsightControlPanel width={this.state.metadata.sizing.controlPanelWidth}
+                             viewMode={this.state.metadata.viewMode}
+                             datasetIconMode={this.state.metadata.datasetIconMode}
                              {...this.state.datasetData}
                              {...this.state.thresholdData}/>
         {insightViewJSX}
