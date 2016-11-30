@@ -2,49 +2,57 @@ var React = require('react');
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
-
-
-var MenuIcon = React.createClass({
-  /**
-   * Gets the initial data for the state of the app
-   */
-  render: function(){
-    var type = this.props.type;
-    var active = type == this.props.graphType;
-    var activeStyle = active ? ' focus' : ' menu';
-    var title = ''
-    var message = ''
-
-    //create message
-    var [icon, className, title, message] = getTypeInfo(type);
-    className += activeStyle;
-
-    var SliderJSX = (this.props.results && active && this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? this.props.renderDTWSlider : null;
-
-    return (
-    <div key={type}>
-         <i className={className}
-            onClick={this.props.onClick}
-            onMouseEnter={(event) => this._handleEnter(active, title, message, icon)}
-            onMouseLeave={(event) => this._handleLeave(active)}>
-         </i>
-         {SliderJSX}
-    </div>);
-  },
-  _handleEnter: function(active, title, message, icon) {
-    //var iconColor = active && '#7c63d8' || '#ff921a';
-    InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
-  },
-  _handleLeave: function(active){
-    InsightActions.sendMessage(['', '', '', '', '', false]);
-  }
-});
-
 /**
  * This dropdown will have all the datasets
  */
 var InsightMenuBar = React.createClass({
-  renderDTWSlider: function() {
+  
+  render: function() {
+    //TODO(charlie) : 185 = the size of the menuBar (make it dynamic or calculated)
+    var menubarStyle = {
+      height: this.props.height,
+      width: this.props.width,
+      background: '#f2f2f2',
+      paddingTop: 10,
+      paddingLeft: 5,
+      overflow: 'scroll',
+    }
+
+    //InsightConstants.GRAPH_TYPE_HORIZON, TODO(charlie): add horizon when complete
+    var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
+                          InsightConstants.GRAPH_TYPE_WARP,
+                          InsightConstants.GRAPH_TYPE_CONNECTED,
+                          InsightConstants.GRAPH_TYPE_RADIAL,
+                          InsightConstants.GRAPH_TYPE_ERROR,
+                          InsightConstants.GRAPH_TYPE_SPLIT];
+
+    var that = this;
+
+    var IconsJSX = graphTypeList.map(function(type) {
+      var moreJSX;
+      var active = that.props.graphType === type;
+      if (active && type === InsightConstants.GRAPH_TYPE_WARP && that.props.resultSelected) {
+        moreJSX = <DTWSlider dtwBias={that.props.dtwBias}/>;
+      }
+      return <MenuIcon 
+              key={type}
+              type={type}
+              active={that.props.graphType === type}
+              results={that.props.results}
+              onClick={(event) => InsightActions.selectGraphType(type)}
+              more={moreJSX} />
+    });
+
+    return (
+      <div style={menubarStyle}>
+        {IconsJSX}
+      </div>
+    );
+   },
+});
+
+var DTWSlider = React.createClass({
+  render: function() {
     var style = {
       slider: {
         marginRight: 7,
@@ -57,65 +65,44 @@ var InsightMenuBar = React.createClass({
       }
     };
 
-    return <div>
-            <input
-              type="range"
-              style={style.slider}
-              max={5}
-              min={-5}
-              step={1}
-              value={this.props.dtwBiasValue}
-              onChange={this._updateDTWBias}/>
-           </div>;
-   },
-   render: function() {
-     //TODO(charlie) : 185 = the size of the menuBar (make it dynamic or calculated)
-     var h = this.props.results && (this.props.type == InsightConstants.GRAPH_TYPE_WARP) ? (75+200) : 200;
+    return (
+      <div>
+        <input type="range" style={style.slider} max={5} min={-5} step={1}
+          value={this.props.dtwBias}
+          onChange={e => InsightActions.updateDTWBias(e.target.value)}/>
+      </div>
+    );
+  },
+});
 
-     var style = {
-       //height: this.props.height,
-       menuBar: {
-         width: this.props.width - 20,
-         background: '#f2f2f2',
-         marginTop: (1/2 *((4.0/5.0) * this.props.height) - 30) - (1/2 * h),  //this number is pretty fn hardcoded
-         paddingTop: 10,                                                 //75 = 1/2 length of the menubar
-         paddingRight: 7.5,
-         paddingLeft: 7.5,
-         paddingBottom: 10,
-         borderRadius: 3
-       }
-     }
+var MenuIcon = React.createClass({
 
-     //InsightConstants.GRAPH_TYPE_HORIZON, TODO(charlie): add horizon when complete
-     var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
-                          InsightConstants.GRAPH_TYPE_WARP,
-                          InsightConstants.GRAPH_TYPE_CONNECTED,
-                          InsightConstants.GRAPH_TYPE_RADIAL,
-                          InsightConstants.GRAPH_TYPE_ERROR,
-                          InsightConstants.GRAPH_TYPE_SPLIT];
+  render: function() {
+    var type = this.props.type;
+    var active = this.props.active;
+    var activeStyle = active ? ' focus' : ' menu';
 
-     var that = this;
-     var IconsJSX = graphTypeList.map(function(i) {
-       return <MenuIcon key={i}
-                        type={i}
-                        graphType={that.props.graphType}
-                        results={that.props.results}
-                        onClick={(event) => that._selectGraphType(i)}
-                        renderDTWSlider={that.renderDTWSlider()} />
-     });
+    var [icon, className, title, message] = getTypeInfo(type);
+    className += activeStyle;
 
-     return (<div style={style.menuBar}>
-              <div>
-                {IconsJSX}
-              </div>
-            </div>);
-   },
-   _selectGraphType: function(type) {
-     InsightActions.selectGraphType(type);
-   },
-   _updateDTWBias: function(e) {
-     InsightActions.updateDTWBias(e.target.value);
-   }
+    var MoreJSX = this.props.more;
+
+    return (
+      <div>
+        <i className={className}
+          onClick={this.props.onClick}
+          onMouseEnter={(event) => this._handleEnter(active, title, message, icon)}
+          onMouseLeave={(event) => this._handleLeave(active)}>
+        </i>
+        {MoreJSX}
+      </div>);
+  },
+  _handleEnter: function(active, title, message, icon) {
+    InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
+  },
+  _handleLeave: function(active){
+    InsightActions.sendMessage(['', '', '', '', '', false]);
+  }
 });
 
 var getTypeInfo = function(type) {
@@ -167,7 +154,7 @@ var getTypeInfo = function(type) {
   }
 
   return [icon, className, title, message];
-}
+};
 
 
 module.exports = InsightMenuBar;

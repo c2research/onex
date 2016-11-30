@@ -13,20 +13,22 @@ var InsightSimilarityResultView = React.createClass({
   render: function() {
     var graphType = this.props.graphType;
     var dtwBias = this.props.dtwBias;
-    var menuWidth = 50;
-    var graphWidth = this.props.width - menuWidth;
+    var menuWidth = 40;
+    var graphWidth = this.props.width - menuWidth - 10;
 
     var InsightMenuBarJSX =
       <InsightMenuBar
         width={menuWidth}
         height={this.props.height}
-        {...this.props.resultViewData}
+        dtwBias={dtwBias}
+        graphType={graphType}
+        resultSelected={this.props.selectedMatch !== null}
        />;
 
     var GraphJSX = this.generateGraph(graphWidth, this.props.height);
 
     return (
-      <div style={{width: this.props.width}}>
+      <div style={{width: this.props.width, overflow: 'hidden'}}>
         <div style={{float: 'left', width: graphWidth}}>
           {GraphJSX}
         </div>
