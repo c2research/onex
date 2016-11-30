@@ -58,15 +58,17 @@ var InsightControlPanel = React.createClass({
         break;
     }
 
-    var viewTableJSX = (this.props.results.resultList.length > 0) && (
-         <div className="viewTable">
-             <div className='section'>
-               <h2> History </h2>
-             </div>
-            <InsightViewTable width={this.props.width}
-                        results={this.props.results.resultList}
-                        height={170}/>
-        </div>);
+    //TODO(charlie): add history once the history data is figured out
+    var viewTableJSX = null;
+    // (this.props.results.resultList.length > 0) && (
+    //      <div className="viewTable">
+    //          <div className='section'>
+    //            <h2> History </h2>
+    //          </div>
+    //         <InsightViewTable width={this.props.width}
+    //                     results={this.props.results.resultList}
+    //                     height={170}/>
+    //     </div>);
 
     var panelJSX =
     <div className="controlPanel" style={style.divStyle}>
@@ -80,38 +82,40 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSimilarityQueryControls: function() {
-    var similarityQueryInfo = this.props.similarityQueryInfo;
-    var qTypeLocal = similarityQueryInfo.qTypeLocal;
-    var values, qStart, qEnd, qSeq;
+    return null;
 
-    if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
-      values = similarityQueryInfo.qDatasetValues;
-      qStart = similarityQueryInfo.qDatasetStart;
-      qEnd = similarityQueryInfo.qDatasetEnd;
-      qSeq = similarityQueryInfo.qDatasetSeq;
-    } else if (qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
-      values = similarityQueryInfo.qUploadValues;
-      qStart = similarityQueryInfo.qUploadStart;
-      qEnd = similarityQueryInfo.qUploadEnd;
-      qSeq = similarityQueryInfo.qUploadSeq;
-    } else {
-      values = similarityQueryInfo.qBuildValues;
-    }
-
-    var queryJSX = <InsightSimilarityQuery dsCurrentLength={this.props.dsCurrentLength}
-                                           qTypeLocal={qTypeLocal}
-                                           qValues={values}
-                                           qStart={qStart}
-                                           qEnd={qEnd}
-                                           qSeq={qSeq}/>;
-    //var selectButtonJSX = <InsightSelectRangeButton show={values.length > 0} />;
-    var findButtonJSX = <InsightFind show={values.length > 0}
-                                     viewMode={this.props.viewMode}/>;
-
-    return <div>
-      {queryJSX}
-      {findButtonJSX}
-    </div>;
+    // var similarityQueryInfo = this.props.similarityQueryInfo;
+    // var qTypeLocal = similarityQueryInfo.qTypeLocal;
+    // var values, qStart, qEnd, qSeq;
+    //
+    // if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
+    //   values = similarityQueryInfo.qDatasetValues;
+    //   qStart = similarityQueryInfo.qDatasetStart;
+    //   qEnd = similarityQueryInfo.qDatasetEnd;
+    //   qSeq = similarityQueryInfo.qDatasetSeq;
+    // } else if (qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
+    //   values = similarityQueryInfo.qUploadValues;
+    //   qStart = similarityQueryInfo.qUploadStart;
+    //   qEnd = similarityQueryInfo.qUploadEnd;
+    //   qSeq = similarityQueryInfo.qUploadSeq;
+    // } else {
+    //   values = similarityQueryInfo.qBuildValues;
+    // }
+    //
+    // var queryJSX = <InsightSimilarityQuery dsCurrentLength={this.props.dsCurrentLength}
+    //                                        qTypeLocal={qTypeLocal}
+    //                                        qValues={values}
+    //                                        qStart={qStart}
+    //                                        qEnd={qEnd}
+    //                                        qSeq={qSeq}/>;
+    // //var selectButtonJSX = <InsightSelectRangeButton show={values.length > 0} />;
+    // var findButtonJSX = <InsightFind show={values.length > 0}
+    //                                  viewMode={this.props.viewMode}/>;
+    //
+    // return <div>
+    //   {queryJSX}
+    //   {findButtonJSX}
+    // </div>;
   },
 
   _getSeasonalQueryControls: function() {

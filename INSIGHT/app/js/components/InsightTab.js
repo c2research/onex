@@ -13,7 +13,6 @@ var InsightTab = React.createClass({
      var innerStyle = "tabSingleContent";
      var outerStyle = "tabSingleWrapper" + selected;
 
-
      var title;
 
      switch (this.props.type) {

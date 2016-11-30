@@ -8,468 +8,315 @@ var TimeSeries = require('./../../TimeSeries');
 
 var CHANGE_EVENT = 'change';
 
-var data = {
-
-	//state
-	graphType: InsightConstants.GRAPH_TYPE_WARP,
-	datasetViewRange: [],
-	uploadViewRange: [],
-
-	//dtw bias
-	dtwBias: 0
+var queryListViewData = {
+  queryLocation: InsightConstants.QUERY_LOCATION_DATASET,
+  // A list of names of the time series
+  queryListDataset: [],
+  queryNameListUpload: [],
+  querySelectedIndexDataset: -1,
+  querySelectedIndexUpload: -1,
 };
 
-// An array of uploaded TimeSeries
-var uploadedQueries = [];
+var previewData = {
+  // A TimeSeries
+  previewSequence: null,
+  previewRange: []
+};
 
-var similarityQueryInfo = {
-	qTypeAPI: 0, //use this later for q from diff sets
-	qUploadSeq: 0,//index of the query
-	qDatasetSeq: 0,//index of the query
-	qDatasetStart: 0,
-	qDatasetEnd: -1,
-	qUploadStart: 0,
-	qUploadEnd: -1,
-	qDatasetValues: [],
-	qUploadValues: [],
- 	qTypeLocal: InsightConstants.QUERY_TYPE_DATASET
-}
-/*
- * This will hold all the data on results and formed queries
- * this can go into another Store eventually
- */
-var results = {
-	viewLiveIndices: [],
-	resultList: []
-}
+var groupViewData = {
+  // A list of TimeSeries
+  groupList: [],
+  groupSelectedIndex: -1
+};
+
+var resultViewData = {
+  graphType: InsightConstants.GRAPH_TYPE_WARP,
+  dtwBias: 0,
+  selectedSubsequence: null,
+  selectedMatch: null
+};
 
 /*
- * A counter for requestIDs to ensure last query is ultimately
- * used.
+ * A counter for requestIDs to ensure last query is ultimately used.
  */
 var requestID = {
-	findMatch: 0,
-	uploadQuery: 0
+  findMatch: 0,
+  uploadQuery: 0
 }
 
 var InsightStoreSimilarity = assign({}, {
-	/*
-	 * Called upon the success a query
-	 */
-	addQueryResultPair: function(result) {
-		results.viewLiveIndices=[0];
-		results.resultList.unshift(result);
-	},
 
-	/*
-	 * clears the list of view live indices, called on change in control panel
-	 * in order to show new query in full.
-	 * view live indices are set when a new
- 	 * result is found and when a query/result match is selected in the data table (future)
-	 */
-	clearLiveView: function() {
-		results.viewLiveIndices = [];
-	},
+  fillQueryListFromDataset: function() {
+    //TODO: update this to request all the queries
+    queryListViewData.queryListDataset = [];
+    for (var i = 0; i < InsightStore.getDSCurrentLength(); i++) {
+        queryListViewData.queryListDataset.push("Dataset: sequence " + i);
+    }
+    queryListViewData.querySelectedIndexDataset = -1;
+  },
 
-	/*
-	 * @return {Object} - returns all the result information
-	 */
-	getResults: function() {
-		return results;
-	},
+  /**
+   * @param {InsightConstant} - the current query type
+   */
+  setQueryLocation: function(v) {
+    queryListViewData.queryLocation = v;
+  },
 
-	/**
-	 * @return {Object} - the values of the current query (uploaded)
-	 */
-	getQUploadValues: function() {
-		return similarityQueryInfo.qUploadValues;
-	},
+  /**
+   * requests server upload a file
+   */
+  uploadQuery: function(files) {
+    var formData = new FormData();
+    $.each(files, function(key, value) {
+      formData.append('query', value);
+    })
+    $.ajax({
+      url: '/query/upload',
+      data: formData,
+      type: 'POST',
+      processData: false,
+      contentType: false,
+      success: function(response) {
+        // TODO: Modify that server to support this
+        querySetSize = response.querySetSize;
+        for (var i = 0; i < querySetSize; i++) {
+          queryListViewData.queryNameListUpload.push("Sequence " + i);
+        }
+        queryListViewData.querySelectedIndexUpload = -1;
+        InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        //TODO: later on, pop up a red message top-right corner that something failed
+        console.log("error in uploading query");
+      }
+    });
+  },
 
-	/**
-	 * @return {Object} - the values of the current query (dataset)
-	 */
-	getQDatasetValues: function() {
-		return similarityQueryInfo.qDatasetValues;
-	},
+  setQuerySelectedIndexDataset: function(i) {
+    queryListViewData.querySelectedIndexDataset = i;
+  },
 
-	getSimilarityQueryInfo: function() {
-		return similarityQueryInfo;
-	},
+  setQuerySelectedIndexUpload: function(i) {
+    queryListViewData.querySelectedIndexUpload = i;
+  },
 
-	getGraphType: function() {
-		return data.graphType;
-	},
+  getQueryListViewData: function() {
+    return queryListViewData;
+  },
 
-	getViewRange: function() {
-		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-			return data.datasetViewRange;
-		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
-			return data.uploadViewRange;
-		}
-	},
+  requestQuery: function() {
+    var fromDataset = queryListViewData.queryLocation == InsightConstants.QUERY_LOCATION_DATASET;
+    var selectedQuery = fromDataset ? queryListViewData.querySelectedIndexDataset :
+                                      queryListViewData.querySelectedIndexUpload;
+    var queryName = fromDataset ? queryListViewData.queryListDataset[selectedQuery] :
+                                  queryListViewData.queryNameListUpload[selectedQuery];
+    InsightStore.requestSequence(fromDataset, selectedQuery,
+      function(endlist) {
+        var newTimeSeries = new TimeSeries(endlist,
+                                           queryName,
+                                           selectedQuery,
+                                           0,
+                                           endlist.length - 1);
+        previewData.previewSequence = newTimeSeries;
+        previewData.previewRange = [0, endlist.length - 1];
+        InsightStore.emitChange();
+       }
+    );
+  },
 
-	/**
-	 * @param {InsightConstant} - the current query type
-	 */
-	setQueryType: function(v) {
-		similarityQueryInfo.qTypeLocal = v;
-	},
+  setPreviewRange: function(array) {
+    data.datasetViewRange = array;
+  },
 
-	/**
-	 * @param {Int} - the index of the query in the LIST IT BELONGS TO
-	 */
-	setQUploadSeq: function(qSeq) {
-		similarityQueryInfo.qUploadSeq = qSeq;
-	},
+  getPreviewData: function() {
+    return previewData;
+  },
 
-	/**
-	 * @param {Int} - the index of the query in the LIST IT BELONGS TO
-	 */
-	setQDatasetSeq: function(qSeq) {
-		similarityQueryInfo.qDatasetSeq = qSeq;
-	},
+  /**
+   * @param {InsightConstants} - the graph type to be set
+   */
+  setGraphType: function(type) {
+    resultViewData.graphType = type;
+  },
 
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQDatasetStart: function(qStart) {
-		if (qStart >= similarityQueryInfo.qDatasetEnd) return;
-		similarityQueryInfo.qDatasetStart = qStart;
-	},
+  /**
+   * sets the dtw bias
+   * @param {Number} - the value to be set to
+   */
+  setDTWBias: function(value) {
+    resultViewData.dtwBias = value;
+  },
 
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQDatasetEnd: function(qEnd) {
-		if (qEnd <= similarityQueryInfo.qDatasetStart) return;
-		similarityQueryInfo.qDatasetEnd = qEnd;
-	},
+  /**
+   * requests server to find the answer
+   */
+  requestFindMatch: function() {
+    if (previewData.previewSequence === null) {
+      return;
+    }
 
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQUploadStart: function(qStart) {
-		if (qStart >= similarityQueryInfo.qUploadEnd) return;
-		similarityQueryInfo.qUploadStart = qStart;
-	},
+    var qStart, qEnd, qSeq, qTypeLocal, qValues, qType;
+    var previewSequence = previewData.previewSequence;
+    qStart = previewData.previewRange[0];
+    qEnd = previewData.previewRange[1];
+    qSeq = previewSequence.getSeq();
+    qType = previewSequence.getLocation();
+    qValues = previewSequence;
 
-	/**
-	 * @param {Int} - the ending index of a query
-	 */
-	setQUploadEnd: function(qEnd) {
-		if (qEnd <= similarityQueryInfo.qUploadStart) return;
-		similarityQueryInfo.qUploadEnd = qEnd;
-	},
+    resultViewData.selectedSubsequence = previewSequence.slice(qStart, qEnd + 1);
 
-	/**
-	 * @param {Object} - the values of the current query
-	 */
-	setQUploadValues: function(qValues) {
-		similarityQueryInfo.qUploadValues = qValues;
-		similarityQueryInfo.qUploadStart = 0;
-		similarityQueryInfo.qUploadEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 
-		data.uploadViewRange = [similarityQueryInfo.qDatasetStart, similarityQueryInfo.qDatasetEnd];
-	},
+    requestID.findMatch += 1;
+    $.ajax({
+      url: '/query/find/',
+      data: {
+          dsCollectionIndex: dsCollectionIndex, //the index of the ds in memory on the server we querying
+          qType: qType, //the type of query, 0->dataset, 1->from file
+          qSeq: qSeq, //the index of q in its ds
+          qStart: qStart,
+          qEnd: qEnd,
+          requestID: requestID.findMatch
+      },
+      dataType: 'json',
+      currentState: {
+        qType: qType,
+        qSeq: qSeq,
+        qStart: qStart,
+        qEnd: qEnd,
+        qValues: qValues,
+        threshold: InsightStore.getThresholdCurrent(),
+        qDsCollectionIndex: dsCollectionIndex
+      },
+      success: function(response) {
+          if (response.requestID != requestID.findMatch){
+            console.log(response, requestID);
+            return;
+          }
 
-	/**
-	 * @param {Object} - the values of the current query
-	 */
-	setQDatasetValues: function(qValues) {
-		similarityQueryInfo.qDatasetValues = qValues;
-		similarityQueryInfo.qDatasetStart = 0;
-		similarityQueryInfo.qDatasetEnd = qValues.length > 0 ? qValues.length - 1 : 0;
+          var currentState = this.currentState;
 
-		data.datasetViewRange = [similarityQueryInfo.qDatasetStart, similarityQueryInfo.qDatasetEnd];
-	},
+          var endlist = response.result.map(function(val, i) {
+            return [i + currentState.qStart, val];
+          });
 
-	/**
-	 * sets the dtw bias
-	 * @param {Number} - the value to be set to
-	 */
-	setDTWBias: function(value) {
-		data.dtwBias = value;
-	},
+          var resultTimeSeries = new TimeSeries(endlist, '',
+                                                currentState.qType,
+                                                response.seq,
+                                                response.start,
+                                                response.end);
+          // TODO: this is temporary, should fill with more time series than this
+          groupViewData.groupList = [resultTimeSeries];
+          groupViewData.groupSelectedIndex = 0;
+          resultViewData.selectedMatch = groupViewData.groupList[0];
+          // var result = { //structure of query result pair
+          //   qTypeLocal: currentState.qTypeLocal,
+          //   qSeq: currentState.qSeq,
+          //   qStart: currentState.qStart,
+          //   qEnd: currentState.qEnd,
+          //   qValues: currentState.qValues,
+          //   qThreshold: currentState.threshold,
+          //   qDistanceType: null,
+          //   qDsCollectionIndex: currentState.qDsCollectionIndex,
+          //   rSeq: response.seq,
+          //   rStart: response.start,
+          //   rEnd: response.end,
+          //   rValues: endlist,
+          //   dsName: response.dsName,
+          //   warpingPath: response.warpingPath,
+          //   similarityValue: response.dist
+          // }
+          // InsightStoreSimilarity.addQueryResultPair(result);//response.result.warpingPath,
+          InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        //TODO: later on, pop up a red message top-right corner that something failed
+        console.log("error in finding answer");
+      }
+    });
+  },
 
-	/**
-	 * @param {InsightConstants} - the graph type to be set
-	 */
-	setGraphType: function(type) {
-		data.graphType = type;
-	},
+  setGroupSelectedIndex: function(i) {
+    groupViewData.groupSelectedIndex = i;
+  },
 
-	setViewRange: function(array) {
-		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-			data.datasetViewRange = array;
-		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
-			data.uploadViewRange = array;
-		}
-	},
-
-	/**
-	 * current view is selected for the query start and end
-	 */
-	selectCurrentRange: function() {
-		if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-			this.setQDatasetStart(data.datasetViewRange[0]);
-			this.setQDatasetEnd(data.datasetViewRange[1]);
-		}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
-			this.setQUploadStart(data.datasetViewRange[0]);
-			this.setQUploadEnd(data.uploadViewRange[1]);
-		}
-	},
-	/**
-	 * gets the dtw bias
-	 */
-	getDTWBias: function() {
-		return data.dtwBias;
-	},
-
-	requestQueryFromDataset: function() {
-		InsightStore.requestSequenceFromDataset(similarityQueryInfo.qDatasetSeq,
-			function(endlist) {
-		   	InsightStoreSimilarity.setQDatasetValues(endlist);
-				InsightStore.calculateDimensions();
-		    InsightStore.emitChange();
-		   }
-		);
-	},
-	/**
-	 * requests server upload a file
-	 */
-	requestUploadQuery: function(files) {
-		var formData = new FormData();
-		$.each(files, function(key, value) {
-			formData.append('query', value);
-		})
-		$.ajax({
-			url: '/query/upload',
-			data: formData,
-			type: 'POST',
-			processData: false,
-			contentType: false,
-			//dataType: 'json',
-			success: function(response) {
-				uploadedQueries = response.queries;
-
-				var endlist = response.queries[0].map(function(val, i) {
-					return [i, val];
-				});
-
-				InsightStoreSimilarity.setQUploadValues(endlist);
-				InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in uploading query");
-			}
-		});
-	},
-
-	/**
-	 * requests server to find the answer
-	 */
-	requestFindMatch: function() {
-		var qStart, qEnd, qSeq, qTypeLocal, qValues, qType;
-
-		//NOTE: we have the option of moving the values in similarityQueryInfo into upload
-		// and dataset and then we can decompose the values more neatly.
-		var qTypeLocal = similarityQueryInfo.qTypeLocal;
-		if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-			qStart = similarityQueryInfo.qDatasetStart;
-			qEnd = similarityQueryInfo.qDatasetEnd;
-			qSeq = similarityQueryInfo.qDatasetSeq;
-			qValues = similarityQueryInfo.qDatasetValues;
-			qType = 0;
-		} else {
-			qStart = similarityQueryInfo.qUploadStart;
-			qEnd = similarityQueryInfo.qUploadEnd;
-			qSeq = similarityQueryInfo.qUploadSeq;
-			qValues = similarityQueryInfo.qUploadValues;
-			qType = 1;
-		}
-
-		var dsCollectionIndex = InsightStore.getDSCollectionIndex();
-
-		if ((dsCollectionIndex == null) || (qSeq == null) ||
-				(dsCollectionIndex < 0) || (qSeq < 0)){
-			console.log("dsCollectionIndex or qseq null, no need to req", qSeq, dsCollectionIndex);
-			return;
-		}
-
-		if ((qStart == null) || (qEnd == null) ||
-				(qStart < 0) || (qEnd < 0) ||
-			  (qStart >= qEnd) || (qEnd > qValues.length)){
-			console.log("setting defaults for qStart and end ");
-
-			 qStart = 0;
-			 qEnd = qValues.length - 1;
-		}
-
-		requestID.findMatch += 1;
-
-		$.ajax({
-			url: '/query/find/',
-			data: {
-			    dsCollectionIndex: dsCollectionIndex, //the index of the ds in memory on the server we querying
-			    qType: qType, //the type of query, 0->dataset, 1->from file
-			    qSeq: qSeq, //the index of q in its ds
-			    qStart: qStart,
-			    qEnd: qEnd,
-			    requestID: requestID.findMatch
-			},
-			dataType: 'json',
-			currentState: {
-				qTypeLocal: qTypeLocal,
-				qSeq: qSeq,
-				qStart: qStart,
-				qEnd: qEnd,
-				qValues: qValues,
-				threshold: InsightStore.getThresholdCurrent(),
-				qDsCollectionIndex: dsCollectionIndex
-			},
-			success: function(response) {
-			    if (response.requestID != requestID.findMatch){
-						console.log(response, requestID);
-						return;
-			    }
-
-					var currentState = this.currentState;
-
-					var endlist = response.result.map(function(val, i) {
-						return [i + currentState.qStart, val];
-					});
-
-			    var result = { //structure of query result pair
-						qTypeLocal: currentState.qTypeLocal,
-						qSeq: currentState.qSeq,
-						qStart: currentState.qStart,
-						qEnd: currentState.qEnd,
-						qValues: currentState.qValues,
-						qThreshold: currentState.threshold,
-						qDistanceType: null,
-						qDsCollectionIndex: currentState.qDsCollectionIndex,
-						rSeq: response.seq,
-						rStart: response.start,
-						rEnd: response.end,
-						rValues: endlist,
-						dsName: response.dsName,
-						warpingPath: response.warpingPath,
-						similarityValue: response.dist
-					}
-					InsightStoreSimilarity.addQueryResultPair(result);//response.result.warpingPath,
-				  InsightStore.emitChange();
-			},
-			error: function(xhr) {
-				//TODO: later on, pop up a red message top-right corner that something failed
-				console.log("error in finding answer");
-			}
-		});
-	},
+  /**
+   * gets the dtw bias
+   */
+  getResultViewData: function() {
+    return resultViewData;
+  },
 
 
 });
 
 // Register callback to handle all updates
 AppDispatcher.register(function(action) {
-	switch(action.actionType) {
-		case InsightConstants.REQUEST_DATA_INIT:
-			InsightStoreSimilarity.clearLiveView();
-			if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SIMILARITY) {
-				InsightStore.requestDatasetInit(function() {
-					InsightStoreSimilarity.setQDatasetSeq(0);
-					InsightStoreSimilarity.requestQueryFromDataset();
-				});
-			}
-			break;
-		case InsightConstants.FIND_MATCH:
-			InsightStoreSimilarity.requestFindMatch();
-			break;
-		case InsightConstants.SIMILARITY_SELECT_QUERY:
-			InsightStoreSimilarity.clearLiveView();
-			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
-				InsightStoreSimilarity.setQDatasetSeq(action.id)
-			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
-				InsightStoreSimilarity.setQUploadSeq(action.id)
-			}
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.SIMILARITY_LOAD_QUERY:
-			InsightStoreSimilarity.requestQueryFromDataset();
-			break;
-		case InsightConstants.SIMILARITY_SELECT_END_Q:
-			InsightStoreSimilarity.clearLiveView();
-			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-				InsightStoreSimilarity.setQDatasetEnd(action.id);
-			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD)  {
-				InsightStoreSimilarity.setQUploadEnd(action.id)
-			}
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.SIMILARITY_SELECT_START_Q:
-			InsightStoreSimilarity.clearLiveView();
-			if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET){
-				InsightStoreSimilarity.setQDatasetStart(action.id);
-			}	else if (similarityQueryInfo.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
-				InsightStoreSimilarity.setQUploadStart(action.id)
-			}
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.QUERY_TYPE_UPLOAD:
-			InsightStoreSimilarity.clearLiveView();
-			InsightStoreSimilarity.setQueryType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.QUERY_TYPE_DATASET:
-			InsightStoreSimilarity.clearLiveView();
-			InsightStoreSimilarity.setQueryType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.UPLOAD_QUERY_FILE:
-			InsightStoreSimilarity.clearLiveView();
-			InsightStoreSimilarity.requestUploadQuery(action.id);
-			break;
-		case InsightConstants.SELECT_DTW_BIAS:
-			InsightStoreSimilarity.setDTWBias(action.id);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_LINE:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_HORIZON:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_CONNECTED:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_ERROR:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_SPLIT:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_RADIAL:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.GRAPH_TYPE_WARP:
-			InsightStoreSimilarity.setGraphType(action.actionType);
-			InsightStore.emitChange();
-			break;
-		case InsightConstants.SELECT_VIEW_POINTS:
-			InsightStoreSimilarity.setViewRange(action.id);
-			InsightStore.emitChange();
-		case InsightConstants.SELECT_CURRENT_RANGE:
-			InsightStoreSimilarity.selectCurrentRange();
-			InsightStore.emitChange();
-		default:
-		  // no op
-	}
+  switch(action.actionType) {
+    case InsightConstants.REQUEST_DATA_INIT:
+      if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SIMILARITY) {
+        InsightStore.requestDatasetInit(function() {
+          // Fill the query list
+          InsightStoreSimilarity.fillQueryListFromDataset();
+        });
+      }
+      break;
+
+    case InsightConstants.QUERY_LOCATION_UPLOAD:
+    case InsightConstants.QUERY_LOCATION_DATASET:
+      InsightStoreSimilarity.setQueryLocation(action.actionType);
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.UPLOAD_QUERY_FILE:
+      InsightStoreSimilarity.uploadQuery(action.id);
+      break;
+
+    case InsightConstants.SIMILARITY_SELECT_QUERY:
+      if (queryListViewData.queryLocation == InsightConstants.QUERY_LOCATION_DATASET) {
+        InsightStoreSimilarity.setQuerySelectedIndexDataset(action.id)
+      } else {
+        InsightStoreSimilarity.setQuerySelectedIndexUpload(action.id)
+      }
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.SIMILARITY_LOAD_QUERY:
+      InsightStoreSimilarity.requestQuery();
+      break;
+
+
+    case InsightConstants.SIMILARITY_SELECT_PREVIEW_RANGE:
+      InsightStoreSimilarity.setPreviewRange(action.id);
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.FIND_MATCH:
+      InsightStoreSimilarity.requestFindMatch();
+      break;
+
+    case InsightConstants.SIMILARITY_SELECT_RESULT:
+      InsightStoreSimilarity.setGroupSelectedIndex(action.id);
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.SELECT_DTW_BIAS:
+      InsightStoreSimilarity.setDTWBias(action.id);
+      InsightStore.emitChange();
+      break;
+    case InsightConstants.GRAPH_TYPE_LINE:
+    case InsightConstants.GRAPH_TYPE_HORIZON:
+    case InsightConstants.GRAPH_TYPE_CONNECTED:
+    case InsightConstants.GRAPH_TYPE_ERROR:
+    case InsightConstants.GRAPH_TYPE_SPLIT:
+    case InsightConstants.GRAPH_TYPE_RADIAL:
+    case InsightConstants.GRAPH_TYPE_WARP:
+      InsightStoreSimilarity.setGraphType(action.actionType);
+      InsightStore.emitChange();
+      break;
+    default:
+      // no op
+  }
 });
 
 module.exports = InsightStoreSimilarity;

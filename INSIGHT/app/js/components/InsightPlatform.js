@@ -1,16 +1,19 @@
 var React = require('react');
 
+//var InsightStore = require('./../flux/stores/InsightStore');
+//var InsightStoreSimilarity = require('./../flux/stores/InsightStoreSimilarity');
+var InsightStoreSeasonal = require('./../flux/stores/InsightStoreSeasonal');
+
 var InsightStore = require('./../flux/stores/InsightStore');
 var InsightStoreSimilarity = require('./../flux/stores/InsightStoreSimilarity');
-var InsightStoreSeasonal = require('./../flux/stores/InsightStoreSeasonal');
 
 var InsightConstants = require('./../flux/constants/InsightConstants');
 var InsightActions = require('./../flux/actions/InsightActions');
 
 var InsightBanner = require('./InsightBanner');
 var InsightControlPanel = require('./InsightControlPanel');
-var InsightViewSimilarity = require('./similarity/InsightViewSimilarity');
-var InsightViewSeasonal = require('./seasonal/InsightViewSeasonal');
+var InsightSimilarityView = require('./similarity/InsightSimilarityView');
+var InsightSeasonalView = require('./seasonal/InsightSeasonalView');
 var InsightMessage = require('./InsightMessage');
 
 var resizeId;
@@ -24,31 +27,41 @@ function getState() {
 
     /* ### general state ### */
     // dataset information
-    dsCollectionList: InsightStore.getDSCollectionList(),
-    dsCollectionIndex: InsightStore.getDSCollectionIndex(),
-    dsCurrentLength: InsightStore.getDSCurrentLength(),
+    // dsCollectionList: InsightStore.getDSCollectionList(),
+    // dsCollectionIndex: InsightStore.getDSCollectionIndex(),
+    // dsCurrentLength: InsightStore.getDSCurrentLength(),
+
+    datasetData: InsightStore.getDatasetData(),
 
     //threshold
-    thresholdRange: InsightStore.getThresholdRange(),
-    thresholdCurrent: InsightStore.getThresholdCurrent(),
-    thresholdStep: InsightStore.getThresholdStep(),
+    // thresholdRange: InsightStore.getThresholdRange(),
+    // thresholdCurrent: InsightStore.getThresholdCurrent(),
+    // thresholdStep: InsightStore.getThresholdStep(),
+
+    thresholdData: InsightStore.getThresholdData(),
 
     // meta
-    viewMode: InsightStore.getViewMode(),
-    sizing: InsightStore.getSizing(),
-    message: InsightStore.getMessage(),
+    // viewMode: InsightStore.getViewMode(),
+    // sizing: InsightStore.getSizing(),
+    // message: InsightStore.getMessage(),
+    // datasetIconMode: InsightStore.getDatasetIconMode(),
 
-    //icon modes
-    datasetIconMode: InsightStore.getDatasetIconMode(),
+    data: InsightStore.getData(),
 
     /* ### similarity state ### */
-    graphType: InsightStoreSimilarity.getGraphType(),
-    similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
-    similarityResults: InsightStoreSimilarity.getResults(),
-    viewRange: InsightStoreSimilarity.getViewRange(),
+    // graphType: InsightStoreSimilarity.getGraphType(),
+    // similarityQueryInfo: InsightStoreSimilarity.getSimilarityQueryInfo(),
+    // similarityResults: InsightStoreSimilarity.getResults(),
+    // viewRange: InsightStoreSimilarity.getViewRange(),
+    //
+    // //dtw bias & menu options
+    // dtwBiasValue: InsightStoreSimilarity.getDTWBias(),
 
-    //dtw bias & menu options
-    dtwBiasValue: InsightStoreSimilarity.getDTWBias(),
+    previewData: InsightStoreSimilarity.getPreviewData(),
+    resultViewData: InsightStoreSimilarity.getResultViewData(),
+    queryListViewData: InsightStoreSimilarity.getQueryListViewData(),
+
+
 
     /* ### seasonal state ### */
     seasonalQueryInfo: InsightStoreSeasonal.getSeasonalQueryInfo(),
@@ -102,22 +115,22 @@ var InsightPlatform = React.createClass({
   render: function() {
     var insightViewJSX;
 
-    switch (this.state.viewMode) {
+    switch (this.state.data.viewMode) {
       case InsightConstants.VIEW_MODE_SIMILARITY:
-        insightViewJSX =  <InsightViewSimilarity marginLeft={this.state.sizing.controlPanelWidth}
-                                                 width={this.state.sizing.displayWidth}
-                                                 height={this.state.sizing.displayHeight}
-                                                 similarityQueryInfo={this.state.similarityQueryInfo}
-                                                 results={this.state.similarityResults}
-                                                 dtwBiasValue={this.state.dtwBiasValue}
-                                                 graphType={this.state.graphType}
-                                                 viewRange={this.state.viewRange}
+        insightViewJSX =  <InsightSimilarityView marginLeft={this.state.data.sizing.controlPanelWidth}
+                                                 width={this.state.data.sizing.displayWidth}
+                                                 height={this.state.data.sizing.displayHeight}
+
+                                                 previewData={this.state.previewData}
+                                                 resultViewData={this.state.resultViewData}
+                                                 groupViewData={this.state.groupViewData}
+                                                 queryListViewData={this.state.queryListViewData}
                                                  />
         break;
       case InsightConstants.VIEW_MODE_SEASONAL:
-        insightViewJSX = <InsightViewSeasonal marginLeft={this.state.sizing.controlPanelWidth}
-                                              width={this.state.sizing.displayWidth}
-                                              height={this.state.sizing.displayHeight}
+        insightViewJSX = <InsightSeasonalView marginLeft={this.state.data.sizing.controlPanelWidth}
+                                              width={this.state.data.sizing.displayWidth}
+                                              height={this.state.data.sizing.displayHeight}
                                               seasonalQueryInfo={this.state.seasonalQueryInfo}
                                               results={this.state.seasonalResults}
                                               />
@@ -132,27 +145,12 @@ var InsightPlatform = React.createClass({
     return (
       <div className="insightPlatform">
         <InsightBanner baseTitle="nsight" />
-        <InsightMessage title={this.state.message.title}
-                        color={this.state.message.color}
-                        iconColor={this.state.message.iconColor}
-                        icon={this.state.message.icon}
-                        message={this.state.message.message}
-                        visibility={this.state.message.visibility}/>
-        <InsightControlPanel width={this.state.sizing.controlPanelWidth}
-                             viewMode={this.state.viewMode}
-                             dsCollectionList={this.state.dsCollectionList}
-                             dsCollectionIndex={this.state.dsCollectionIndex}
-                             dsCurrentLength={this.state.dsCurrentLength}
-                             datasetIconMode={this.state.datasetIconMode}
-                             thresholdRange={this.state.thresholdRange}
-                             thresholdCurrent={this.state.thresholdCurrent}
-                             thresholdStep={this.state.thresholdStep}
-                             similarityQueryInfo={this.state.similarityQueryInfo}
-                             seasonalQueryInfo={this.state.seasonalQueryInfo}
-                             distanceList={this.state.distanceList}
-                             distanceCurrentIndex={this.state.distanceCurrentIndex}
-                             results={this.state.similarityResults}
-        />
+        <InsightMessage {...this.state.data.message}/>
+        <InsightControlPanel width={this.state.data.sizing.controlPanelWidth}
+                             viewMode={this.state.data.viewMode}
+                             datasetIconMode={this.state.data.datasetIconMode}
+                             {...this.state.datasetData}
+                             {...this.state.thresholdData}/>
         {insightViewJSX}
        </div>
     );

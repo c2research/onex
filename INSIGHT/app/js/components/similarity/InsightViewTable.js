@@ -128,6 +128,9 @@ var InsightViewTable = React.createClass({
       marginRight: margin,
       marginBottom: 10
     }
+
+    var queryJSX = InsightSimilarityQuery
+
     var tableJSX =
     <div className="viewTable" style={style}>
       <Table

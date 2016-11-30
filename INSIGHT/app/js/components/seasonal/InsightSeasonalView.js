@@ -7,8 +7,8 @@ var AnnotatedSlider = require('./../AnnotatedSlider');
 /**
  * This is a prototype for an initial view
  */
-var InsightViewSeasonal = React.createClass({
- 
+var InsightSeasonalView = React.createClass({
+
   render: function() {
     var width = this.props.width;
     var height = this.props.height;
@@ -28,7 +28,7 @@ var InsightViewSeasonal = React.createClass({
                             strokeWidth={3}
                            />;
 
-    var patternSelector = patterns && (patterns.length > 1) && 
+    var patternSelector = patterns && (patterns.length > 1) &&
                           <PatternSelector
                             max={patterns.length - 1}
                             width={300}
@@ -81,7 +81,7 @@ var InsightViewSeasonal = React.createClass({
 
 var PatternSelector = React.createClass({
   render: function() {
-    return <AnnotatedSlider 
+    return <AnnotatedSlider
             max={this.props.max}
             min={this.props.min}
             step={1}
@@ -94,4 +94,4 @@ var PatternSelector = React.createClass({
   }
 })
 
-module.exports = InsightViewSeasonal;
+module.exports = InsightSeasonalView;

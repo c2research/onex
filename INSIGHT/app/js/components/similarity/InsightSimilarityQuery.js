@@ -1,6 +1,5 @@
 var React = require('react');
-var InsightQuerySlider = require('./../InsightQuerySlider');
-var InsightSimilarityQueryOptions = require('./InsightSimilarityQueryOptions');
+
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
@@ -12,34 +11,16 @@ var InsightSimilarityQuery = React.createClass({
      var divStyle = {width: this.props.width};
 
      var distanceJSX = null;
-
-     var querySlider = this.props.qTypeLocal == InsightConstants.QUERY_TYPE_DATASET &&
-                       <InsightQuerySlider
-                          qSeq={this.props.qSeq}
-                          dsCurrentLength={this.props.dsCurrentLength}
-                          onChange={this._handleQueryChange} />
-
      var uploadQueryJSX = (this.props.qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) && <UploadQuery />;
 
      var panelJSX = this.props.dsCurrentLength > 0 &&
      <div className="section">
-        <h2> Query </h2>
+        <h5> Determine Query Location </h5>
         <QueryTypeRadio qTypeLocal={this.props.qTypeLocal}/>
         {uploadQueryJSX}
-        <div>
-          {querySlider}
-        </div>
      </div>;
-     //<InsightSimilarityQueryOptions qValuesLength={this.props.qValues.length} qStart={this.props.qStart} qEnd={this.props.qEnd} />
      return <div> {panelJSX} </div>;
-   },
-
-   _handleQueryChange: function(e) {
-    InsightActions.selectSimilarityQuery(parseInt(e.target.value, 10));
-    clearTimeout(this._queryChangedId);
-    this._queryChangedId = setTimeout(InsightActions.loadSimilarityQuery, 50);
    }
-
 });
 
 var QueryTypeRadio = React.createClass({

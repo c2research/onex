@@ -33,9 +33,6 @@ var InsightDatasetDropdown = React.createClass({
      return panelJSX;
    },
    _onSelect(val) {
-     //I would greedily set the value, then send into flux!
-     //but, we want to be able to clear the values on a DS change,
-     //and have it represented here clearly
      if (val == null){
        InsightActions.selectDSIndex(null);
      } else {

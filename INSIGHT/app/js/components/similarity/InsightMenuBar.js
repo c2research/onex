@@ -37,12 +37,6 @@ var MenuIcon = React.createClass({
   },
   _handleLeave: function(active){
     InsightActions.sendMessage(['', '', '', '', '', false]);
-    // if (active){
-    //   return;
-    // } else if (this.props.graphType) {
-    //   var [icon, className, title, message] = getTypeInfo(this.props.graphType);
-    //   InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
-    // }
   }
 });
 
