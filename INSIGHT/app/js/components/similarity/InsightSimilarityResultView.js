@@ -14,7 +14,7 @@ var InsightSimilarityResultView = React.createClass({
     var graphType = this.props.graphType;
     var dtwBias = this.props.dtwBias;
     var menuWidth = 50;
-    var graphWidth = this.props.width = menuWidth;
+    var graphWidth = this.props.width - menuWidth;
     var InsightMenuBarJSX =
       <InsightMenuBar
         width={menuWidth}
