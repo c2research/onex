@@ -6,11 +6,12 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
 var ConnectedScatterPlot = require('./../charts/ConnectedScatterPlot');
 var RadialChart = require('./../charts/RadialChart');
-var OverviewChart = require('./../charts/OverviewChart');
 
 var InsightSimilarityResultView = React.createClass({
 
   render: function() {
+    var height = this.props.height;
+    var width = this.props.width;
     var graphType = this.props.graphType;
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
@@ -19,16 +20,22 @@ var InsightSimilarityResultView = React.createClass({
     var InsightMenuBarJSX =
       <InsightMenuBar
         width={menuWidth}
-        height={this.props.height}
+        height={height}
         dtwBias={dtwBias}
         graphType={graphType}
         resultSelected={this.props.selectedMatch !== null}
        />;
 
-    var GraphJSX = this.generateGraph(graphWidth, this.props.height);
+    var GraphJSX = this.generateGraph(graphWidth, height);
 
+    var style = {
+      width: width, 
+      overflow: 'hidden',
+      borderLeft: '1px dashed gray',
+      borderBottom: '1px dashed gray'
+    };
     return (
-      <div style={{width: this.props.width, overflow: 'hidden'}}>
+      <div style={style}>
         <div style={{float: 'left', width: graphWidth}}>
           {GraphJSX}
         </div>
@@ -45,7 +52,7 @@ var InsightSimilarityResultView = React.createClass({
       return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]]; 
     });
     var data = {};
-    var margins = {left: 35, right: 15, top: 25, bottom: 20};
+    var margins = {left: 35, right: 15, top: 40, bottom: 20};
     var title = 'Similarity Results';
     var resultGraph = null;
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);

@@ -19,8 +19,8 @@ var queryListViewData = {
 
 var previewData = {
   // A TimeSeries
-  previewSequence: null,
-  previewRange: []
+  previewSequence: new TimeSeries([[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]], '', 1, 1, 0, 18),
+  previewRange: [0, 18]
 };
 
 var groupViewData = {
@@ -128,7 +128,7 @@ var InsightStoreSimilarity = assign({}, {
   },
 
   setPreviewRange: function(array) {
-    data.datasetViewRange = array;
+    previewData.previewRange = array;
   },
 
   getPreviewData: function() {
@@ -288,7 +288,6 @@ AppDispatcher.register(function(action) {
     case InsightConstants.SIMILARITY_LOAD_QUERY:
       InsightStoreSimilarity.requestQuery();
       break;
-
 
     case InsightConstants.SIMILARITY_SELECT_PREVIEW_RANGE:
       InsightStoreSimilarity.setPreviewRange(action.id);

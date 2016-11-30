@@ -76,6 +76,13 @@ var InsightActions = {
       actionType: InsightConstants.SIMILARITY_LOAD_QUERY
     });
   },
+  
+  selectPreviewRange: function(range) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SIMILARITY_SELECT_PREVIEW_RANGE,
+      id: range
+    });
+  },
   /**
    * initiates function to change graphTypeList
    */

@@ -55,20 +55,15 @@ var OverviewChart = React.createClass({
       case 'boolean':
         return fieldOld === fieldNew;
         break;
-      case 'function':
-        return fieldOld === fieldNew;
-        break;
       default:
-        console.log("Missing case from equality types: " + type);
-        return fieldOld === fieldNew;
-        break;
+        return true;
     }
   },
   // TODO(Cuong): consider this to be a mixin so that it can be reused in other charts
   _detectChangeAndUpdateNonDataProps: function(newNonDataProps) {
     var changed = false;
     for (var field in newNonDataProps) {
-      if(!this._recursiveEqualityCheck(this.nonDataProps[field], newNonDataProps[field])){
+      if(!this._recursiveEqualityCheck(this.nonDataProps[field], newNonDataProps[field])) {
         changed = true;
         break;
       }
@@ -101,6 +96,7 @@ var OverviewChart = React.createClass({
       title: this.props.title
     };
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
+      console.log('destroyed');
       this.d3OverviewChart.destroy(el);
       this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
     } else {

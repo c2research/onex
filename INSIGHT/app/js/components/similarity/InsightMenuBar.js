@@ -2,13 +2,9 @@ var React = require('react');
 var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
-/**
- * This dropdown will have all the datasets
- */
 var InsightMenuBar = React.createClass({
   
   render: function() {
-    //TODO(charlie) : 185 = the size of the menuBar (make it dynamic or calculated)
     var menubarStyle = {
       height: this.props.height,
       width: this.props.width,
@@ -66,11 +62,9 @@ var DTWSlider = React.createClass({
     };
 
     return (
-      <div>
-        <input type="range" style={style.slider} max={5} min={-5} step={1}
-          value={this.props.dtwBias}
-          onChange={e => InsightActions.updateDTWBias(e.target.value)}/>
-      </div>
+      <input type="range" style={style.slider} max={5} min={-5} step={1}
+        value={this.props.dtwBias}
+        onChange={e => InsightActions.updateDTWBias(e.target.value)}/>
     );
   },
 });

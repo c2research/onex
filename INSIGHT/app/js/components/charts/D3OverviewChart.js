@@ -22,7 +22,7 @@ D3OverviewChart.prototype.create = function(el, props, data) {
   // Append a drawing area. The use of margins follows the convention in:
   // http://bl.ocks.org/mbostock/3019563
   var svg = d3.select(el).append('svg')
-              .classed('multi-time-series-chart', true)
+              .classed('overview-chart', true)
               .attr('width', width + margins.left + margins.right)
               .attr('height', height + margins.top + margins.bottom);
 
@@ -58,11 +58,9 @@ D3OverviewChart.prototype.create = function(el, props, data) {
   this.update(el, data);
 };
 
-
-
 // Update the current chart with new data.
 D3OverviewChart.prototype.update = function(el, data) {
-  var svg = d3.select(el).select('svg.multi-time-series-chart');
+  var svg = d3.select(el).select('svg.overview-chart');
 
   this._updateBrushFunction(svg, data);
   this._drawAxis(svg, data);
@@ -102,7 +100,7 @@ D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
 
 // Remove the current chart
 D3OverviewChart.prototype.destroy = function(el) {
-  d3.select(el).select('svg.multi-time-series-chart').remove();
+  d3.select(el).select('svg.overview-chart').remove();
 }
 
 // Draw axes
@@ -152,11 +150,12 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
   var areaFunc = d3.area()
                    .x(function(d) { return scales.x(d[0]); })
                    .y0(this.props.height)
-                   .y1(function(d) { return scales.y(d[1]); })
+                   .y1(function(d) { return scales.y(d[1]); });
 
   var pathGroup = svg.select('g.horizonAreaWrapper');
 
   var paths = pathGroup.selectAll('path').data(series);
+
   var _color = function(i) {
     var color = '';
     switch(i){
@@ -186,7 +185,7 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
        .attr('d', function(d) { return areaFunc(d.values); })
        .style('fill', function(_,i){ return _color(i)})
        .style('stroke-width', 0)
-       .style('fill-opacity', 0.4)
+       .style('fill-opacity', 0.6)
   // exit
   paths.exit().remove();
 };
