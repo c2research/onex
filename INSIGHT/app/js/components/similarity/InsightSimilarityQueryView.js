@@ -12,27 +12,49 @@ var DatasetNameCell = function({rowIndex, data, ...props}) {
          </Cell>;
 }
 
-var MultiTimeSeriesChartCell = function({rowIndex, data, ...props}) {
-  var query = data[rowIndex].qValues;
-  var start = data[rowIndex].qStart;
-  var end = data[rowIndex].qEnd;
-  var querySelection = query.slice(start, end + 1);
-  var result = data[rowIndex].rValues;
-  var warpingPath = data[rowIndex].warpingPath;
+//TODO(charlie): color the selected one!
+var NameCell = function({rowIndex, data, queryIndex, ...props}) {
+  var style = {};
+  if (queryIndex == rowIndex) {
+    style = {
+      backgroundColor: '#2daf89'
+    }
+  }
+  return <Cell {...props} style={style} >
+          {data[rowIndex]}
+         </Cell>;
+}
+
+var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) {
+  // var query = data[rowIndex].qValues;
+  // var start = data[rowIndex].qStart;
+  // var end = data[rowIndex].qEnd;
+  // var querySelection = query.slice(start, end + 1);
+  // var result = data[rowIndex].rValues;
+  // var warpingPath = data[rowIndex].warpingPath;
+  // var chartData = {
+  //   series: [{values: querySelection}, {values: result}],
+  //   warpingPath: warpingPath,
+  //   maxDomainY: 0.2
+  // };
   var chartData = {
-    series: [{values: querySelection}, {values: result}],
-    warpingPath: warpingPath,
-    maxDomainY: 0.2
+    series: [{values: []}],
+    domains: { x: [0, 100], y: [0, 1]},
   };
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
-
   var chart = <MultiTimeSeriesChart width={props.width - 16}
                                          height={props.height - 16}
                                          margins={margins}
-                                         data={chartData}
                                          strokeWidth={1}
+                                         data={chartData}
                                          color={'blue'} />
-  return <Cell {...props}>
+   var style = {};
+   if (queryIndex == rowIndex) {
+     style = {
+       backgroundColor: '#2daf89'
+     }
+   }
+  return <Cell {...props} style={style}>
           {chart}
          </Cell>;
 }
@@ -53,23 +75,26 @@ var InsightSimilarityQueryView = React.createClass({
                      ? [this.props.queryListDataset, this.props.querySelectedIndexDataset]
                      : [this.props.queryListUpload, this.props.querySelectedIndexUpload];
 
+    var width = this.props.width / 2 ;
+
     var Queries =
       <ColumnGroup
         header={<Cell>Queries</Cell>}>
         <Column
           header={<Cell>Index</Cell>}
-          cell={<DatasetNameCell data={queryList} />}
-          width={15}
+          cell={<NameCell data={queryList} queryIndex={queryIndex} />}
+          width={width}
         />
         <Column
           header={<Cell>Time Series Query</Cell>}
-          cell={<MultiTimeSeriesChartCell data={queryList} />}
-          width={50}
+          cell={<MultiTimeSeriesChartCell data={queryList} queryIndex={queryIndex} />}
+          width={width}
+          queryIndex={queryIndex}
         />
       </ColumnGroup>
 
 
-    //var callbackSelectQuery = this._selectQuery;
+    var callbackSelectQuery = this._selectQuery;
 
     var tableJSX =
       <div className="viewTable">
@@ -79,19 +104,18 @@ var InsightSimilarityQueryView = React.createClass({
           width={this.props.width}
           height={this.props.height}
           groupHeaderHeight={40}
-          headerHeight={40}>
+          headerHeight={40}
+          onRowClick={this._selectQuery}>
           {Queries}
         </Table>
       </div>;
-    //TODO(charlie): onRowClick={() => callbackSelectQuery}
+    //TODO(charlie):
 
     return <div> {tableJSX} </div>;
   },
-  _selectQuery: function(e) {
-    var rowIndex = e.target.rowIndex;
+  _selectQuery: function(e, rowIndex) {
     InsightActions.selectSimilarityQuery(rowIndex);
   }
-
 });
 
 module.exports = InsightSimilarityQueryView;

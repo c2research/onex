@@ -63,7 +63,7 @@ var InsightActions = {
     });
   },
   selectSimilarityQuery: function(index) {
-    AppDispather.dispatch({
+    AppDispatcher.dispatch({
       actionType: InsightConstants.SIMILARITY_SELECT_QUERY,
       id: index
     });
@@ -104,7 +104,7 @@ var InsightActions = {
       id: value
     });
   },
- 
+
   selectSeasonalQuery: function(index) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SEASONAL_SELECT_QUERY,

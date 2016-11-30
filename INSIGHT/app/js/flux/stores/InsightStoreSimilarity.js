@@ -51,7 +51,9 @@ var InsightStoreSimilarity = assign({}, {
     //TODO: update this to request all the queries
     queryListViewData.queryListDataset = [];
     for (var i = 0; i < InsightStore.getDSCurrentLength(); i++) {
-        queryListViewData.queryListDataset.push("Dataset: sequence " + i);
+        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        queryListViewData.queryListDataset.push("Dataset " + name + " - Sequence " + i);
+
     }
     queryListViewData.querySelectedIndexDataset = -1;
   },
@@ -259,6 +261,7 @@ AppDispatcher.register(function(action) {
         InsightStore.requestDatasetInit(function() {
           // Fill the query list
           InsightStoreSimilarity.fillQueryListFromDataset();
+          InsightStore.emitChange();
         });
       }
       break;
