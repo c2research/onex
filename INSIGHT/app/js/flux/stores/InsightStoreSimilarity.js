@@ -151,7 +151,7 @@ var InsightStoreSimilarity = assign({}, {
    * @param {Number} - the value to be set to
    */
   setDTWBias: function(value) {
-    resultViewData.dtwBias = value;
+    resultViewData.dtwBias = parseInt(value, 10);
   },
 
   /**
@@ -207,7 +207,7 @@ var InsightStoreSimilarity = assign({}, {
           var currentState = this.currentState;
 
           var endlist = response.result.map(function(val, i) {
-            return [i + currentState.qStart, val];
+            return [i + response.start, val];
           });
 
           var resultTimeSeries = new TimeSeries(endlist, '',
@@ -219,6 +219,7 @@ var InsightStoreSimilarity = assign({}, {
           groupViewData.groupList = [resultTimeSeries];
           groupViewData.groupSelectedIndex = 0;
           resultViewData.selectedMatch = groupViewData.groupList[0];
+          resultViewData.warpingPath = response.warpingPath;
           // var result = { //structure of query result pair
           //   qTypeLocal: currentState.qTypeLocal,
           //   qSeq: currentState.qSeq,

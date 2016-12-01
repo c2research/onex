@@ -34,12 +34,14 @@ class TimeSeries {
   }
 
   slice(start, end) {
+    var newStart = this._start + start;
+    var newEnd = Math.min(this._start + end - 1, this._end);
     return new TimeSeries(this._values.slice(start, end),
                           this._name,
                           this._loc,
                           this._seq,
-                          this._start,
-                          this._end);
+                          newStart,
+                          newEnd);
   }
 };
 

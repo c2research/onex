@@ -34,7 +34,7 @@ var MultiTimeSeriesChart = React.createClass({
   componentDidMount: function() {
     var el = ReactDOM.findDOMNode(this);
     this.d3MultiTimeSeriesChart = new D3MultiTimeSeriesChart();
-    console.log(this.props.showToolTip);
+
     this.nonDataProps = {
       width: this.props.width,
       height: this.props.height,
