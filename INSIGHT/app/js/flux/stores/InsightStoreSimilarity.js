@@ -169,10 +169,11 @@ var InsightStoreSimilarity = assign({}, {
     qSeq = previewSequence.getSeq();
     qType = previewSequence.getLocation();
     qValues = previewSequence;
-    console.log(qStart, qEnd, qSeq, qType);
+    
     // Clear result view
     resultViewData.selectedSubsequence = previewSequence.slice(qStart, qEnd + 1);
     resultViewData.selectedMatch = null;
+    resultViewData.warpingPath = [];
     InsightStore.emitChange();
 
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
