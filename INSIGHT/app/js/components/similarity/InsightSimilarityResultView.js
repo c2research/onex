@@ -60,6 +60,10 @@ var InsightSimilarityResultView = React.createClass({
   generateGraph: function(width, height) {
     var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
     var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
+    var warpingPath = this.props.warpingPath;
+    // console.log(selectedSubsequence.getValues().map((x) => x[1]));
+    // console.log(selectedMatch.getValues().map((x) => x[1]));
+    // console.log(this.props.warpingPath);
     var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
       return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
     });
@@ -78,7 +82,7 @@ var InsightSimilarityResultView = React.createClass({
         data = {
           series: [{ values: selectedSubsequence.getValues()},
                    { values: alignedSelectedMatchValues}],
-          warpingPath: this.props.warpingPath,
+          warpingPath: warpingPath,
           domains: { x: [0, 1], y: [0, 1] },
           color: 'blue',
           strokeWidth: '1.5'
@@ -92,7 +96,7 @@ var InsightSimilarityResultView = React.createClass({
           series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
                    { values: biasedMatchValues, color: bias == 0 ? 'green' : 'magenta'}],
           domains: { x: commonXDomain, y: commonYDomain },
-          warpingPath: this.props.warpingPath
+          warpingPath: warpingPath
         }
         resultGraph = this.generateMultiLineChart(data, margins, width, height, title);
         break;
@@ -125,7 +129,7 @@ var InsightSimilarityResultView = React.createClass({
         data = {
           series: [{ values: selectedSubsequence.getValues() },
                    { values: alignedSelectedMatchValues }],
-          warpingPath: this.props.warpingPath,
+          warpingPath: warpingPath,
           maxDomainY: 0.2
         };
         resultGraph =  this.generateErrorChart(data, margins, width, height, title);
