@@ -39,8 +39,6 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
     domains: { x: commonXDomain, y: [0, 1]},
   };
 
-  console.log(chartData);
-
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
   var chart =
     <MultiTimeSeriesChart
