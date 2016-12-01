@@ -1,6 +1,7 @@
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightMenuBarResult = require('./InsightMenuBarResult');
+var TimeSeries = require('./../../TimeSeries');
 
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var TimeSeriesDifferenceChart = require('./../charts/TimeSeriesDifferenceChart');
@@ -8,6 +9,16 @@ var ConnectedScatterPlot = require('./../charts/ConnectedScatterPlot');
 var RadialChart = require('./../charts/RadialChart');
 
 var InsightSimilarityResultView = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    queryLocation: React.PropTypes.string,
+    graphType: React.PropTypes.string,
+    dtwBias: React.PropTypes.number,
+    selectedSubsequence: React.PropTypes.object,
+    selectedMatch: React.PropTypes.object,
+    warpingPath: React.PropTypes.array,
+  },
 
   render: function() {
     var height = this.props.height;
@@ -47,13 +58,15 @@ var InsightSimilarityResultView = React.createClass({
   },
 
   generateGraph: function(width, height) {
-    var selectedSubsequence = this.props.selectedSubsequence;
-    var selectedMatch = this.props.selectedMatch;
+    var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
+    var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
     var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
       return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
     });
+    alignedSelectedMatchValues = alignedSelectedMatchValues || [];
+    
     var data = {};
-    var margins = {left: 35, right: 15, top: 40, bottom: 20};
+    var margins = {left: 35, right: 15, top: 30, bottom: 50};
     var title = 'Similarity Results';
     var resultGraph = null;
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);

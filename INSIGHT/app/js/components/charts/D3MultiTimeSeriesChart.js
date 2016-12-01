@@ -114,7 +114,7 @@ D3MultiTimeSeriesChart.prototype.update = function(el, data) {
 
   this._drawAxis(svg, data);
   this._drawLines(svg, data);
-  this._drawPoints(svg, data);
+  //this._drawPoints(svg, data);
   this._drawWarpingPath(svg, data);
   this._drawVoronoi(svg, data);
 };
@@ -270,7 +270,7 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1]);
+                that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1].toFixed(3));
               })
               .on('mouseout', function(d, i) {
                 d3.select('circle.circle_' + i)

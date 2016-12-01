@@ -1,15 +1,21 @@
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightActions = require('./../../flux/actions/InsightActions');
+var TimeSeries = require('./../../TimeSeries');
+
 var InsightMenuBarPreview = require('./InsightMenuBarPreview');
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var OverviewChart = require('./../charts/OverviewChart');
 
 var InsightSimilarityPreview = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    previewSequence: React.PropTypes.object,
+    previewRange: React.PropTypes.array
+  },
+
   render: function() {
-    if (!this.props.previewSequence) {
-      return null;
-    }
     var height = this.props.height;
     var width = this.props.width;
     var menuWidth = 40;
@@ -21,8 +27,8 @@ var InsightSimilarityPreview = React.createClass({
         height={height}
       />;
 
-    var previewSequence = this.props.previewSequence;
-    var previewRange = this.props.previewRange;
+    var previewSequence = this.props.previewSequence || new TimeSeries([], '', -1, 0, 0, 0);
+    var previewRange = this.props.previewRange || [0, 1];
     var selectedSequence = previewSequence.getValues().slice(previewRange[0], previewRange[1] + 1);
 
     var selectedViewData = {

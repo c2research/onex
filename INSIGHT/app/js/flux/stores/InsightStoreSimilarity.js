@@ -19,8 +19,8 @@ var queryListViewData = {
 
 var previewData = {
   // A TimeSeries
-  previewSequence: new TimeSeries([[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]], '', 1, 1, 0, 18),
-  previewRange: [0, 18]
+  previewSequence: null, //new TimeSeries([[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]], '', 1, 1, 0, 18),
+  previewRange: []
 };
 
 //TODO: on a match switch showingRepresentatives to false,
@@ -35,9 +35,9 @@ var groupViewData = {
 var resultViewData = {
   graphType: InsightConstants.GRAPH_TYPE_WARP,
   dtwBias: 0,
-  selectedSubsequence: new TimeSeries([[1, 0.5], [2, 0.2], [3, 0.5], [4, 0.2], [5, 0.5]], '', 2, 1, 1, 5),
-  selectedMatch: new TimeSeries([[4, 0.5], [5, 0.1], [6, 0.4], [7, 0.3], [8, 0.5]], '', 2, 3, 4, 8),
-  warpingPath: [[0, 0], [0, 1], [1, 1], [2, 2], [3, 3], [4, 3], [4, 4]]
+  selectedSubsequence: null,//new TimeSeries([[1, 0.5], [2, 0.2], [3, 0.5], [4, 0.2], [5, 0.5]], '', 2, 1, 1, 5),
+  selectedMatch: null, //new TimeSeries([[4, 0.5], [5, 0.1], [6, 0.4], [7, 0.3], [8, 0.5]], '', 2, 3, 4, 8),
+  warpingPath: [], //[[0, 0], [0, 1], [1, 1], [2, 2], [3, 3], [4, 3], [4, 4]]
 };
 
 /*

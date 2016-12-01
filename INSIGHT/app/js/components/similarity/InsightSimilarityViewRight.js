@@ -4,6 +4,13 @@ var InsightSimilarityResultView = require('./InsightSimilarityResultView');
 var InsightSimilarityPreview = require('./InsightSimilarityPreview');
 
 var InsightSimilarityViewRight = React.createClass({
+  propTypes: {
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    resultViewData: React.PropTypes.object,
+    previewData: React.PropTypes.object,
+  },
+
   render: function() {
     var dimensions = {
       width: this.props.width,

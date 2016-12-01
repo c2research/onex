@@ -46,14 +46,14 @@ var MenuIcon = React.createClass({
     return (
       <i className={className}
         onClick={this.props.onClick}
-        onMouseEnter={(event) => this._handleEnter(active, title, message, icon)}
-        onMouseLeave={(event) => this._handleLeave(active)}>
+        onMouseEnter={(event) => this._handleEnter(title, message, icon)}
+        onMouseLeave={(event) => this._handleLeave()}>
       </i>);
   },
-  _handleEnter: function(active, title, message, icon) {
+  _handleEnter: function(title, message, icon) {
     InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
   },
-  _handleLeave: function(active){
+  _handleLeave: function(){
     InsightActions.sendMessage(['', '', '', '', '', false]);
   }
 });
