@@ -31,10 +31,16 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
   //   warpingPath: warpingPath,
   //   maxDomainY: 0.2
   // };
+  var timeSeries = data[rowIndex];
+  var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
+
   var chartData = {
-    series: [{values: []}],
-    domains: { x: [0, 100], y: [0, 1]},
+    series: [{values: timeSeries.getValues()}],
+    domains: { x: commonXDomain, y: [0, 1]},
   };
+
+  console.log(chartData);
+
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
   var chart =
     <MultiTimeSeriesChart

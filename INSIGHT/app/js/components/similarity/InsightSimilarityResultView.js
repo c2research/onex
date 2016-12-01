@@ -30,7 +30,7 @@ var InsightSimilarityResultView = React.createClass({
 
     var style = {
       height: height,
-      width: width, 
+      width: width,
       overflow: 'hidden',
       borderLeft: '1px dashed gray',
       borderBottom: '1px dashed gray'
@@ -41,16 +41,16 @@ var InsightSimilarityResultView = React.createClass({
           {GraphJSX}
         </div>
         <div style={{float: 'right'}}>
-          {InsightMenuBarResultJSX}
-        </div>        
+           {InsightMenuBarResultJSX}
+        </div>
       </div>);
   },
 
   generateGraph: function(width, height) {
     var selectedSubsequence = this.props.selectedSubsequence;
     var selectedMatch = this.props.selectedMatch;
-    var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) { 
-      return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]]; 
+    var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
+      return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
     });
     var data = {};
     var margins = {left: 35, right: 15, top: 40, bottom: 20};
@@ -59,6 +59,7 @@ var InsightSimilarityResultView = React.createClass({
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);
     var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
     var commonYDomain = [0, 1];
+    console.log('sadf', selectedSubsequence.getValues());
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:

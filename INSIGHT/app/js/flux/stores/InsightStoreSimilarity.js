@@ -288,7 +288,8 @@ var InsightStoreSimilarity = assign({}, {
         }
         groupViewData.showingRepresentatives = true;
         groupViewData.groupList = response.representatives.map(function(array, i) {
-          return new TimeSeries(array, 'Centroid '+i,InsightConstants.QUERY_LOCATION_DATASET,
+          var values = array.map(function(x, j) { return [j,x]});
+          return new TimeSeries(values, 'Centroid '+i,InsightConstants.QUERY_LOCATION_DATASET,
                                                 i,
                                                 0,
                                                 array.length);
