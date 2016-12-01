@@ -56,8 +56,7 @@ var InsightStoreSimilarity = assign({}, {
     queryListViewData.queryListDataset = [];
     for (var i = 0; i < InsightStore.getDSCurrentLength(); i++) {
         var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
-        queryListViewData.queryListDataset.push("Dataset " + name + " - Sequence " + i);
-
+        queryListViewData.queryListDataset.push(name + " - " + i);
     }
     queryListViewData.querySelectedIndexDataset = -1;
   },

@@ -21,17 +21,15 @@ var NameCell = function({rowIndex, data, queryIndex, ...props}) {
 }
 
 var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) {
-  // var query = data[rowIndex].qValues;
-  // var start = data[rowIndex].qStart;
-  // var end = data[rowIndex].qEnd;
-  // var querySelection = query.slice(start, end + 1);
-  // var result = data[rowIndex].rValues;
-  // var warpingPath = data[rowIndex].warpingPath;
+  //TODO(charlie): uncomment
+  // var timeSeries = data[rowIndex];
+  // var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
+  //
   // var chartData = {
-  //   series: [{values: querySelection}, {values: result}],
-  //   warpingPath: warpingPath,
-  //   maxDomainY: 0.2
+  //   series: [{values: timeSeries.getValues()}],
+  //   domains: { x: commonXDomain, y: [0, 1]},
   // };
+
   var chartData = {
     series: [{values: []}],
     domains: { x: [0, 100], y: [0, 1]},
@@ -65,7 +63,9 @@ var InsightSimilarityQueryView = React.createClass({
       ? [this.props.queryListDataset, this.props.querySelectedIndexDataset]
       : [this.props.queryListUpload, this.props.querySelectedIndexUpload];
 
-    var width = this.props.width / 2 ;
+    var widthIndex = this.props.width * 0.4;
+    var widthChart = this.props.width * 0.6;
+
     var queryLocation = this.props.queryLocation;
     var QueriesJSX =
       <ColumnGroup
@@ -73,13 +73,12 @@ var InsightSimilarityQueryView = React.createClass({
         <Column
           header={<Cell>Index</Cell>}
           cell={<NameCell data={queryList} queryIndex={queryIndex} />}
-          width={width}
+          width={widthIndex}
         />
         <Column
           header={<Cell>Time Series Query</Cell>}
           cell={<MultiTimeSeriesChartCell data={queryList} queryIndex={queryIndex} />}
-          width={width}
-          queryIndex={queryIndex}
+          width={widthChart}
         />
       </ColumnGroup>
 

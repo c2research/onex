@@ -69,7 +69,7 @@ var InsightSimilarityGroupView = React.createClass({
       height: this.props.height
     }
 
-    var widthIndex = this.props.width * 0.2 ;
+    var widthIndex = this.props.width * 0.2;
     var widthChart = this.props.width * 0.8;
 
     var [title, columnName] = this.props.showingRepresentatives

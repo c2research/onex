@@ -59,7 +59,6 @@ var InsightSimilarityResultView = React.createClass({
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);
     var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
     var commonYDomain = [0, 1];
-    console.log('sadf', selectedSubsequence.getValues());
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
