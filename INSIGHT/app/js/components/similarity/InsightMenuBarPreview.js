@@ -8,7 +8,11 @@ var buttonsType = keyMirror({
 });
 
 var InsightMenuBarPreview = React.createClass({
-  
+  propTypes: {
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+  },
+
   render: function() {
     var menubarStyle = {
       height: this.props.height,
@@ -37,7 +41,10 @@ var InsightMenuBarPreview = React.createClass({
 });
 
 var MenuIcon = React.createClass({
-
+  propTypes: {
+    type: React.PropTypes.string,
+    onClick: React.PropTypes.func
+  },
   render: function() {
     var type = this.props.type;
 

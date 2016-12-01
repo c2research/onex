@@ -3,7 +3,14 @@ var InsightActions = require('./../../flux/actions/InsightActions');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 var InsightMenuBarResult = React.createClass({
-  
+  propTypes: {
+    width: React.PropTypes.number,
+    height: React.PropTypes.number,
+    dtwBias: React.PropTypes.number,
+    graphType: React.PropTypes.string,
+    resultSelected: React.PropTypes.bool
+  },
+
   render: function() {
     var menubarStyle = {
       height: this.props.height,
@@ -47,6 +54,10 @@ var InsightMenuBarResult = React.createClass({
 });
 
 var DTWSlider = React.createClass({
+  propTypes: {
+    dtwBias: React.PropTypes.number,
+  },
+
   render: function() {
     var style = {
       slider: {
@@ -69,6 +80,11 @@ var DTWSlider = React.createClass({
 });
 
 var MenuIcon = React.createClass({
+  propTypes: {
+    more: React.PropTypes.object,
+    type: React.PropTypes.string,
+    active: React.PropTypes.bool
+  },
 
   render: function() {
     var type = this.props.type;
