@@ -121,6 +121,7 @@ var InsightStoreSimilarity = assign({}, {
         var newTimeSeries = new TimeSeries(endlist,
                                            queryName,
                                            selectedQuery,
+                                           fromDataset+0,
                                            0,
                                            endlist.length - 1);
         previewData.previewSequence = newTimeSeries;

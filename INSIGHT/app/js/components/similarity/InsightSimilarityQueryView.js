@@ -103,6 +103,7 @@ var InsightSimilarityQueryView = React.createClass({
   },
   _selectQuery: function(e, rowIndex) {
     InsightActions.selectSimilarityQuery(rowIndex);
+    InsightActions.loadSimilarityQuery();  
   }
 });
 
