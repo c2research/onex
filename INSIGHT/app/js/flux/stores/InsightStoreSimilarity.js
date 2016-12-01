@@ -45,7 +45,8 @@ var resultViewData = {
  */
 var requestID = {
   findMatch: 0,
-  uploadQuery: 0
+  uploadQuery: 0,
+  requestGroupRepresentatives: 0
 }
 
 var InsightStoreSimilarity = assign({}, {
@@ -260,6 +261,46 @@ var InsightStoreSimilarity = assign({}, {
     return resultViewData;
   },
 
+  /**
+   * initial request to the server for information on
+   * a dataset
+   */
+  requestGroupRepresentatives: function() {
+    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
+
+    if (dsCollectionIndex == null){
+      console.log("index null, no need to req");
+      return;
+    }
+
+    requestID.requestGroupRepresentatives += 1;
+
+    $.ajax({
+      url: '/representatives',
+      data: {
+        dsCollectionIndex : dsCollectionIndex,
+        requestID: requestID.requestGroupRepresentatives
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.requestID != requestID.requestGroupRepresentatives) {
+            console.log(requestID, response.requestID);
+        }
+        groupViewData.showingRepresentatives = true;
+        groupViewData.groupList = response.representatives.map(function(array, i) {
+          return new TimeSeries(array, 'Centroid '+i,InsightConstants.QUERY_LOCATION_DATASET,
+                                                i,
+                                                0,
+                                                array.length);
+        });
+        InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        //TODO: later on, pop up a red message top-right corner that something failed
+        console.log("error requesting dataset init");
+      }
+    });
+  }
 
 });
 
@@ -271,6 +312,7 @@ AppDispatcher.register(function(action) {
         InsightStore.requestDatasetInit(function() {
           // Fill the query list
           InsightStoreSimilarity.fillQueryListFromDataset();
+          InsightStoreSimilarity.requestGroupRepresentatives();
           InsightStore.emitChange();
         });
       }

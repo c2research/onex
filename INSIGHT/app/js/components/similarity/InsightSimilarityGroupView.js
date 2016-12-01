@@ -78,14 +78,14 @@ var InsightSimilarityGroupView = React.createClass({
         <Column
           header={<Cell>Index</Cell>}
           cell={<NameCell data={this.props.groupList}
-                          queryIndex={this.props.groupSelectedIndex} />}
+                          groupSelectedIndex={this.props.groupSelectedIndex} />}
           width={widthIndex}
           groupSelectedIndex={this.props.groupSelectedIndex}
         />
         <Column
           header={<Cell>{columnName}</Cell>}
           cell={<MultiTimeSeriesChartCell data={this.props.groupList}
-                                          queryIndex={this.props.groupSelectedIndex} />}
+                                          groupSelectedIndex={this.props.groupSelectedIndex} />}
           width={widthChart}
           groupSelectedIndex={this.props.groupSelectedIndex}
         />
