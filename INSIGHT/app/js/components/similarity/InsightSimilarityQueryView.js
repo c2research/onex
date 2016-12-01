@@ -43,6 +43,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) 
       strokeWidth={1}
       data={chartData}
       color={'blue'}
+      showToolTip={false}
     />
 
    var style = {};

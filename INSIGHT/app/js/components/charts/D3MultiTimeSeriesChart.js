@@ -270,12 +270,16 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1].toFixed(3));
+                if (that.props.showToolTip) {
+                  that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1].toFixed(3));
+                }
               })
               .on('mouseout', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'black');
-                that._removeToolTip(svg);
+                if (that.props.showToolTip) {
+                  that._removeToolTip(svg);
+                }
               });
 
   voronoiPaths.exit().remove();

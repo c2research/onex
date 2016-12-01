@@ -46,12 +46,10 @@ var InsightSimilarityPreview = React.createClass({
                           strokeWidth={3}
                           title={'Preview Query'}
                         />;
-    console.log(previewSequence);
     var overviewData = {
       series: [{ values: previewSequence.getValues()}, { values: selectedSequence } ],
       domains: { x: [previewSequence.getStart(), previewSequence.getEnd()], y: [0, 1] },
     }
-    console.log(overviewData);
     var overviewMargins = {left: 35, right: 20, top: 5, bottom: 35};
     var OverviewD3JSX = <OverviewChart
                           margins={overviewMargins}
