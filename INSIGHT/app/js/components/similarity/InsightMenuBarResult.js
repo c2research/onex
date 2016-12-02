@@ -18,7 +18,6 @@ var InsightMenuBarResult = React.createClass({
       background: '#f2f2f2',
       paddingTop: 10,
       paddingLeft: 5,
-      overflow: 'scroll',
     }
 
     //InsightConstants.GRAPH_TYPE_HORIZON, TODO(charlie): add horizon when complete
@@ -37,7 +36,7 @@ var InsightMenuBarResult = React.createClass({
       if (active && type === InsightConstants.GRAPH_TYPE_WARP && that.props.resultSelected) {
         moreJSX = <DTWSlider dtwBias={that.props.dtwBias}/>;
       }
-      return <MenuIcon 
+      return <MenuIcon
               key={type}
               type={type}
               active={that.props.graphType === type}
