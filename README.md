@@ -18,12 +18,33 @@ $ pip install -r requirements.txt
 
 The 'make' command will build the ONEX binary and put that into the server directory. The other command will install neccessary dependencies for the server. You can also install in a virtualenv.
 
+
+### Install dependencies for application
+
+Installs dependencies for application necessary to build it. 
+```
+# Still in the INSIGHT folder
+$ npm run install
+```
+
 ### To build application 
 
-Builds and bundles react app into plain js
+Builds and bundles react app into plain js (choose one of the following).
+
+When quickly compiling locally run this:
 ```
 # Still in the INSIGHT folder
 $ npm run build
+```
+When working locally, run this to continually update saved changes:
+```
+# Still in the INSIGHT folder
+$ npm run watch
+```
+When deploying and NOT DEBUGGING, build it as production app as this will minify and otherwise optimize the app:
+```
+# Still in the INSIGHT folder
+$ npm run production-build
 ```
 
 ### Run the server
