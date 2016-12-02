@@ -16,24 +16,24 @@ var NameCell = function({rowIndex, data, queryIndex, ...props}) {
   }
   return (
     <Cell {...props} style={style} >
-      {data[rowIndex]}
+      {data[rowIndex].getName()}
     </Cell>);
 }
 
 var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) {
   //TODO(charlie): uncomment
-  // var timeSeries = data[rowIndex];
-  // var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
-  //
-  // var chartData = {
-  //   series: [{values: timeSeries.getValues()}],
-  //   domains: { x: commonXDomain, y: [0, 1]},
-  // };
+  var timeSeries = data[rowIndex];
+  var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
 
   var chartData = {
-    series: [{values: []}],
-    domains: { x: [0, 100], y: [0, 1]},
+    series: [{values: timeSeries.getValues()}],
+    domains: { x: commonXDomain, y: [0, 1]},
   };
+
+  // var chartData = {
+  //   series: [{values: []}],
+  //   domains: { x: [0, 100], y: [0, 1]},
+  // };
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
   var chart =
     <MultiTimeSeriesChart
@@ -104,7 +104,7 @@ var InsightSimilarityQueryView = React.createClass({
   },
   _selectQuery: function(e, rowIndex) {
     InsightActions.selectSimilarityQuery(rowIndex);
-    InsightActions.loadSimilarityQuery();  
+    InsightActions.loadSimilarityQuery();
   }
 });
 

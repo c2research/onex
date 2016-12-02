@@ -1,6 +1,6 @@
 {
   "name": "insight",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Web app for time series exploration",
   "main": "app.js",
   "scripts": {

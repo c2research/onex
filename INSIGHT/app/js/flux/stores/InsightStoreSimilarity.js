@@ -44,7 +44,8 @@ var resultViewData = {
 var requestID = {
   findMatch: 0,
   uploadQuery: 0,
-  requestGroupRepresentatives: 0
+  requestGroupRepresentatives: 0,
+  datasetQueries: 0
 }
 
 var InsightStoreSimilarity = assign({}, {
@@ -52,8 +53,8 @@ var InsightStoreSimilarity = assign({}, {
   fillQueryListFromDataset: function() {
     //TODO: update this to request all the queries
     queryListViewData.queryListDataset = [];
+    var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
     for (var i = 0; i < InsightStore.getDSCurrentLength(); i++) {
-        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
         queryListViewData.queryListDataset.push(name + " - " + i);
     }
     queryListViewData.querySelectedIndexDataset = -1;
@@ -318,6 +319,51 @@ var InsightStoreSimilarity = assign({}, {
         console.log("error requesting dataset init");
       }
     });
+  },
+
+  /**
+   * initial request to the server for information on
+   * a dataset
+   */
+  requestDatasetQueries: function() {
+    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
+
+    if (dsCollectionIndex == null){
+      console.log("index null, no need to req");
+      return;
+    }
+
+    requestID.datasetQueries += 1;
+
+    $.ajax({
+      url: '/dataset/queries',
+      data: {
+        requestID: requestID.datasetQueries
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.requestID != requestID.datasetQueries) {
+            console.log(requestID, response.requestID);
+        }
+        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        queryListViewData.queryListDataset = response.queries.map(function(array, i) {
+          var values = array.map(function(x, j) { return [j,x]});
+          return new TimeSeries(values, name + " - " + i ,InsightConstants.QUERY_LOCATION_DATASET,
+                                                i,
+                                                0,
+                                                array.length);
+        });
+
+        queryListViewData.queryLocation = InsightConstants.QUERY_LOCATION_DATASET;
+        queryListViewData.querySelectedIndexDataset = -1;
+
+        InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        //TODO: later on, pop up a red message top-right corner that something failed
+        console.log("error requesting dataset init");
+      }
+    });
   }
 
 });
@@ -329,10 +375,12 @@ AppDispatcher.register(function(action) {
       if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SIMILARITY) {
         InsightStore.requestDatasetInit(function() {
           // Fill the query list
-          InsightStoreSimilarity.fillQueryListFromDataset();
-          InsightStoreSimilarity.requestGroupRepresentatives();
           InsightStoreSimilarity.clearResultViewData();
           InsightStoreSimilarity.clearPreviewData();
+
+          InsightStoreSimilarity.requestDatasetQueries();//requestDatasetQueries fillQueryListFromDataset
+          InsightStoreSimilarity.requestGroupRepresentatives();
+
           InsightStore.emitChange();
         });
       }

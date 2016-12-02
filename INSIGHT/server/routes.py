@@ -243,9 +243,16 @@ def api_get_representatives():
   with lock:
     representatives = onex.getGroupRepresentatives(current_ds_index)
     representatives.sort(key=lambda x:x[1]) # sort on group size
-    representatives = [x[0] for x in representatives]
+    representatives = [x[0] for x in representatives] # currently splicing size
     return jsonify(representatives=representatives, requestID=request_id)
 
+
+@app.route('/dataset/queries')
+def api_get_dataset_queries():
+  request_id = request.args.get('requestID', -1, type=int)
+  with lock:
+    queries = onex.getAllSequences(current_ds_index)
+    return jsonify(queries=queries, requestID=request_id)
 
 def _allowed_file(filename):
   return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
