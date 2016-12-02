@@ -4,8 +4,9 @@
   "description": "Web app for time series exploration",
   "main": "app.js",
   "scripts": {
-    "build": "browserify -t [ babelify --presets [ latest react ]  --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js",
-    "watch": "watchify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js"
+    "build": "NODE_ENV=development browserify -t [ babelify --presets [ latest react ]  --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js",
+    "watch": "NODE_ENV=development watchify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js",
+    "production-build": "NODE_ENV=production browserify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] -t envify -g uglifyify app/js/app.js -o server/static/js/bundle.js"
   },
   "author": "Charles Lovering & Cuong Nguyen",
   "license": "ISC",
@@ -24,12 +25,14 @@
   },
   "dependencies": {
     "d3": "^4.2.6",
+    "envify": "^4.0.0",
     "fixed-data-table": "^0.6.3",
     "flux": "^2.1.1",
     "jquery": "^3.1.0",
     "keymirror": "^0.1.1",
     "object-assign": "^4.1.0",
     "react": "^15.3.1",
-    "react-dom": "^15.3.1"
+    "react-dom": "^15.3.1",
+    "uglifyify": "^3.0.4"
   }
 }
