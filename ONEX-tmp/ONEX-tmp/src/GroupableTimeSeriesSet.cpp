@@ -199,9 +199,7 @@ warping_path_t GroupableTimeSeriesSet::warping_path(int seq, TimeInterval interv
 {
     TimeSeriesInterval a = dataset->getInterval(seq, interval);
     TimeSeriesInterval b = other->dataset->getInterval(otherSeq, otherInt);
-
     warping_path_t path = metric->getWarpingPath(a, b);
-
     return path;
 }
 

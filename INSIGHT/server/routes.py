@@ -62,7 +62,6 @@ def api_dataset_load():
 @app.route('/dataset/init/')
 def api_dataset_init():
   global current_collection_index, current_ds_index
-  # TODO(Cuong): Instead of use default value of -1, catch the exception
   request_id          = request.args.get('requestID', -1, type=int)
   ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
   st                  = request.args.get('st', 0.2, type=float)
@@ -166,8 +165,8 @@ def api_find_best_match():
     r_dist, r_seq, r_start, r_end = \
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
     result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
-    warpingPath = onex.getWarpingPath(current_ds_index, q_seq, q_start, q_end,
-                                      q_ds_index, r_seq, r_start, r_end)
+    warpingPath = onex.getWarpingPath(q_ds_index, q_seq, q_start, q_end,
+                                      current_ds_index, r_seq, r_start, r_end)
 
     return jsonify(result=result,
                    warpingPath=warpingPath,

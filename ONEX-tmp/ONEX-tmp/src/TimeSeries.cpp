@@ -74,7 +74,7 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
         return distFunc(a[0],b[0]);
 
     // create cost matrix
-    seqitem_t cost[m][n]; // TODO (Cuong): allocate this on stack? 
+    seqitem_t cost[m][n];
     auto trace = new pair<seqitem_t, seqitem_t>*[m]; // For tracing warping
     for (int i = 0; i < m; i++) {
         trace[i] = new pair<seqitem_t, seqitem_t>[n];
@@ -84,17 +84,15 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
     cost[0][0] = distFunc(a[0], b[0]);
     trace[0][0] = make_pair(-1, -1);
 
-    // calculate first row
+    // calculate first column
     for(int i = 1; i < m; i++) {
-
-        cost[i][0] = cost[i-1][0] + distFunc(a[i], b[0]);
+        cost[i][0] = pullFunc(cost[i-1][0], distFunc(a[i], b[0]));
         trace[i][0] = make_pair(i - 1, 0);
     }
 
-    // calculate first column
+    // calculate first row
     for(int j = 1; j < n; j++) {
-
-        cost[0][j] = cost[0][j-1] + distFunc(a[0], b[j]);
+        cost[0][j] = pullFunc(cost[0][j-1], distFunc(a[0], b[j]));
         trace[0][j] = make_pair(0, j - 1);
     }
 
@@ -132,8 +130,8 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
         for(int i = 1; i < m; i++) {
             for(int j = 1; j < n; j++) {
                 seqitem_t mp = std::min(cost[i-1][j],
-                     std::min(cost[i][j-1],
-                              cost[i-1][j-1]));
+                                        std::min(cost[i][j-1],
+                                                 cost[i-1][j-1]));
                 vector<seqitem_t> tmp;
                 tmp.push_back(cost[i - 1][j]);
                 tmp.push_back(cost[i][j - 1]);

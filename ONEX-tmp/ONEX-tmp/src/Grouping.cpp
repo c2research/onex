@@ -864,8 +864,6 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
 
     free(order);
 
-    cout << "rld " << endl;
-
     return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestMatch(qenv, groups.size()*2);
 }
 
@@ -911,8 +909,6 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
     }
 
     free(order);
-
-    cout << "rld " << endl;
 
     return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestDistinctMatch(qenv, groups.size()*2, INF, qSeq);
 }

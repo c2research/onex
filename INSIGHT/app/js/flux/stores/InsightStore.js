@@ -307,13 +307,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
    * requests server for a sequence within the dataset
    */
   requestSequence: function(fromDataset, sequenceIndex, callback) {
-    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
-    
-    if ((dsCollectionIndex == null) || (sequenceIndex == null) ||
-        (dsCollectionIndex < 0) || (sequenceIndex < 0)){
-      console.log("dsCollectionIndex or qseq null, no need to req");
-      return;
-    }
 
     requestID.fromDataset += 1;
 
