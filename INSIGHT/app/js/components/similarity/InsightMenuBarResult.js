@@ -20,7 +20,6 @@ var InsightMenuBarResult = React.createClass({
       paddingLeft: 5,
     }
 
-    //InsightConstants.GRAPH_TYPE_HORIZON, TODO(charlie): add horizon when complete
     var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
                           InsightConstants.GRAPH_TYPE_WARP,
                           InsightConstants.GRAPH_TYPE_CONNECTED,
@@ -106,7 +105,7 @@ var MenuIcon = React.createClass({
       </div>);
   },
   _handleEnter: function(active, title, message, icon) {
-    InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
+    InsightActions.sendMessage([title, icon,  '#58768f','#bbcddb', message, true]);
   },
   _handleLeave: function(active){
     InsightActions.sendMessage(['', '', '', '', '', false]);

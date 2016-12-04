@@ -16,8 +16,9 @@ var InsightBanner = React.createClass({
          paddingRight: 5
        },
        title: {
-           textAlign: 'left',
+           textAlign: 'center',
            fontSize: '3em',
+           color: 'white',
            fontWeight: 'lighter',
            borderBottom: 'none',
            margin: 0
@@ -39,17 +40,10 @@ var InsightBanner = React.createClass({
 
      return (
        <div className="insightBanner">
-          <div style={style.wrapper}>
-              <div style={style.float}>
-                  <img src='static/resources/images/icon.png' style={style.icon} alt=""></img>
-              </div>
-              <div style={style.floatR}>
-                <h1 style={style.title}>
-                  {title}
-                </h1>
-              </div>
-          </div>
-      </div>
+         <h1 style={style.title}>
+           {title}
+         </h1>
+       </div>
       );
    }
 });

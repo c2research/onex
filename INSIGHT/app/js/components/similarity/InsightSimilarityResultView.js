@@ -68,7 +68,7 @@ var InsightSimilarityResultView = React.createClass({
       return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
     });
     alignedSelectedMatchValues = alignedSelectedMatchValues || [];
-    
+
     var data = {};
     var margins = {left: 35, right: 15, top: 30, bottom: 50};
     var title = 'Similarity Results';
@@ -93,8 +93,8 @@ var InsightSimilarityResultView = React.createClass({
         var bias = 0.05 * this.props.dtwBias;
         var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: biasedMatchValues, color: bias == 0 ? 'green' : 'magenta'}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
+                   { values: biasedMatchValues, color: bias == 0 ? 'Green' : "#c05a53"}],
           domains: { x: commonXDomain, y: commonYDomain },
           warpingPath: warpingPath
         }
@@ -102,24 +102,24 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_LINE:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: alignedSelectedMatchValues, color: 'green'}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
+                   { values: alignedSelectedMatchValues, color: 'Green'}],
           domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateMultiLineChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_RADIAL:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-                   { values: alignedSelectedMatchValues, color: 'green'}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
+                   { values: alignedSelectedMatchValues, color: 'Green'}],
           domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateRadialChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
         data = {
-          seriesQ: { values: selectedSubsequence.getValues(), color: '#e2b6b3'},
-          seriesR: { values: selectedMatch.getValues(), color: 'green'},
+          seriesQ: { values: selectedSubsequence.getValues(), color: '#74a2cc'},
+          seriesR: { values: selectedMatch.getValues(), color: 'Green'},
           domainsQ: { x: [selectedSubsequence.getStart(), selectedSubsequence.getEnd()], y: commonYDomain },
           domainsR: { x: [selectedMatch.getStart(), selectedMatch.getEnd()], y: commonYDomain },
         };
@@ -148,7 +148,7 @@ var InsightSimilarityResultView = React.createClass({
             height={height - margins.top - margins.bottom}
             data={data}
             strokeWidth={3}
-            color={'green'}
+            color={'#74a2cc'}
             title={title}
           />;
   },
@@ -213,7 +213,7 @@ var InsightSimilarityResultView = React.createClass({
             margins={margins}
             data={data}
             strokeWidth={1}
-            color={'blue'}
+            color={'#74a2cc'}
             title={title} />;
   },
 

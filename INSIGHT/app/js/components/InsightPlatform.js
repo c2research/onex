@@ -143,7 +143,7 @@ var InsightPlatform = React.createClass({
 
     return (
       <div className="insightPlatform">
-        <InsightBanner baseTitle="nsight" />
+        <InsightBanner baseTitle="INSIGHT" />
         <InsightMessage {...this.state.metadata.message}/>
         <InsightControlPanel width={this.state.metadata.sizing.controlPanelWidth}
                              viewMode={this.state.metadata.viewMode}

@@ -242,8 +242,8 @@ def api_get_representatives():
   request_id = request.args.get('requestID', -1, type=int)
   with lock:
     representatives = onex.getGroupRepresentatives(current_ds_index)
-    representatives.sort(key=lambda x:x[1]) # sort on group size
-    representatives = [x[0] for x in representatives] # currently splicing size
+    representatives.sort(key=lambda x:x[1], reverse=True) # sort on group size
+    #representatives = [x[0] for x in representatives]
     return jsonify(representatives=representatives, requestID=request_id)
 
 

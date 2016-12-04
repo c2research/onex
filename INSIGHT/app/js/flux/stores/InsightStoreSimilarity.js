@@ -263,8 +263,6 @@ var InsightStoreSimilarity = assign({}, {
     return resultViewData;
   },
 
-
-
   /*
    * clears data to maintain flow
    */
@@ -304,10 +302,12 @@ var InsightStoreSimilarity = assign({}, {
         if (response.requestID != requestID.requestGroupRepresentatives) {
             console.log(requestID, response.requestID);
         }
+        var length = queryListViewData.queryListDataset.length;
         groupViewData.showingRepresentatives = true;
-        groupViewData.groupList = response.representatives.map(function(array, i) {
+        groupViewData.groupList = response.representatives.map(function(tuple, i) {
+          var [array, count] = tuple;
           var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, 'Centroid '+i,InsightConstants.QUERY_LOCATION_DATASET,
+          return new TimeSeries(values, 100 * (count / length) ,InsightConstants.QUERY_LOCATION_DATASET,
                                                 i,
                                                 0,
                                                 array.length);

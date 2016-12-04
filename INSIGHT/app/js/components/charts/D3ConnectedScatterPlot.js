@@ -300,7 +300,7 @@ D3ConnectedScatterPlot.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                var text = '(' + d.data[0] + ',' + d.data[1] + ')'; 
+                var text = '(' + d.data[0] + ',' + d.data[1] + ')';
                 that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), text);
               })
               .on('mouseout', function(d, i) {

@@ -53,7 +53,7 @@ D3OverviewChart.prototype.create = function(el, props, data) {
     .attr("class", "brush")
     .attr('transform', this._translate())
     .attr('clip-path', 'url(#mainClip)');
-  
+
   this._addTitle(svg);
   this.update(el, data);
 };
@@ -161,11 +161,11 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
     switch(i){
       case 0:
         // entire TS
-        color = '#a3cfec'
+        color = '#e0af9e'
         break;
       case 1:
         // selected area
-        color = '#e2b6b3'
+        color = '#74a2cc'
         break;
       case 2:
         //match
@@ -178,6 +178,24 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
     return color;
   }
 
+  var _opacity = function(i) {
+    var opacity = '';
+    switch(i){
+      case 0:
+        // entire TS
+        opacity = 0.65
+        break;
+      case 1:
+        // selected area
+        opacity = 0.8
+        break;
+      default:
+        opacity = 1;
+    }
+    return opacity;
+  }
+
+
   // enter + update
   paths.enter()
        .append('path')
@@ -185,7 +203,7 @@ D3OverviewChart.prototype._drawHorizonArea = function(svg, data) {
        .attr('d', function(d) { return areaFunc(d.values); })
        .style('fill', function(_,i){ return _color(i)})
        .style('stroke-width', 0)
-       .style('fill-opacity', 0.6)
+       .style('fill-opacity', function(_,i){ return _opacity(i)})
   // exit
   paths.exit().remove();
 };

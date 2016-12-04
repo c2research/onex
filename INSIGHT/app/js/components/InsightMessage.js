@@ -28,7 +28,7 @@ var InsightMessage = React.createClass({
    },
    render: function() {
      var iconClassName = "fa fa-"+ this.props.icon + " fa-2x";
-     var shadowColor = this.state.focused && '#e2b6b3' || '#2daf89';
+     var shadowColor = "Gray"
      var style = {
        component: {
          position: 'absolute',

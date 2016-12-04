@@ -1,9 +1,20 @@
  /* ---------->>> GLOBAL <<<-----------*/
+ @font-face {
+   font-family: Avenir;
+   src: "{{ url_for('static', filename='resources/AvenirLTStd-Book.otf') }}" format("opentype");
+ }
+
+ @font-face {
+   font-family: Avenir;
+   font-weight: light;
+   src: "{{ url_for('static', filename='resources/AvenirLTStd-Light.otf') }}" format("opentype");
+ }
+
 body {
   background: #FFF;
   font-family: "Helvetica Neue",sans-serif, Helvetica, Arial;
-  font-size: 15px;
   font-weight: 200;
+  font-size: 15px;
   line-height: 1.7;
   margin: 0;
   max-width: 100%;
@@ -19,11 +30,12 @@ body {
 }
  /* ---------->>> BANNER <<<-----------*/
 div.insightBanner {
+  font-family: "Avenir";
   position: relative;
   z-index: 5;
   width: 100%;
   left: 0;
-  background-color: rgba(230, 230, 230, 0.35);
+  background-color: #58768f; /*rgba(230, 230, 230, 0.35);*/
   -webkit-box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
   -moz-box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
   box-shadow: 0px 1px 2px 0px rgba(169,169,169,1);
@@ -67,7 +79,7 @@ div.tabSingleWrapper {
   transform-origin:left;
   -webkit-transition: all 0.3 s; /* For Safari 3.1 to 6.0 */
   transition: box-shadow 0.3s, color 0.3s, width 0.3s, background 0.3s, font-size 0.3s;
-  box-shadow: inset 0 0 0 0 #a3cfec;
+  box-shadow: inset 0 0 0 0 #bbcddb; /* #a3cfec;*/
 }
 div.tabSingleWrapper.selected {
   width: 65%;
@@ -76,10 +88,10 @@ div.tabSingleWrapper.selected {
 div.tabSingleWrapper.notselected {
   width: 35%;
   font-size: 0.7em;
-  background-color: #e2b6b3 /*rgba(63, 81, 181, 0.3); /*rgba(250, 250, 250, 0.25);*/
+  background-color: #ea8f71 /*#e2b6b3 /*rgba(63, 81, 181, 0.3); /*rgba(250, 250, 250, 0.25);*/
 }
 div.tabSingleWrapper:hover {
-  box-shadow: inset 200px 0 0 0 #a3cfec;
+  box-shadow: inset 200px 0 0 0 #bbcddb;
 }
 div.notselected {
   font-style: italic;
@@ -105,10 +117,10 @@ h4 {
 }
 h4.query {
   font-weight: 200;
-  text-align: center;
   font-size: 1.1em;
   margin-bottom: 0px;
   border-bottom: 0px;
+  padding-left: 10px;
 }
 h3 {
   margin: 5px;
@@ -180,12 +192,12 @@ i.menu {
   opacity: .55;
 }
 i.focus {
-  color: #a3cfec;
-  opacity: .75;
+  color: #8aa6bb;
+  opacity: 0.85;
 }
 i.menu:hover {
   opacity: 1;
 }
 i.menu:active {
-  color: #a3cfec;
+  color: #58768f;
 }

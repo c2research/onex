@@ -6,16 +6,18 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
-var NameCell = function({rowIndex, data, groupSelectedIndex, ...props}) {
+var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
   var style = {};
   if (groupSelectedIndex == rowIndex) {
     style = {
-      backgroundColor: '#2daf89'
+      backgroundColor: '#bbcddb'
     }
   }
+  var name = showingRepresentatives ? (data[rowIndex].getName().toFixed(2) + '%') : rowIndex;
+
   return (
     <Cell {...props} style={style} >
-      {rowIndex}
+      {name}
     </Cell>);
 }
 
@@ -54,7 +56,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
    var style = {};
    if (groupSelectedIndex == rowIndex) {
      style = {
-       backgroundColor: '#2daf89'
+       backgroundColor: '#bbcddb'
      }
    }
   return (
@@ -73,22 +75,23 @@ var InsightSimilarityGroupView = React.createClass({
     var widthIndex = this.props.width * 0.2;
     var widthChart = this.props.width * 0.8;
 
-    var [title, columnName] = this.props.showingRepresentatives
-      ? ['Dataset Overview', 'Group Representatives']
-      : ['Similarity Match Overview', 'Top Matches'];
+    var [title, firstColumnName, secondColumnName] = this.props.showingRepresentatives
+      ? ['Dataset Overview', 'Percent', 'Cluster Representatives']
+      : ['Similarity Overview', 'Kth Nearest','Top Matches'];
 
     var GroupsJSX =
       <ColumnGroup
         header={<Cell>{title}</Cell>}>
         <Column
-          header={<Cell>Index</Cell>}
+          header={<Cell>{firstColumnName}</Cell>}
           cell={<NameCell data={this.props.groupList}
-                          groupSelectedIndex={this.props.groupSelectedIndex} />}
+                          groupSelectedIndex={this.props.groupSelectedIndex}
+                          showingRepresentatives={this.props.showingRepresentatives} />}
           width={widthIndex}
           groupSelectedIndex={this.props.groupSelectedIndex}
         />
         <Column
-          header={<Cell>{columnName}</Cell>}
+          header={<Cell>{secondColumnName}</Cell>}
           cell={<MultiTimeSeriesChartCell data={this.props.groupList}
                                           groupSelectedIndex={this.props.groupSelectedIndex} />}
           width={widthChart}

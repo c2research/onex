@@ -11,7 +11,7 @@ var NameCell = function({rowIndex, data, queryIndex, ...props}) {
   var style = {};
   if (queryIndex == rowIndex) {
     style = {
-      backgroundColor: '#2daf89'
+      backgroundColor: '#bbcddb'
     }
   }
   return (
@@ -21,7 +21,6 @@ var NameCell = function({rowIndex, data, queryIndex, ...props}) {
 }
 
 var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) {
-  //TODO(charlie): uncomment
   var timeSeries = data[rowIndex];
   var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
 
@@ -30,10 +29,6 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) 
     domains: { x: commonXDomain, y: [0, 1]},
   };
 
-  // var chartData = {
-  //   series: [{values: []}],
-  //   domains: { x: [0, 100], y: [0, 1]},
-  // };
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
   var chart =
     <MultiTimeSeriesChart
@@ -49,7 +44,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) 
    var style = {};
    if (queryIndex == rowIndex) {
      style = {
-       backgroundColor: '#2daf89'
+       backgroundColor: '#bbcddb'
      }
    }
   return (
@@ -98,7 +93,6 @@ var InsightSimilarityQueryView = React.createClass({
       </div>;
 
     return <div>
-
             {tableJSX}
            </div>;
   },

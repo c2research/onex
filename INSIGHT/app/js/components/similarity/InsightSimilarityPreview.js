@@ -33,7 +33,7 @@ var InsightSimilarityPreview = React.createClass({
 
     var selectedViewData = {
       series: [{ values: selectedSequence,
-                 color: '#e2b6b3' }],
+                 color: '#74a2cc' }],
       domains: { x: previewRange, y: [0, 1] },
     };
 
@@ -75,7 +75,7 @@ var InsightSimilarityPreview = React.createClass({
         </div>
         <div style={{float: 'right'}}>
           {InsightMenuBarPreviewJSX}
-        </div>  
+        </div>
       </div>
     );
   }
