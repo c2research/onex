@@ -10,6 +10,27 @@ namespace py = boost::python;
 OnlineSession os;
 
 /**
+ * Reduce the number of data points by putting every certain number of
+ * data points into bins. Data points in each bin are averaged and become
+ * a single new data point.
+ * 
+ * \param seq     the sequence to be reduced.
+ * \param binSize number of data points in a bin.
+ * \return the reduced sequence.
+ */
+vector<seqitem_t> reduceSequence(vector<seqitem_t> seq, int binSize) {
+  vector<seqitem_t> reduced;
+  for (int i = 0; i < seq.size(); i += binSize) {
+    seqitem_t binSum = 0;
+    for (int j = 0; j < binSize; j++) {
+      binSum += seq[i + j];
+    }
+    reduced.push_back(binSum / binSize);
+  }
+  return reduced;
+}
+
+/**
  * Load dataset from a given path.
  *
  * \param path to the dataset in relation to the server.
@@ -96,17 +117,27 @@ py::tuple findSimilar(int dbIndex, int qIndex, int qSeq,
  * \param dbSeq index of a sequence in the dataset.
  * \param dbStart starting position of the subsequence in the sequence.
  * \param dbEnd ending position of the subsequence in the sequence.
+ * \param binSize number of data points in a bin that used for data compression.
  *
  * \return a Python list containing the data points in the subsequence.
  */
-py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
+py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd, int binSize = 1)
 {
   py::list result;
   TimeSeriesInterval interval = os.getinterval(dbIndex, dbSeq, TimeInterval(dbStart, dbEnd));
+  vector<seqitem_t> reducedInterval;
   for (int i = 0; i < interval.length(); i++) {
-    result.append(interval[i]);
+    reducedInterval.push_back(interval[i]);
+  }
+  reducedInterval = reduceSequence(reducedInterval, binSize);
+  for (int i = 0; i < reducedInterval.size(); i++) {
+    result.append(reducedInterval[i]);
   }
   return result;
+}
+
+py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
+  return getSubsequence(dbIndex, dbSeq, dbStart, dbEnd, 1);
 }
 
 /**
@@ -122,7 +153,7 @@ py::list getAllSequences(int dbIndex)
   int seqCount = os.getdbseqcount(dbIndex);
   int seqLength = os.getdbseqlength(dbIndex);
   for (int i = 0; i < seqCount; i++) {
-    py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1);
+    py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1, 2);
     result.append(ts);
   }
   return result;
@@ -210,7 +241,7 @@ py::list getSeasonal(int dbIndex, int dbSeq, int length)
  */
 py::list getGroupRepresentatives(int dbIndex)
 {
-  vector<vector<double> > representatives = os.getGroupRepresentatives(dbIndex);
+  vector<vector<seqitem_t> > representatives = os.getGroupRepresentatives(dbIndex);
   vector<int> counts = os.getGroupCounts(dbIndex);
 
   py::list result;
@@ -246,12 +277,12 @@ py::list getGroupValues(int dbIndex, int groupIndex)
   //py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
 
 
-  vector<vector<double> > ts = os.getGroupValues(dbIndex, groupIndex);
+  vector<vector<seqitem_t> > ts = os.getGroupValues(dbIndex, groupIndex);
   py::list values;
 
-  BOOST_FOREACH(vector<double > group, ts ){
+  BOOST_FOREACH(vector<seqitem_t > group, ts ){
     py::list ts;
-    BOOST_FOREACH(double datum, group){
+    BOOST_FOREACH(seqitem_t datum, group){
       ts.append(datum);
     }
     values.append(ts);
@@ -283,6 +314,7 @@ int getDatasetSeqLength(int dbIndex)
   return os.getdbseqlength(dbIndex);
 }
 
+
 BOOST_PYTHON_MODULE(ONEXBindings)
 {
   py::def("loadDataset", loadDataset);
@@ -291,6 +323,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("groupDataset", groupDataset);
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
+  py::def("getSubsequence", getSubsequenceDefault);
   py::def("getAllSequences", getAllSequences);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
