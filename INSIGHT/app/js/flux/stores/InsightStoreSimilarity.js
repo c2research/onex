@@ -227,8 +227,6 @@ var InsightStoreSimilarity = assign({}, {
           // groupViewData.showingRepresentatives = false;
           resultViewData.selectedMatch = resultTimeSeries;
           resultViewData.warpingPath = response.warpingPath;
-          console.log('wp_length = ' + response.warpingPath.length);
-          console.log(response.warpingPath);
           // var result = { //structure of query result pair
           //   qSeq: currentState.qSeq,
           //   qStart: currentState.qStart,
