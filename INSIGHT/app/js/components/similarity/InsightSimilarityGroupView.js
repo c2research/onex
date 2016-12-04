@@ -6,14 +6,22 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
+function shadeColor(color, percent) {   
+  var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
+  return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+}
+
 var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
-  var style = {};
+  var percent = parseFloat(data[rowIndex].getName());
+  var style = {
+    backgroundColor: shadeColor('#dbd9bb', 1 - percent / 100)
+  };
   if (groupSelectedIndex == rowIndex) {
     style = {
       backgroundColor: '#bbcddb'
     }
   }
-  var name = showingRepresentatives ? (data[rowIndex].getName().toFixed(2) + '%') : rowIndex;
+  var name = showingRepresentatives ? (percent.toFixed(2) + '%') : rowIndex;
 
   return (
     <Cell {...props} style={style} >
