@@ -145,7 +145,7 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
                        .tickSizeInner(-height)
                        .tickPadding(7)
                        .ticks(Math.min(Math.round(width / 40), domains.x[1]))
-                       .tickFormat(f);
+                       .tickFormat(d3.format('d'));
 
   // Actually draw the axes
   svg.select('g.xaxisWrapper')

@@ -88,7 +88,7 @@ div.tabSingleWrapper.selected {
 div.tabSingleWrapper.notselected {
   width: 35%;
   font-size: 0.7em;
-  background-color: #ea8f71 /*#e2b6b3 /*rgba(63, 81, 181, 0.3); /*rgba(250, 250, 250, 0.25);*/
+  background-color: #e5e5e5 /*#e2b6b3 /*rgba(63, 81, 181, 0.3); /*rgba(250, 250, 250, 0.25);*/
 }
 div.tabSingleWrapper:hover {
   box-shadow: inset 200px 0 0 0 #bbcddb;
