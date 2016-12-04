@@ -100,26 +100,24 @@ def api_dataset_init():
     return jsonify(dsLength=ds_length, numGroups=num_groups, requestID=request_id)
 
 
-@app.route('/query/fromdataset/')
-def api_query_from_dataset():
-  global current_ds_index
+@app.route('/dataset/get/')
+def get_a_sequence_from_dataset():
   request_id          = request.args.get('requestID', -1, type=int)
-  ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
+  from_data_set       = request.args.get('fromDataset', 1, type=int)
   q_seq               = request.args.get('qSeq', -1, type=int)
   with lock:
-    if not (ds_collection_index == current_collection_index):
-      raise InvalidUsage('Dataset {} is not loaded yet'.format(ds_collection_index))
+    ds_index = current_ds_index if from_data_set else current_q_index
 
-    ds_length = onex.getDatasetSeqCount(current_ds_index);
+    ds_length = onex.getDatasetSeqCount(ds_index);
     if (q_seq < 0 or q_seq >= ds_length):
       raise InvalidUsage('Sequence index is out of bound')
 
-    app.logger.debug('Get sequence %d in dataset %d',
+    app.logger.debug('Get sequence %d, fromDataSet = %s',
                      q_seq,
-                     current_collection_index)
+                     from_data_set)
 
-    seq_length = onex.getDatasetSeqLength(current_ds_index);
-    query = onex.getSubsequence(current_ds_index, q_seq, 0, seq_length - 1)
+    seq_length = onex.getDatasetSeqLength(ds_index);
+    query = onex.getSubsequence(ds_index, q_seq, 0, seq_length - 1)
 
     return jsonify(query=query, requestID=request_id)
 
@@ -148,8 +146,6 @@ def api_find_best_match():
         raise InvalidUsage('No custom query is loaded')
       # If find with custom query, set to the dataset containing the custom query
       q_ds_index = current_q_index
-      # There is only one sequence in this dataset
-      q_seq = 0
 
     # Get number of sequences in the database containing the query
     q_ds_length = onex.getDatasetSeqCount(q_ds_index)
@@ -157,7 +153,6 @@ def api_find_best_match():
       raise InvalidUsage('Sequence index is out of bound')
 
     seq_length = onex.getDatasetSeqLength(q_ds_index)
-    # TODO(Cuong): 1-based or 0-based ?
     if q_start >= seq_length or q_end >= seq_length:
       raise InvalidUsage('Invalid starting and ending position')
 
@@ -216,10 +211,7 @@ def api_upload_query():
     current_q_index = onex.loadDataset(query_path)
     app.logger.debug('Loaded new custom query')
 
-    #seq_count = onex.getDatasetSeqCount(current_q_index);
-    #seq_length = onex.getDatasetSeqLength(current_q_index);
-    queries = onex.getAllSequences(current_q_index);
-    #query = onex.getSubsequence(current_q_index, 0, 0, seq_length - 1)
+    queries = onex.getAllSequences(current_q_index, 1);
 
     return jsonify(queries=queries, requestID=request_id)
 
@@ -251,8 +243,9 @@ def api_get_representatives():
 def api_get_dataset_queries():
   request_id = request.args.get('requestID', -1, type=int)
   with lock:
-    queries = onex.getAllSequences(current_ds_index)
+    queries = onex.getAllSequences(current_ds_index, 2)
     return jsonify(queries=queries, requestID=request_id)
+
 
 def _allowed_file(filename):
   return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS

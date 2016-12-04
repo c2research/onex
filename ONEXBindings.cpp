@@ -144,16 +144,17 @@ py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
  * Get all sequences in a dataset.
  *
  * \param dbIndex index of a dataset in the dataset list.
+ * \param binSize number of data points in a bin that used for data compression.
  * \return a list where each element is a Python list representing a sequence
  *         in the dataset
  */
-py::list getAllSequences(int dbIndex) 
+py::list getAllSequences(int dbIndex, int binSize) 
 {
   py::list result;
   int seqCount = os.getdbseqcount(dbIndex);
   int seqLength = os.getdbseqlength(dbIndex);
   for (int i = 0; i < seqCount; i++) {
-    py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1, 2);
+    py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1, binSize);
     result.append(ts);
   }
   return result;

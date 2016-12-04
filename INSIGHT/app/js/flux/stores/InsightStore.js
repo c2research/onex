@@ -308,7 +308,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
    */
   requestSequence: function(fromDataset, sequenceIndex, callback) {
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
-
+    
     if ((dsCollectionIndex == null) || (sequenceIndex == null) ||
         (dsCollectionIndex < 0) || (sequenceIndex < 0)){
       console.log("dsCollectionIndex or qseq null, no need to req");
@@ -318,10 +318,10 @@ var InsightStore = assign({}, EventEmitter.prototype, {
     requestID.fromDataset += 1;
 
     $.ajax({
-      url: '/query/fromdataset/',
+      url: '/dataset/get/',
       data: {
-        dsCollectionIndex : fromDataset ? dsCollectionIndex : -1, //the index of the ds in memory on the server
-        qSeq : sequenceIndex, //the index of the query in the list
+        fromDataset : fromDataset,
+        qSeq : sequenceIndex,
         requestID : requestID.fromDataset
       },
       dataType: 'json',

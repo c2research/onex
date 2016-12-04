@@ -96,7 +96,6 @@ var OverviewChart = React.createClass({
       title: this.props.title
     };
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
-      console.log('destroyed');
       this.d3OverviewChart.destroy(el);
       this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
     } else {

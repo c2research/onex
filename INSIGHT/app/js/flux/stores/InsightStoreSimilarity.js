@@ -10,7 +10,7 @@ var CHANGE_EVENT = 'change';
 
 var queryListViewData = {
   queryLocation: InsightConstants.QUERY_LOCATION_DATASET,
-  // A list of names of the time series
+  // A list of time series
   queryListDataset: [],
   queryListUpload: [],
   querySelectedIndexDataset: -1,
@@ -34,7 +34,7 @@ var groupViewData = {
 
 var previewData = {
   // A TimeSeries
-  previewSequence: null, //new TimeSeries([[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]], '', 1, 1, 0, 18),
+  previewSequence: null,
   previewRange: []
 };
 
@@ -51,22 +51,11 @@ var resultViewData = {
  */
 var requestID = {
   findMatch: 0,
-  uploadQuery: 0,
   requestGroupRepresentatives: 0,
   datasetQueries: 0
 }
 
 var InsightStoreSimilarity = assign({}, {
-
-  fillQueryListFromDataset: function() {
-    //TODO: update this to request all the queries
-    queryListViewData.queryListDataset = [];
-    var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
-    for (var i = 0; i < InsightStore.getDSCurrentLength(); i++) {
-        queryListViewData.queryListDataset.push(name + " - " + i);
-    }
-    queryListViewData.querySelectedIndexDataset = -1;
-  },
 
   /**
    * @param {InsightConstant} - the current query type
@@ -90,12 +79,19 @@ var InsightStoreSimilarity = assign({}, {
       processData: false,
       contentType: false,
       success: function(response) {
-        // TODO: Modify that server to support this
-        querySetSize = response.querySetSize;
-        for (var i = 0; i < querySetSize; i++) {
-          queryListViewData.queryListDataset.push("Sequence " + i);
-        }
+        var name = files[0].name;
+        queryListViewData.queryListUpload = response.queries.map(function(array, i) {
+          var values = array.map(function(x, j) { return [j,x]});
+          return new TimeSeries(values, name + " - " + i , 
+                                                InsightConstants.QUERY_LOCATION_UPLOAD,
+                                                i,
+                                                0,
+                                                array.length - 1);
+        });
+
+        queryListViewData.queryLocation = InsightConstants.QUERY_LOCATION_UPLOAD;
         queryListViewData.querySelectedIndexUpload = -1;
+
         InsightStore.emitChange();
       },
       error: function(xhr) {
@@ -118,12 +114,13 @@ var InsightStoreSimilarity = assign({}, {
   },
 
   requestQuery: function() {
-    var fromDataset = queryListViewData.queryLocation == InsightConstants.QUERY_LOCATION_DATASET;
+    var fromDataset = (queryListViewData.queryLocation == InsightConstants.QUERY_LOCATION_DATASET) + 0;
+
     var selectedQuery = fromDataset ? queryListViewData.querySelectedIndexDataset :
                                       queryListViewData.querySelectedIndexUpload;
     var queryName = fromDataset ? queryListViewData.queryListDataset[selectedQuery] :
-                                  queryListViewData.queryListDataset[selectedQuery];
-    InsightStore.requestSequence(fromDataset, selectedQuery,
+                                  queryListViewData.queryListUpload[selectedQuery];
+    InsightStore.requestSequence(fromDataset + 0, selectedQuery,
       function(endlist) {
         var newTimeSeries = new TimeSeries(endlist,
                                            queryName,
@@ -169,12 +166,12 @@ var InsightStoreSimilarity = assign({}, {
       return;
     }
 
-    var qStart, qEnd, qSeq, qTypeLocal, qValues, qType;
+    var qStart, qEnd, qSeq, qValues, qFindWithCustomQuery;
     var previewSequence = previewData.previewSequence;
     qStart = previewData.previewRange[0];
     qEnd = previewData.previewRange[1];
     qSeq = previewSequence.getSeq();
-    qType = previewSequence.getLocation();
+    qFindWithCustomQuery = previewSequence.getLocation();
     qValues = previewSequence;
 
     // Clear result view
@@ -190,7 +187,7 @@ var InsightStoreSimilarity = assign({}, {
       url: '/query/find/',
       data: {
           dsCollectionIndex: dsCollectionIndex, //the index of the ds in memory on the server we querying
-          qType: qType, //the type of query, 0->dataset, 1->from file
+          qFindWithCustomQuery: qFindWithCustomQuery, //the type of query, 0->dataset, 1->from file
           qSeq: qSeq, //the index of q in its ds
           qStart: qStart,
           qEnd: qEnd,
@@ -198,7 +195,7 @@ var InsightStoreSimilarity = assign({}, {
       },
       dataType: 'json',
       currentState: {
-        qType: qType,
+        qFindWithCustomQuery: qFindWithCustomQuery,
         qSeq: qSeq,
         qStart: qStart,
         qEnd: qEnd,
@@ -219,7 +216,7 @@ var InsightStoreSimilarity = assign({}, {
           });
 
           var resultTimeSeries = new TimeSeries(endlist, '',
-                                                currentState.qType,
+                                                currentState.qFindWithCustomQuery,
                                                 response.seq,
                                                 response.start,
                                                 response.end);
@@ -232,7 +229,6 @@ var InsightStoreSimilarity = assign({}, {
           resultViewData.warpingPath = response.warpingPath;
 
           // var result = { //structure of query result pair
-          //   qTypeLocal: currentState.qTypeLocal,
           //   qSeq: currentState.qSeq,
           //   qStart: currentState.qStart,
           //   qEnd: currentState.qEnd,
@@ -317,7 +313,8 @@ var InsightStoreSimilarity = assign({}, {
         groupViewData.groupList = response.representatives.map(function(tuple, i) {
           var [array, count] = tuple;
           var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, 100 * (count / length) ,InsightConstants.QUERY_LOCATION_DATASET,
+          return new TimeSeries(values, 100 * (count / length), 
+                                                0,
                                                 i,
                                                 0,
                                                 array.length);
@@ -361,7 +358,7 @@ var InsightStoreSimilarity = assign({}, {
           return new TimeSeries(values, name + " - " + i ,InsightConstants.QUERY_LOCATION_DATASET,
                                                 i,
                                                 0,
-                                                array.length);
+                                                array.length - 1);
         });
 
         queryListViewData.queryLocation = InsightConstants.QUERY_LOCATION_DATASET;
@@ -388,7 +385,7 @@ AppDispatcher.register(function(action) {
           InsightStoreSimilarity.clearResultViewData();
           InsightStoreSimilarity.clearPreviewData();
 
-          InsightStoreSimilarity.requestDatasetQueries();//requestDatasetQueries fillQueryListFromDataset
+          InsightStoreSimilarity.requestDatasetQueries();
           InsightStoreSimilarity.requestGroupRepresentatives();
 
           InsightStore.emitChange();

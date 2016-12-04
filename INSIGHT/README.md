@@ -62,12 +62,12 @@ Perform loading and grouping on a dataset.
 
 **HTTP method and URL**
 
-    GET /query/fromdataset/
+    GET /dataset/get/
 
 **URL params**
 
-    dsCollectionIndex: int
-      Index of the dataset in the dataset list.
+    fromDataset: int
+      1 if getting a sequence from the loaded dataset. 0 if getting from the uploaded query file.
 
     qSeq: int
       Index of a sequence in the dataset.
