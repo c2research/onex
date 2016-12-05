@@ -149,7 +149,8 @@ var InsightPlatform = React.createClass({
                              viewMode={this.state.metadata.viewMode}
                              datasetIconMode={this.state.metadata.datasetIconMode}
                              {...this.state.datasetData}
-                             {...this.state.thresholdData}/>
+                             {...this.state.thresholdData}
+                             {...this.state.seasonalQueryInfo}/>
         {insightViewJSX}
        </div>
     );

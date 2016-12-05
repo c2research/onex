@@ -51,7 +51,7 @@ var InsightControlPanel = React.createClass({
         queryControlJSX = this._getSimilarityQueryControls();
         break;
       case InsightConstants.VIEW_MODE_SEASONAL:
-       // queryControlJSX = this._getSeasonalQueryControls();
+        queryControlJSX = this._getSeasonalQueryControls();
         break;
       case InsightConstants.VIEW_MODE_CLUSTER:
         queryControlJSX = this._getClusterQueryControls();
@@ -119,14 +119,10 @@ var InsightControlPanel = React.createClass({
   },
 
   _getSeasonalQueryControls: function() {
-    var seasonalQueryInfo = this.props.seasonalQueryInfo;
-    var qSeq = seasonalQueryInfo.qSeq;
-    var qLength = seasonalQueryInfo.qLength;
-    var qValues = seasonalQueryInfo.qValues;
     var queryJSX = <InsightSeasonalQuery dsCurrentLength={this.props.dsCurrentLength}
-                                         qValues={qValues}
-                                         qSeq={qSeq}
-                                         qLength={qLength}/>;
+                                         qValues={this.props.qValues}
+                                         qSeq={this.props.qSeq}
+                                         qLength={this.props.qLength}/>;
     return <div>
       {queryJSX}
     </div>;
