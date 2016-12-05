@@ -6,7 +6,7 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
-function shadeColor(color, percent) {   
+function shadeColor(color, percent) {
   var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
   return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
 }
@@ -14,7 +14,7 @@ function shadeColor(color, percent) {
 var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
   var percent = parseFloat(data[rowIndex].getName());
   var style = {
-    backgroundColor: shadeColor('#dbd9bb', 1 - percent / 100)
+    backgroundColor: shadeColor('#ea8f71', (1 - percent/100)) //dbd9bb
   };
   if (groupSelectedIndex == rowIndex) {
     style = {
@@ -30,17 +30,6 @@ var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentati
 }
 
 var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...props}) {
-  // var query = data[rowIndex].qValues;
-  // var start = data[rowIndex].qStart;
-  // var end = data[rowIndex].qEnd;
-  // var querySelection = query.slice(start, end + 1);
-  // var result = data[rowIndex].rValues;
-  // var warpingPath = data[rowIndex].warpingPath;
-  // var chartData = {
-  //   series: [{values: querySelection}, {values: result}],
-  //   warpingPath: warpingPath,
-  //   maxDomainY: 0.2
-  // };
   var timeSeries = data[rowIndex];
   var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
 
