@@ -1,3 +1,4 @@
+var d3 = require('d3');
 var React = require('react');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightActions = require('./../../flux/actions/InsightActions');
@@ -6,21 +7,24 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
-function shadeColor(color, percent) {
-  var f=parseInt(color.slice(1),16),t=percent<0?0:255,p=percent<0?percent*-1:percent,R=f>>16,G=f>>8&0x00FF,B=f&0x0000FF;
-  return "#"+(0x1000000+(Math.round((t-R)*p)+R)*0x10000+(Math.round((t-G)*p)+G)*0x100+(Math.round((t-B)*p)+B)).toString(16).slice(1);
+
+var color = d3.scaleThreshold()
+              .domain([0.05, 0.1, 0.15, 0.2, 0.4, 0.8, 1])
+              .range(["#C6E2FF", "#BFEFFF", "#CAE1FF", "#7EC0EE", "#4973AB", "#58768f"]);
+function shadeColor(percent) {
+  return color(percent);
 }
 
 var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
   var percent = parseFloat(data[rowIndex].getName());
   var style = {
-    backgroundColor: shadeColor('#ea8f71', (1 - percent/100)) //dbd9bb
+    backgroundColor: shadeColor((percent/100)) //(1 - percent/100)) //dbd9bb
   };
-  if (groupSelectedIndex == rowIndex) {
-    style = {
-      backgroundColor: '#bbcddb'
-    }
-  }
+  // if (groupSelectedIndex == rowIndex) {
+  //   style = {
+  //     backgroundColor: '#bbcddb'
+  //   }
+  // }
   var name = showingRepresentatives ? (percent.toFixed(2) + '%') : rowIndex;
 
   return (
@@ -53,7 +57,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
    var style = {};
    if (groupSelectedIndex == rowIndex) {
      style = {
-       backgroundColor: '#bbcddb'
+       borderColor: '#bbcddb'
      }
    }
   return (
