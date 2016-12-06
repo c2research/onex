@@ -58,7 +58,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
    var style = {};
    if (groupSelectedIndex == rowIndex) {
      style = {
-       borderColor: '#bbcddb'
+       backgroundColor: '#ff9a3d'
      }
    }
   return (
