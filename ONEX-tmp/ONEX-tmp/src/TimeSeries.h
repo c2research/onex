@@ -37,7 +37,7 @@ struct SeriesDistanceMetric
                          warping_path_t (*getWarpingPath)(TimeSeriesInterval &a, TimeSeriesInterval &b) = _defaultGetWarpingPath);
 
 private:
-    static warping_path_t _defaultGetWarpingPath(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+    static warping_path_t _defaultGetWarpingPath(TimeSeriesInterval &a, TimeSeriesInterval &b)
     {
         warping_path_t empty;
         return empty;
@@ -96,6 +96,9 @@ public:
     ~TimeSeriesInterval(void);
 
     int length(void);
+
+    int getSeqNum() { return seqNum; }
+    TimeInterval getInterval() { return interval; }
 
     seqitem_t &operator[](int index); // Get a reference to a part of the index.
     seqitem_t *getData(int index = 0); // Get an actual pointer to the data.

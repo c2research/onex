@@ -13,7 +13,7 @@ OnlineSession os;
  * Reduce the number of data points by putting every certain number of
  * data points into bins. Data points in each bin are averaged and become
  * a single new data point.
- * 
+ *
  * \param seq     the sequence to be reduced.
  * \param binSize number of data points in a bin.
  * \return the reduced sequence.
@@ -140,6 +140,18 @@ py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
   return getSubsequence(dbIndex, dbSeq, dbStart, dbEnd, 1);
 }
 
+py::list getSequences(int dbIndex, py::list indices, int binSize)
+{
+  py::list seqs;
+  int seqLength = os.getdbseqlength(dbIndex);
+  for (int i = 0; i < py::len(indices); i++) {
+    int index = py::extract<int>(indices[i]);
+    py::list seq = getSubsequence(dbIndex, index, 0, seqLength - 1, binSize);
+    seqs.append(seq);
+  }
+  return seqs;
+}
+
 /**
  * Get all sequences in a dataset.
  *
@@ -148,7 +160,7 @@ py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
  * \return a list where each element is a Python list representing a sequence
  *         in the dataset
  */
-py::list getAllSequences(int dbIndex, int binSize) 
+py::list getAllSequences(int dbIndex, int binSize)
 {
   py::list result;
   int seqCount = os.getdbseqcount(dbIndex);
@@ -263,35 +275,29 @@ py::list getGroupRepresentatives(int dbIndex)
 }
 
 /**
- * Get all the ts in a group
- *
- * \param dbIndex index of a dataset.
- * \param groupIndex index of the group
- * \return a list of lists of doubles
+ * Get all the ts locaitons in a group
+ * ...
  */
-py::list getGroupValues(int dbIndex, int groupIndex)
+py::list getGroupValues(int dbIndex, int length, int groupIndex)
 {
-  //perhaps we should have os.getGroupValues get intervals instead
-  //of the actual values?
-  //the key function to fix is getGroupValues in Grouping.cpp.
-
-  //py::list getSubsequence(int dbIndex, int dbSeq, int dbStart, int dbEnd)
-
-
-  vector<vector<seqitem_t> > ts = os.getGroupValues(dbIndex, groupIndex);
-  py::list values;
-
-  BOOST_FOREACH(vector<seqitem_t > group, ts ){
-    py::list ts;
-    BOOST_FOREACH(seqitem_t datum, group){
-      ts.append(datum);
-    }
-    values.append(ts);
+  vector<TimeSeriesInterval> seqs = os.getGroupValues(dbIndex, length, groupIndex);
+  py::list sequenceLocations;
+  BOOST_FOREACH(TimeSeriesInterval seq, seqs){
+    TimeInterval interval = seq.getInterval();
+    sequenceLocations.append(py::make_tuple(seq.getSeqNum(), interval.start, interval.end));
   }
 
-  return values;
+  return sequenceLocations;
 }
 
+/**
+ * ...
+ */
+py::tuple getGroupIndex(int dbIndex, int dbSeq, int start, int end)
+{
+  pair<int, int> index = os.getGroupIndex(dbIndex, dbSeq, TimeInterval(start, end));
+  return py::make_tuple(index.first, index.second);
+}
 
 /**
  * Get the number of sequence in a dataset.
@@ -325,6 +331,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
   py::def("getSubsequence", getSubsequenceDefault);
+  py::def("getSequences", getSequences);
   py::def("getAllSequences", getAllSequences);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
@@ -332,4 +339,5 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("getSeasonal", getSeasonal);
   py::def("getGroupRepresentatives", getGroupRepresentatives);
   py::def("getGroupValues", getGroupValues);
+  py::def("getGroupIndex", getGroupIndex);
 }

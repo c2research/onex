@@ -135,7 +135,7 @@ public:
     kBest getBestMatch(TimeSeriesIntervalEnvelope query, int warps=-1, double dropout=INF);
     kBest getBestDistinctMatch(TimeSeriesIntervalEnvelope query, int warps=-1, double dropout=INF, int qSeq=-1);
     vector<kBest> getSeasonal(int);
-    vector<vector<seqitem_t> > getGroupValues(void);
+    vector<TimeSeriesInterval> getGroupValues(void);
     vector<seqitem_t> &getCentroid(void);
 };
 

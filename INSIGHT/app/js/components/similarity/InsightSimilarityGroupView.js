@@ -8,9 +8,10 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
 
-var color = d3.scaleThreshold()
-              .domain([0.05, 0.1, 0.15, 0.2, 0.4, 0.8, 1])
-              .range(["#C6E2FF", "#BFEFFF", "#CAE1FF", "#7EC0EE", "#4973AB", "#58768f"]);
+// var color = d3.scaleThreshold()
+//               .domain([0.05, 0.1, 0.15, 0.2, 0.4, 0.8, 1])
+//               .range(["#C6E2FF", "#BFEFFF", "#CAE1FF", "#7EC0EE", "#4973AB", "#58768f"]);
+var color;
 function shadeColor(percent) {
   return color(percent);
 }
@@ -18,7 +19,7 @@ function shadeColor(percent) {
 var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
   var percent = parseFloat(data[rowIndex].getName());
   var style = {
-    backgroundColor: shadeColor((percent/100)) //(1 - percent/100)) //dbd9bb
+    backgroundColor: shadeColor(percent) //(1 - percent/100)) //dbd9bb
   };
   // if (groupSelectedIndex == rowIndex) {
   //   style = {
@@ -72,6 +73,16 @@ var InsightSimilarityGroupView = React.createClass({
       width: this.props.width,
       height: this.props.height
     }
+
+    var percents = this.props.groupList.map(function(timeSeries){
+      return timeSeries.getName();
+    })
+
+    color = d3.scalePow()
+              .exponent(0.1)
+              .domain([Math.min(...percents), Math.max(...percents)])
+              .range(["#f2f9ff", "#357cb7"])
+              .interpolate(d3.interpolateCubehelix);
 
     var widthIndex = this.props.width * 0.2;
     var widthChart = this.props.width * 0.8;

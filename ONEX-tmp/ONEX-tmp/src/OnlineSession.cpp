@@ -165,26 +165,40 @@ vector<vector<seqitem_t> > OnlineSession::getGroupRepresentatives(int index)
     return representatives;
 }
 
+pair<int, int> OnlineSession::getGroupIndex(int dbIndex, int dbSeq, TimeInterval interval)
+{
+  int length = interval.length();
+  int index = -1;
+
+  GroupableTimeSeriesSet* currentDS = datasets[dbIndex];
+  TimeSeriesSetGrouping* allGroups = currentDS->getGrouping();
+  TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(interval.length());
+  vector<TimeSeriesGroup*> groups = sameLengthGroups->getGroups();
+  for (unsigned int i = 0; i < groups.size(); i++) {
+    if (groups[i]->isMember(dbSeq, interval.start)) {
+      index = i;
+      break;
+    }
+  }
+  return make_pair(length, index);
+}
+
 /**
  * Get all the ts in (a group)
  *
- * \param dbIndex index of a dataset.
- * \param groupIndex index of the group
+ * ...
  * \return a list of vectors of doubles (each centroid) (of the largest size groups)
  */
-vector<vector<seqitem_t> > OnlineSession::getGroupValues(int dbIndex, int groupIndex)
+vector<TimeSeriesInterval> OnlineSession::getGroupValues(int dbIndex, int length, int groupIndex)
 {
     //get the correct group, and currently we would only every
     //be getting a group of max size so we get the 'full group'
-    GroupableTimeSeriesSet* step_1 = datasets[dbIndex];
-    TimeSeriesSetGrouping* step_2 = step_1->getGrouping();
-    TimeSeriesGrouping* step_3 = step_2->getFullGroup();
-    vector<TimeSeriesGroup*> groups = step_3->getGroups();
+    GroupableTimeSeriesSet* currentDS = datasets[dbIndex];
+    TimeSeriesSetGrouping* allGroups = currentDS->getGrouping();
+    TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(length);
+    TimeSeriesGroup* targetGroup = sameLengthGroups->getGroup(groupIndex);
 
-    //select the group to get the values for
-    TimeSeriesGroup* tsg = groups[groupIndex];
-
-    return tsg->getGroupValues();
+    return targetGroup->getGroupValues();
 }
 
 int OnlineSession::killdbgroups(int index)

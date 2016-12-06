@@ -27,7 +27,7 @@ var InsightControlPanel = React.createClass({
                    InsightConstants.VIEW_MODE_SEASONAL];
     var that = this;
     var tabList = modeList.map(function(mode) {
-      return <InsightTab type={mode} current={that.props.viewMode} width={that.props.width / 3 - 10} key={mode} />;
+      return <InsightTab type={mode} current={that.props.viewMode} key={mode} />;
     });
 
     var tabsJSX =
@@ -83,39 +83,6 @@ var InsightControlPanel = React.createClass({
 
   _getSimilarityQueryControls: function() {
     return null;
-
-    // var similarityQueryInfo = this.props.similarityQueryInfo;
-    // var qTypeLocal = similarityQueryInfo.qTypeLocal;
-    // var values, qStart, qEnd, qSeq;
-    //
-    // if (qTypeLocal == InsightConstants.QUERY_TYPE_DATASET) {
-    //   values = similarityQueryInfo.qDatasetValues;
-    //   qStart = similarityQueryInfo.qDatasetStart;
-    //   qEnd = similarityQueryInfo.qDatasetEnd;
-    //   qSeq = similarityQueryInfo.qDatasetSeq;
-    // } else if (qTypeLocal == InsightConstants.QUERY_TYPE_UPLOAD) {
-    //   values = similarityQueryInfo.qUploadValues;
-    //   qStart = similarityQueryInfo.qUploadStart;
-    //   qEnd = similarityQueryInfo.qUploadEnd;
-    //   qSeq = similarityQueryInfo.qUploadSeq;
-    // } else {
-    //   values = similarityQueryInfo.qBuildValues;
-    // }
-    //
-    // var queryJSX = <InsightSimilarityQuery dsCurrentLength={this.props.dsCurrentLength}
-    //                                        qTypeLocal={qTypeLocal}
-    //                                        qValues={values}
-    //                                        qStart={qStart}
-    //                                        qEnd={qEnd}
-    //                                        qSeq={qSeq}/>;
-    // //var selectButtonJSX = <InsightSelectRangeButton show={values.length > 0} />;
-    // var findButtonJSX = <InsightFind show={values.length > 0}
-    //                                  viewMode={this.props.viewMode}/>;
-    //
-    // return <div>
-    //   {queryJSX}
-    //   {findButtonJSX}
-    // </div>;
   },
 
   _getSeasonalQueryControls: function() {
