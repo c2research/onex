@@ -9,7 +9,8 @@ var RadialChart = React.createClass({
     strokeWidth: React.PropTypes.number,
     margins: React.PropTypes.object,
     data: React.PropTypes.object,
-    title: React.PropTypes.string
+    title: React.PropTypes.string,
+    showLegend: React.PropTypes.bool
   },
 
   _detectChangeAndUpdateNonDataProps: function(newNonDataProps) {
@@ -30,7 +31,8 @@ var RadialChart = React.createClass({
       height: this.props.height,
       margins: this.props.margins,
       strokeWidth: this.props.strokeWidth,
-      title: this.props.title
+      title: this.props.title,
+      showLegend: this.props.showLegend
     };
   },
 

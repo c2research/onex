@@ -7,7 +7,8 @@ Example props:
   width: 700,
   height: 350,
   margins: {left: 10, right: 10, top: 10, bottom: 10}
-  strokeWidth: 1
+  strokeWidth: 1,
+  showLegend: true
 }
 Example data:
 {
@@ -25,6 +26,11 @@ Example data:
 
 // Object constructor
 var D3RadialChart = function() {
+  this._legendProps = { 
+    marginTop: 15,
+    boxSize: 9,
+    spacing: 10,
+  };
 };
 
 D3RadialChart.prototype = new D3BaseChart;
@@ -65,6 +71,11 @@ D3RadialChart.prototype.create = function(el, props, data) {
      .attr('transform', 'translate(' + center.x + ',' + center.y + ')');
 
   svg.append('g')
+    .classed('legend', true)
+    .attr('transform', 'translate(' + (margins.left) + ','
+                                    + (this._legendProps.marginTop) + ')');
+
+  svg.append('g')
      .classed('voronoiWrapper', true);
 
   var tooltipWrapper = svg.append('g').classed('tooltipWrapper', true);
@@ -96,6 +107,9 @@ D3RadialChart.prototype.update = function(el, data) {
 
   this._drawRadialAxis(svg, data);
   this._drawLines(svg, data);
+  if (this.props.showLegend) {
+    this._drawLegend(svg, data);
+  }
   //this._drawVoronoi(svg, data);
 };
 
@@ -208,6 +222,29 @@ D3RadialChart.prototype._drawLines = function(svg, data) {
   // exit
   paths.exit().remove();
 
+};
+
+D3RadialChart.prototype._drawLegend = function(svg, data) {
+  var legendProps = this._legendProps;
+  var accLength = 0;
+  var legendGroup = svg.select('g.legend');
+  legendGroup.selectAll('*').remove();
+  data.series.forEach(function(d, i) {
+    if (d.values.length == 0) return;
+    legendGroup.append('rect')
+               .attr('x', accLength)
+               .attr('y', 0)
+               .attr('width', legendProps.boxSize)
+               .attr('height', legendProps.boxSize)
+               .style('fill', d.color);
+    accLength += legendProps.boxSize + 5;
+    var text = legendGroup.append('text')
+                          .attr('x', accLength)
+                          .attr('y', 0)
+                          .style('dominant-baseline', 'mathematical')
+                          .text(d.legend);
+    accLength += text.node().getBBox().width + legendProps.spacing;
+  });
 };
 
 // Draw the invisible Voronoi diagram to assist user experience

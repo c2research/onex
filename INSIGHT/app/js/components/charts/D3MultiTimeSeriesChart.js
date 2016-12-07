@@ -15,9 +15,11 @@ Example data:
 {
   series: [{ values: [[0, 0.1], [1, 0.15], [2, 0.1], [3, 0.16], [4, 0.11], [5, 0.2], [6, 0.2], [7, 0.21], [8, 0.22], [9, 0.2], [10, 0.16], [11, 0.14], [12, 0.11], [13, 0.1], [14, 0.09], [15, 0.07], [16, 0.09], [17, 0.06], [18, 0.04]],
              color: 'red',
+             legend: 'query',
              strokeWidth: 3
            },
            { values: [[0, 0.03], [1, 0.07], [2, 0.08], [3, 0.09], [4, 0.1], [5, 0.11], [6, 0.1], [7, 0.1], [8, 0.07], [9, 0.05], [10, 0.04], [11, 0.03], [12, 0.02], [13, 0.01], [14, 0.0]],
+             legend: 'result',
              color: 'blue'
            }],
   domains: {x: [0, 20], y: [0, 1]},
@@ -29,6 +31,11 @@ Example data:
 // Object constructor
 var D3MultiTimeSeriesChart = function() {
   this._pointRadius = 2;
+  this._legendProps = { 
+    marginTop: 15,
+    boxSize: 9,
+    spacing: 10,
+  };
 };
 
 D3MultiTimeSeriesChart.prototype = new D3BaseChart;
@@ -78,6 +85,11 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
      .attr('clip-path', 'url(#mainClip)');
 
   svg.append('g')
+    .classed('legend', true)
+    .attr('transform', 'translate(' + (margins.left) + ','
+                                    + (this._legendProps.marginTop) + ')');
+
+  svg.append('g')
      .classed('pointsWrapper', true)
      .attr('transform', this._translate())
      .attr('clip-path', 'url(#mainClip)');
@@ -118,6 +130,9 @@ D3MultiTimeSeriesChart.prototype.update = function(el, data) {
   this._drawLines(svg, data);
   //this._drawPoints(svg, data);
   this._drawWarpingPath(svg, data);
+  if (this.props.showLegend) {
+    this._drawLegend(svg, data);
+  }
   if (this.props.showToolTip) {
     this._drawVoronoi(svg, data);
   }
@@ -241,7 +256,30 @@ D3MultiTimeSeriesChart.prototype._drawWarpingPath = function(svg, data) {
 
   // exit
   lines.exit().remove();
-}
+};
+
+D3MultiTimeSeriesChart.prototype._drawLegend = function(svg, data) {
+  var legendProps = this._legendProps;
+  var accLength = 0;
+  var legendGroup = svg.select('g.legend');
+  legendGroup.selectAll('*').remove();
+  data.series.forEach(function(d, i) {
+    if (d.values.length == 0) return;
+    legendGroup.append('rect')
+               .attr('x', accLength)
+               .attr('y', 0)
+               .attr('width', legendProps.boxSize)
+               .attr('height', legendProps.boxSize)
+               .style('fill', d.color);
+    accLength += legendProps.boxSize + 5;
+    var text = legendGroup.append('text')
+                          .attr('x', accLength)
+                          .attr('y', 0)
+                          .style('dominant-baseline', 'mathematical')
+                          .text(d.legend);
+    accLength += text.node().getBBox().width + legendProps.spacing;
+  });
+};
 
 // Draw the invisible Voronoi diagram to assist user experience
 D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
@@ -283,7 +321,7 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               });
 
   voronoiPaths.exit().remove();
-}
+};
 
 D3MultiTimeSeriesChart.prototype._showToolTip = function(svg, x, y, text) {
   var tooltipWrapper = svg.select('g.tooltipWrapper');
@@ -309,10 +347,10 @@ D3MultiTimeSeriesChart.prototype._showToolTip = function(svg, x, y, text) {
 
   tooltipWrapper.transition()
                 .style('opacity', 0.8);
-}
+};
 
 D3MultiTimeSeriesChart.prototype._removeToolTip = function(svg) {
   svg.select('g.tooltipWrapper').transition().style('opacity', 0);
-}
+};
 
 module.exports = D3MultiTimeSeriesChart;

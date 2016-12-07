@@ -70,7 +70,7 @@ var InsightSimilarityResultView = React.createClass({
     alignedSelectedMatchValues = alignedSelectedMatchValues || [];
 
     var data = {};
-    var margins = {left: 35, right: 15, top: 30, bottom: 50};
+    var margins = {left: 35, right: 15, top: 35, bottom: 40};
     var title = 'Similarity Results';
     var resultGraph = null;
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);
@@ -93,8 +93,8 @@ var InsightSimilarityResultView = React.createClass({
         var bias = 0.05 * this.props.dtwBias;
         var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
-                   { values: biasedMatchValues, color: bias == 0 ? 'Green' : "#c05a53"}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+                   { values: biasedMatchValues, color: bias == 0 ? 'green' : "#c05a53", legend: 'match'}],
           domains: { x: commonXDomain, y: commonYDomain },
           warpingPath: warpingPath
         }
@@ -102,24 +102,24 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_LINE:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
-                   { values: alignedSelectedMatchValues, color: 'Green'}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+                   { values: alignedSelectedMatchValues, color: 'green', legend: 'match'}],
           domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateMultiLineChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_RADIAL:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc'},
-                   { values: alignedSelectedMatchValues, color: 'Green'}],
+          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+                   { values: alignedSelectedMatchValues, color: 'green', legend: 'match'}],
           domains: { x: commonXDomain, y: commonYDomain },
         }
         resultGraph = this.generateRadialChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
         data = {
-          seriesQ: { values: selectedSubsequence.getValues(), color: '#74a2cc'},
-          seriesR: { values: selectedMatch.getValues(), color: 'Green'},
+          seriesQ: { values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+          seriesR: { values: selectedMatch.getValues(), color: 'green', legend: 'match'},
           domainsQ: { x: [selectedSubsequence.getStart(), selectedSubsequence.getEnd()], y: commonYDomain },
           domainsR: { x: [selectedMatch.getStart(), selectedMatch.getEnd()], y: commonYDomain },
         };
@@ -160,6 +160,7 @@ var InsightSimilarityResultView = React.createClass({
             height={height - margins.top - margins.bottom}
             data={data}
             strokeWidth={3}
+            showLegend={true}
             title={title}
           />;
   },
@@ -172,7 +173,7 @@ var InsightSimilarityResultView = React.createClass({
             strokeWidth={3}
             data={data}
             title={title}
-
+            showLegend={true}
     />;
   },
 
@@ -185,16 +186,17 @@ var InsightSimilarityResultView = React.createClass({
       series: [data.seriesR],
       domains: data.domainsR
     };
-    var splitmargins = {left: 35, right: 15, top: 5, bottom: 20};
+    var splitmargins = {left: 35, right: 15, top: 35, bottom: 20};
 
     return <div>
       <MultiTimeSeriesChart
-        margins={margins}
+        margins={splitmargins}
         width={width - margins.left - margins.right}
         height={(height / 2) - margins.top - margins.bottom}
         data={queryData}
         strokeWidth={3}
         title={title}
+        showLegend={true}
       />
       <MultiTimeSeriesChart
         margins={splitmargins}
@@ -202,6 +204,7 @@ var InsightSimilarityResultView = React.createClass({
         height={(height / 2) - margins.top - margins.bottom}
         data={resultData}
         strokeWidth={3}
+        showLegend={true}
       />
     </div>;
    },

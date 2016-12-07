@@ -179,12 +179,6 @@ input {
   background: #a3cfec; /*-webkit-linear-gradient(top, #a3cfec, #a9a9a9);*/
 }
 
-/* ---------->>> CHARTS <<<-----------*/
-
-.legend {
-  visibility: hidden;
-}
-
 /* ---------->>> ICONS <<<-----------*/
 i.menu {
   color: black;
