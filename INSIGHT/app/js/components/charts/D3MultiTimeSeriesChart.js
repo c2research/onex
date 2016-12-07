@@ -30,7 +30,8 @@ Example data:
 
 // Object constructor
 var D3MultiTimeSeriesChart = function() {
-  this._pointRadius = 2;
+  this._pointRadius = 3;
+  this._pointColor = '#ff4000';
   this._legendProps = { 
     marginTop: 15,
     boxSize: 9,
@@ -327,6 +328,15 @@ D3MultiTimeSeriesChart.prototype._showToolTip = function(svg, x, y, text) {
   var tooltipWrapper = svg.select('g.tooltipWrapper');
   var tooltip = tooltipWrapper.select('rect#tooltip');
   var tooltipText = tooltipWrapper.select('text#tooltipText');
+
+  var circle = tooltipWrapper.selectAll('circle').data([[x, y]]);
+  circle.enter()
+        .append('circle')
+        .merge(circle)
+        .attr('cx', function(d) { return d[0]; })
+        .attr('cy', function(d) { return d[1]; })
+        .attr('r', this._pointRadius)
+        .attr('fill', this._pointColor);
 
   tooltipText.text(text);
 
