@@ -360,7 +360,6 @@ var InsightStoreSimilarity = assign({}, {
                                                 array.length - 1);
         });
 
-        queryListViewData.queryLocation = InsightConstants.QUERY_LOCATION_DATASET;
         queryListViewData.querySelectedIndexDataset = -1;
 
         InsightStore.emitChange();

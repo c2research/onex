@@ -116,7 +116,9 @@ D3MultiTimeSeriesChart.prototype.update = function(el, data) {
   this._drawLines(svg, data);
   //this._drawPoints(svg, data);
   this._drawWarpingPath(svg, data);
-  this._drawVoronoi(svg, data);
+  if (this.props.showToolTip) {
+    this._drawVoronoi(svg, data);
+  }
 };
 
 // Remove the current chart
@@ -270,16 +272,12 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                if (that.props.showToolTip) {
                   that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1].toFixed(3));
-                }
               })
               .on('mouseout', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'black');
-                if (that.props.showToolTip) {
                   that._removeToolTip(svg);
-                }
               });
 
   voronoiPaths.exit().remove();
