@@ -72,22 +72,8 @@ var OverviewChart = React.createClass({
     return changed;
   },
 
-  componentDidMount: function() {
-    var el = ReactDOM.findDOMNode(this);
-    this.d3OverviewChart = new D3OverviewChart();
-    this.nonDataProps = {
-      width: this.props.width,
-      height: this.props.height,
-      margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth,
-      onBrushSelection: this.props.onBrushSelection,
-      title: this.props.title
-    }
-    this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
-  },
-  componentDidUpdate: function() {
-    var el = ReactDOM.findDOMNode(this);
-    var nonDataProps = {
+  _getNonDataProps: function() {
+    return {
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
@@ -95,6 +81,17 @@ var OverviewChart = React.createClass({
       onBrushSelection: this.props.onBrushSelection,
       title: this.props.title
     };
+  },
+
+  componentDidMount: function() {
+    var el = ReactDOM.findDOMNode(this);
+    this.d3OverviewChart = new D3OverviewChart();
+    this.nonDataProps = this._getNonDataProps();
+    this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);
+  },
+  componentDidUpdate: function() {
+    var el = ReactDOM.findDOMNode(this);
+    var nonDataProps = this._getNonDataProps();
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3OverviewChart.destroy(el);
       this.d3OverviewChart.create(el, this.nonDataProps, this.props.data);

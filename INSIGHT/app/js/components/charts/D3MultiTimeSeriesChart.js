@@ -6,8 +6,10 @@ Example props:
 {
   width: 700,
   height: 350,
-  margins: {left: 10, right: 10, top: 10, bottom: 10}
-  strokeWidth: 1
+  margins: {left: 10, right: 10, top: 10, bottom: 10},
+  strokeWidth: 1,
+  showToolTip: true,
+  showLegend: true
 }
 Example data:
 {

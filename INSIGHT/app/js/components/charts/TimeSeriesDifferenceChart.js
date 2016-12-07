@@ -12,22 +12,46 @@ var TimeSeriesDifferenceChart = React.createClass({
     title: React.PropTypes.string
   },
 
-  componentDidMount: function() {
-    var el = ReactDOM.findDOMNode(this);
-    this.d3TimeSeriesDifferenceChart = new D3TimeSeriesDifferenceChart();
-    this.d3TimeSeriesDifferenceChart.create(el, {
+  _detectChangeAndUpdateNonDataProps: function(newNonDataProps) {
+    var changed = false;
+    for (var field in newNonDataProps) {
+      if (this.nonDataProps[field] !== newNonDataProps[field]) {
+        changed = true;
+        break;
+      }
+    }
+    this.nonDataProps = newNonDataProps;
+    return changed;
+  },
+
+  _getNonDataProps: function() {
+    return {
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
       color: this.props.color,
       strokeWidth: this.props.strokeWidth,
       title: this.props.title
-    }, this.props.data);
+    };
+  },
+
+  componentDidMount: function() {
+    var el = ReactDOM.findDOMNode(this);
+    this.d3TimeSeriesDifferenceChart = new D3TimeSeriesDifferenceChart();
+    this.nonDataProps = this._getNonDataProps();
+    this.d3TimeSeriesDifferenceChart.create(el, this.nonDataProps, this.props.data);
   },
 
   componentDidUpdate: function() {
     var el = ReactDOM.findDOMNode(this);
-    this.d3TimeSeriesDifferenceChart.update(el, this.props.data);
+    var nonDataProps = this._getNonDataProps();
+    if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
+      this.d3TimeSeriesDifferenceChart.destroy(el);
+      this.d3TimeSeriesDifferenceChart.create(el, this.nonDataProps, this.props.data);
+    }
+    else {
+      this.d3TimeSeriesDifferenceChart.update(el, this.props.data);
+    }
   },
 
   componentWillUnmount: function() {

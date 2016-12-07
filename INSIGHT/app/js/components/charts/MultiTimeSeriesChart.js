@@ -1,6 +1,7 @@
 var D3MultiTimeSeriesChart = require('./D3MultiTimeSeriesChart');
 var React = require('react');
 var ReactDOM = require('react-dom');
+var assign = require('object-assign');
 
 var MultiTimeSeriesChart = React.createClass({
   propTypes: {
@@ -9,6 +10,7 @@ var MultiTimeSeriesChart = React.createClass({
     margins: React.PropTypes.object,
     data: React.PropTypes.object,
     showToolTip: React.PropTypes.bool,
+    showLegend: React.PropTypes.bool,
     title: React.PropTypes.string
   },
 
@@ -30,32 +32,30 @@ var MultiTimeSeriesChart = React.createClass({
     this.nonDataProps = newNonDataProps;
     return changed;
   },
-
-  componentDidMount: function() {
-    var el = ReactDOM.findDOMNode(this);
-    this.d3MultiTimeSeriesChart = new D3MultiTimeSeriesChart();
-
-    this.nonDataProps = {
+  // TODO: Make a more general function and use mixins or similar
+  // Should read this: https://facebook.github.io/react/blog/2016/07/13/mixins-considered-harmful.html
+  _getNonDataProps: function() {
+    return {
       width: this.props.width,
       height: this.props.height,
       margins: this.props.margins,
       strokeWidth: this.props.strokeWidth,
       showToolTip: this.props.showToolTip,
+      showLegend: this.props.showLegend,
       title: this.props.title
-    }
+    };
+  },
+
+  componentDidMount: function() {
+    var el = ReactDOM.findDOMNode(this);
+    this.d3MultiTimeSeriesChart = new D3MultiTimeSeriesChart();
+    this.nonDataProps = this._getNonDataProps();
     this.d3MultiTimeSeriesChart.create(el, this.nonDataProps, this.props.data);
   },
 
   componentDidUpdate: function() {
     var el = ReactDOM.findDOMNode(this);
-    var nonDataProps = {
-      width: this.props.width,
-      height: this.props.height,
-      margins: this.props.margins,
-      strokeWidth: this.props.strokeWidth,
-      title: this.props.title,
-      showToolTip: this.props.showToolTip,
-    };
+    var nonDataProps = this._getNonDataProps();
     if (this._detectChangeAndUpdateNonDataProps(nonDataProps)) {
       this.d3MultiTimeSeriesChart.destroy(el);
       this.d3MultiTimeSeriesChart.create(el, this.nonDataProps, this.props.data);
