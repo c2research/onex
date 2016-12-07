@@ -27,7 +27,7 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
-    var contextHeight = this.props.selectedMatch !== null ? 40 : 0;
+    var contextHeight = this.props.selectedMatch !== null ? 25 : 0;
     var graphHeight = height - contextHeight;
 
     var InsightMenuBarResultJSX =
@@ -46,7 +46,8 @@ var InsightSimilarityResultView = React.createClass({
       width: width,
       overflow: 'hidden',
       borderLeft: '1px dashed gray',
-      borderBottom: '1px dashed gray'
+      borderBottom: '1px dashed gray',
+      position: 'relative'
     };
 
     var contextStyle = {
@@ -54,7 +55,10 @@ var InsightSimilarityResultView = React.createClass({
       height: contextHeight,
       fontSize: '0.9em',
       padding: 5,
-      textAlign: 'center'
+      textAlign: 'center',
+      position: 'absolute',
+      left: 0,
+      bottom: 0
     }
 
     var context = this.generateContext(this.props.selectedMatch);
