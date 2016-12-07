@@ -17,7 +17,7 @@ function shadeColor(percent) {
 }
 
 var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
-  var percent = parseFloat(data[rowIndex].getName());
+  var percent = data[rowIndex].getName();
   var style = {
     backgroundColor: shadeColor(percent) //(1 - percent/100)) //dbd9bb
   };
@@ -26,7 +26,7 @@ var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentati
   //     backgroundColor: '#bbcddb'
   //   }
   // }
-  var name = showingRepresentatives ? (percent.toFixed(2) + '%') : rowIndex;
+  var name = showingRepresentatives ? ((100* percent).toFixed(2) + '%') : rowIndex;
 
   return (
     <Cell {...props} style={style} >
@@ -76,12 +76,12 @@ var InsightSimilarityGroupView = React.createClass({
 
     var percents = this.props.groupList.map(function(timeSeries){
       return timeSeries.getName();
-    })
+    });
 
     color = d3.scalePow()
-              .exponent(0.1)
+              .exponent(0.5)
               .domain([Math.min(...percents), Math.max(...percents)])
-              .range(["#f2f9ff", "#357cb7"])
+              .range(["#efefef", "#357cb7"])
               .interpolate(d3.interpolateCubehelix);
 
     var widthIndex = this.props.width * 0.2;

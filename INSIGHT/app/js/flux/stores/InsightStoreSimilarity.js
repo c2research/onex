@@ -82,7 +82,7 @@ var InsightStoreSimilarity = assign({}, {
         var name = files[0].name;
         queryListViewData.queryListUpload = response.queries.map(function(array, i) {
           var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, name + " - " + i , 
+          return new TimeSeries(values, name + " - " + i ,
                                                 InsightConstants.QUERY_LOCATION_UPLOAD,
                                                 i,
                                                 0,
@@ -312,7 +312,7 @@ var InsightStoreSimilarity = assign({}, {
         groupViewData.groupList = response.representatives.map(function(tuple, i) {
           var [array, count] = tuple;
           var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, 100 * (count / length), 
+          return new TimeSeries(values, (count / length),
                                                 0,
                                                 i,
                                                 0,
