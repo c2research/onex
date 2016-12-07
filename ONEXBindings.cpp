@@ -23,6 +23,7 @@ vector<seqitem_t> reduceSequence(vector<seqitem_t> seq, int binSize) {
   for (int i = 0; i < seq.size(); i += binSize) {
     seqitem_t binSum = 0;
     for (int j = 0; j < binSize; j++) {
+      if (i + j >= seq.size()) break;
       binSum += seq[i + j];
     }
     reduced.push_back(binSum / binSize);
