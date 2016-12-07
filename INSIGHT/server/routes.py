@@ -249,7 +249,7 @@ def api_get_dataset_queries():
 
 def _to_string(l, decimal=4):
   fmt = '%.' + str(decimal) + 'f'
-  return [fmt % elem for elem in l]
+  return [float(fmt % elem) for elem in l]
 
 
 def _allowed_file(filename):
