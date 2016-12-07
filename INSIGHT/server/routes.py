@@ -116,7 +116,7 @@ def get_a_sequence_from_dataset():
                      from_data_set)
 
     seq_length = onex.getDatasetSeqLength(ds_index);
-    query = onex.getSubsequence(ds_index, q_seq, 0, seq_length - 1)
+    query = _to_string(onex.getSubsequence(ds_index, q_seq, 0, seq_length - 1))
 
     return jsonify(query=query, requestID=request_id)
 
@@ -164,7 +164,7 @@ def api_find_best_match():
 
     r_dist, r_seq, r_start, r_end = \
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
-    result = onex.getSubsequence(current_ds_index, r_seq, r_start, r_end)
+    result = _to_string(onex.getSubsequence(current_ds_index, r_seq, r_start, r_end))
     warpingPath = onex.getWarpingPath(q_ds_index, q_seq, q_start, q_end,
                                       current_ds_index, r_seq, r_start, r_end)
 
@@ -243,7 +243,13 @@ def api_get_dataset_queries():
   request_id = request.args.get('requestID', -1, type=int)
   with lock:
     queries = onex.getAllSequences(current_ds_index, 2)
+    queries = map(_to_string, queries)
     return jsonify(queries=queries, requestID=request_id)
+
+
+def _to_string(l, decimal=4):
+  fmt = '%.' + str(decimal) + 'f'
+  return [fmt % elem for elem in l]
 
 
 def _allowed_file(filename):
