@@ -12,13 +12,18 @@ var InsightSimilarityViewRight = React.createClass({
   },
 
   render: function() {
-    var dimensions = {
+    var resultProportion = 0.55;
+    var resultDimensions = {
       width: this.props.width,
-      height: this.props.height / 2
+      height: this.props.height * resultProportion
+    }
+    var previewDimensions = {
+      width: this.props.width,
+      height: this.props.height * (1-resultProportion)
     }
     return (<div style={{height: this.props.height, width: this.props.width}}>
-        <InsightSimilarityResultView {...this.props.resultViewData} {...dimensions}/>
-        <InsightSimilarityPreview {...this.props.previewData} {...dimensions}/>
+        <InsightSimilarityResultView {...this.props.resultViewData} {...resultDimensions}/>
+        <InsightSimilarityPreview {...this.props.previewData} {...previewDimensions}/>
     </div>);
   }
 });

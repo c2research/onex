@@ -214,8 +214,8 @@ var InsightStoreSimilarity = assign({}, {
           var endlist = response.result.map(function(val, i) {
             return [i + response.start, val];
           });
-
-          var resultTimeSeries = new TimeSeries(endlist, '',
+          var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+          var resultTimeSeries = new TimeSeries(endlist, name,
                                                 currentState.qFindWithCustomQuery,
                                                 response.seq,
                                                 response.start,
@@ -308,6 +308,7 @@ var InsightStoreSimilarity = assign({}, {
             console.log(requestID, response.requestID);
         }
         var length = queryListViewData.queryListDataset.length;
+        groupViewData.groupSelectedIndex = -1;
         groupViewData.showingRepresentatives = true;
         groupViewData.groupList = response.representatives.map(function(tuple, i) {
           var [array, count] = tuple;

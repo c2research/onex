@@ -27,6 +27,8 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
+    var contextHeight = this.props.selectedMatch !== null ? 40 : 0;
+    var graphHeight = height - contextHeight;
 
     var InsightMenuBarResultJSX =
       <InsightMenuBarResult
@@ -37,7 +39,7 @@ var InsightSimilarityResultView = React.createClass({
         resultSelected={this.props.selectedMatch !== null}
        />;
 
-    var GraphJSX = this.generateGraph(graphWidth, height);
+    var GraphJSX = this.generateGraph(graphWidth, graphHeight);
 
     var style = {
       height: height,
@@ -46,14 +48,27 @@ var InsightSimilarityResultView = React.createClass({
       borderLeft: '1px dashed gray',
       borderBottom: '1px dashed gray'
     };
+
+    var contextStyle = {
+      width: graphWidth,
+      height: contextHeight,
+      fontSize: '0.9em',
+      padding: 5,
+      textAlign: 'center'
+    }
+
+    var context = this.generateContext(this.props.selectedMatch);
+
     return (
       <div style={style}>
         <div style={{float: 'left', width: graphWidth}}>
           {GraphJSX}
+          <div style={contextStyle}> {context} </div>
         </div>
         <div style={{float: 'right'}}>
            {InsightMenuBarResultJSX}
         </div>
+
       </div>);
   },
 
@@ -219,6 +234,19 @@ var InsightSimilarityResultView = React.createClass({
             color={'#74a2cc'}
             title={title} />;
   },
+
+  generateContext: function(timeSeries) {
+    if (timeSeries !== null) {
+      var index = timeSeries.getSeq();
+      var start = timeSeries.getStart();
+      var end = timeSeries.getEnd();
+      var dataset = timeSeries.getName();
+      var context = 'matching subseuquence: '+ index + 'th entry in ' + dataset + ', length ' + (end - start) + ' from indices ' + start + ' - ' + end;
+      return context;
+    } else {
+      return '';
+    }
+  }
 
 });
 
