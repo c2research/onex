@@ -24,8 +24,8 @@ Since this server performs computation with ONEX code, which is not written in a
   dataset: ['ECG', 'ItalyPower', 'FacesAll']
 }
 ```
+---
 
-<br/>
 ### 2. Initalize a dataset
 
 Perform loading and grouping on a dataset.
@@ -56,8 +56,7 @@ Perform loading and grouping on a dataset.
   requestID: <int> # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 3. Get a sequence from a dataset
 
 **HTTP method and URL**
@@ -86,14 +85,13 @@ Perform loading and grouping on a dataset.
   requestID: <int>  # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 4. Get full dataset (for the purpose of providing queries)
 Get a list of time series in the current dataset
 
 **HTTP method and URL**
 
-  GET /dataset/queries
+    GET /dataset/queries
 
 **URL params**
 
@@ -110,8 +108,7 @@ Status: **200**
   requestID: <int>  # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 5. Get DTW distance and warping path between two time series
 Get the DTW distance and optionally warping path between two time series.
 One time series (q) is either from the loaded dataset or from an upload set,
@@ -119,7 +116,7 @@ the other (r) is from the loaded dataset
 
 **HTTP method and URL**
 
-  GET /dataset/queries
+    GET /dataset/queries
 
 **URL params**
 
@@ -160,8 +157,7 @@ Status: **200**
   warpingPath: <int>  # the warping path between two time series or an empty list if get_warping_path is 0
 }
 ```
-
-<br />
+---
 ### 6. Find best match
 Find the best match with a subsequence in a dataset from all subsequences in another dataset.
 
@@ -205,8 +201,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
   requestID: <int>   # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 7. Upload custom query
 Upload a custom query file to the server.
 
@@ -238,8 +233,7 @@ Status: **200**
   requestID: <int>  # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 8. Get seasonal patterns
 Get a list of seasonal patterns within a given time series.
 
@@ -276,14 +270,13 @@ Status: **200**
   requestID: <int>  # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 9. Get group representatives
 Get a list of representatives of underlying groups (of the max length only)
 
 **HTTP method and URL**
 
-  GET /group/representatives
+    GET /group/representatives
 
 **URL params**
 
@@ -300,14 +293,13 @@ Status: **200**
   requestID: <int>  # The requestID sent with the request
 }
 ```
-
-<br/>
+---
 ### 10. Get group values
 Get a list of time series inside a group
 
 **HTTP method and URL**
 
-  GET /group/values
+    GET /group/values
 
 **URL params**
 
@@ -331,7 +323,7 @@ Status: **200**
 }
 ```
 
-values is a list of object that has the form:
+*values* is a list of object that has the form:
 
 ```
 {
