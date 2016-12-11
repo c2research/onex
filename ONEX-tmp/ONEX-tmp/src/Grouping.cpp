@@ -1,5 +1,5 @@
 #include "Grouping.h"
-
+#include "RepresentativeTree.h"
 #include "trillionDTW.h"
 
 #include <iostream>
@@ -528,11 +528,14 @@ TimeSeriesGrouping::TimeSeriesGrouping(TimeSeriesSet *dataset, int length)
     this->dataset = dataset;
     this->length = length;
     this->perSeq = dataset->getSeqLength() - length + 1;
+    this->representativeTree = NULL;
 }
 
 TimeSeriesGrouping::~TimeSeriesGrouping(void)
 {
     clearGroups();
+    delete representativeTree;
+
 }
 
 TimeSeriesGroup *TimeSeriesGrouping::getGroup(int index)
@@ -591,7 +594,15 @@ void TimeSeriesGrouping::genGroups(seqitem_t ST)
         }
     }
 
+    //its sorted by number of members
     std::sort(groups.begin(), groups.end(), &_group_gt_op);
+
+    //create the tree after groups are created
+    clock_t start = clock();
+    genRepresentativeTree(ST);
+    clock_t end = clock();
+    double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.;
+    cout << "Tree Generated: "<< time << " ms" << endl;
 }
 
 void TimeSeriesGrouping::clearGroups(void)
@@ -611,6 +622,7 @@ void TimeSeriesGrouping::genEnvelopes(void)
 
 int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t *dist, int warps, double dropout)
 {
+
     if (warps < 0)
         warps = query.interval.length() * 2;
 
@@ -633,6 +645,19 @@ int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t
     *dist = bsfDist;
 
     return bsfIndex;
+}
+
+int TimeSeriesGrouping::getBestGroupTree(TimeSeriesIntervalEnvelope query, seqitem_t *dist, int warps, double dropout, seqitem_t ST)
+{
+    if (warps < 0)
+        warps = query.interval.length() * 2;
+
+    if (representativeTree == NULL){
+      //TODO(cuong): this indicates the TimeSeriesGrouping was not grouped. How can this happen?
+      genGroups(ST);
+    }
+    int groupIndex = representativeTree->findBestGroup(query, warps, dist);
+    return groupIndex;
 }
 
 vector<vector<kBest>> TimeSeriesGrouping::getSeasonal(int seq)
@@ -811,12 +836,6 @@ int TimeSeriesSetGrouping::group(void)
         groups[i] = new TimeSeriesGrouping(dataset, i+1);
         groups[i]->genGroups(ST);
 
-    //    printf("Needed %5d groups for length %5d.\n", groups[i]->getCount(), i+1);
-        // printf("[ ");
-        // for (int j = 0; j < groups[i]->getCount(); j++)
-        //     printf("%3d ", groups[i]->getGroup(j)->getCount());
-        // printf("]\n");
-
         count += groups[i]->getCount();
     }
     return count;
@@ -854,9 +873,12 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
     int bsfLen = -1;
 
     for (int i = 0; i < count; i++) {
-
+        // this finds the best set of groups of a length
         seqitem_t dist;
-        int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        // this looks through each group of a certain length finding the best of those groups and setting dist
+        // int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
+
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
             bsfGroup = g;
@@ -892,16 +914,18 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
 
     int *order = genOrder(strat, top, bottom, center);
 
-
     seqitem_t bsf = INF;
     int bsfGroup = -1;
     int bsfLen = -1;
+    seqitem_t dist;
+
+    clock_t start = clock();
 
     for (int i = 0; i < count; i++) {
 
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
-        seqitem_t dist;
         int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        //int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
@@ -913,8 +937,11 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
             break;
     }
 
-    free(order);
+    clock_t end = clock();
+    double t = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
+    cout << "TIME: " << t << endl; //94.01 - 13.478  vs 0.534
 
+    free(order);
     return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestDistinctMatch(qenv, groups.size()*2, INF, qSeq);
 }
 
@@ -954,4 +981,12 @@ int TimeSeriesSetGrouping::toFile(const char *path)
     out.close();
 
     return 0;
+}
+
+void TimeSeriesGrouping::genRepresentativeTree(seqitem_t ST)
+{
+  if (representativeTree != NULL) {
+    delete representativeTree;
+  }
+  representativeTree = new RepresentativeTree(groups, ST);
 }

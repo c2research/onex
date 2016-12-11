@@ -5,7 +5,11 @@
 #include <vector>
 #include <stdint.h>
 
+//#include "RepresentativeTree.h"
+
 using namespace std;
+
+class RepresentativeTree;
 
 struct kBest
 {
@@ -126,6 +130,8 @@ public:
     seqitem_t distance(vector<seqitem_t> &data, SeriesDistanceMetric *metric=&lp2_norm_dist, seqitem_t dropout=INF);
     seqitem_t distance(int len, seqitem_t *data, SeriesDistanceMetric *metric=&lp2_norm_dist, seqitem_t dropout=INF);
 
+    int getLength(void) { return length; }
+    int getPerSeq(void) { return perSeq; }
     int getCount(void);
 
     TimeSeriesIntervalEnvelope &getEnvelope(void);
@@ -156,6 +162,7 @@ protected:
 
     vector<TimeSeriesGroup*> groups;
 
+    RepresentativeTree *representativeTree;
     /*
     void updateDiffs(void);
 
@@ -181,6 +188,9 @@ public:
     void clearGroups(void);
 
     void genEnvelopes(void);
+
+    void genRepresentativeTree(seqitem_t ST);
+    int getBestGroupTree(TimeSeriesIntervalEnvelope query, seqitem_t *dist, int warps, double dropout, seqitem_t ST);
 
     int getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t *dist=NULL, int warps=-1, double dropout=INF);
     vector< vector<kBest> > getSeasonal(int);
