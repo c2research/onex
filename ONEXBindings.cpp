@@ -184,9 +184,7 @@ py::list getAllSequences(int dbIndex, int binSize)
  * \param dbSeqB index of a sequence in the second dataset
  * \param startB starting position of the second subsequence
  * \param endB ending position of the second subsequence
- * \return a Python list containing Python tuples representing pairs of
- *         indices each of which matches a point from the first subsequence
- *         to a point in the second subsequence.
+ * \return dtw distance between two time series.
  */
 seqitem_t getDistance(int dbIndexA, int dbSeqA, int startA, int endA,
                      int dbIndexB, int dbSeqB, int startB, int endB)

@@ -113,7 +113,8 @@ var InsightSimilarityResultView = React.createClass({
         var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
           series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
-                   { values: biasedMatchValues, color: bias == 0 ? 'green' : "#c05a53", legend: 'match'}],
+                   { values: biasedMatchValues, color: bias == 0 ? 'green' : "#c05a53", 
+                     legend: bias == 0 ? 'match' : 'match (added bias = ' + bias.toFixed(2) + ')'}],
           domains: { x: commonXDomain, y: commonYDomain },
           warpingPath: warpingPath
         }
