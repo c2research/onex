@@ -28,6 +28,9 @@ var previewData = {
 var groupViewData = {
   // A list of TimeSeries
   showingRepresentatives: true,
+  representatives: [],
+  representativesSelectedIndex: -1,
+
   groupIndex: [],
   groupList: [],
   groupSelectedIndex: -1
@@ -53,6 +56,7 @@ var resultViewData = {
 var requestID = {
   findMatch: 0,
   requestGroupRepresentatives: 0,
+  requestGroupValues: 0,
   datasetQueries: 0
 }
 
@@ -184,6 +188,7 @@ var InsightStoreSimilarity = assign({}, {
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 
     requestID.findMatch += 1;
+    var that = this;
     $.ajax({
       url: '/query/find/',
       data: {
@@ -229,6 +234,7 @@ var InsightStoreSimilarity = assign({}, {
           groupViewData.groupIndex = response.groupIndex;
           resultViewData.selectedMatch = resultTimeSeries;
           resultViewData.warpingPath = response.warpingPath;
+          that.requestGroupValues();
           // var result = { //structure of query result pair
           //   qSeq: currentState.qSeq,
           //   qStart: currentState.qStart,
@@ -312,19 +318,54 @@ var InsightStoreSimilarity = assign({}, {
                                                 0,
                                                 i,
                                                 0,
-                                                array.length);
+                                                array.length - 1);
         });
         InsightStore.emitChange();
       },
       error: function(xhr) {
         //TODO: later on, pop up a red message top-right corner that something failed
-        console.log("error requesting dataset init");
+        console.log("error requesting group representatives");
       }
     });
   },
 
   requestGroupValues: function() {
+    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 
+    if (dsCollectionIndex == null){
+      console.log("index null, no need to req");
+      return;
+    }
+    var groupIndex = groupViewData.groupIndex;
+    requestID.requestGroupValues += 1;
+
+    $.ajax({
+      url: '/group/values/',
+      data: {
+        length: groupIndex[0],
+        index: groupIndex[1],
+        requestID: requestID.requestGroupValues
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.requestID != requestID.requestGroupValues) {
+            console.log(requestID, response.requestID);
+        }
+        groupViewData.groupSelectedIndex = -1;
+        groupViewData.showingRepresentatives = true;
+        groupViewData.groupList = response.values.map(function(tuple, i) {
+          var [array, seq, start, end] = tuple;
+          var values = array.map(function(x, j) { return [j + start,x]});
+          return new TimeSeries(values, '', 0, seq, start, end);
+        });
+        console.log(groupViewData.groupList);
+        InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        //TODO: later on, pop up a red message top-right corner that something failed
+        console.log("error requesting group vales");
+      }
+    });
   },
 
   requestDatasetQueries: function() {
@@ -362,7 +403,7 @@ var InsightStoreSimilarity = assign({}, {
       },
       error: function(xhr) {
         //TODO: later on, pop up a red message top-right corner that something failed
-        console.log("error requesting dataset init");
+        console.log("error requesting dataset queries");
       }
     });
   }

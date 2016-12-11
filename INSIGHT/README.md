@@ -289,7 +289,8 @@ Status: **200**
 + Content:
 ```
 {
-  representatives: [[<double>]] # A list of list of doubles
+  representatives: [([<double>], <int>)] # A tuple where the first value is the group representative 
+                                         # and the second value is the number of sequences in that group
   requestID: <int>  # The requestID sent with the request
 }
 ```
@@ -318,18 +319,11 @@ Status: **200**
 + Content:
 ```
 {
-  values: [{object}]] # A list of object 
+  values: [([<double>], <int>, <int>, <int>)] # A list of tuple where the first value is 
+                                              # a sequence and the next three values are 
+                                              # respectively the index of the sequence in 
+                                              # the dataset, the starting position and the
+                                              # ending position
   requestID: <int>  # The requestID sent with the request
-}
-```
-
-*values* is a list of object that has the form:
-
-```
-{
-  values: [<double>], # values of a sequence
-  seq: <int>,         # index of the sequence in the loaded dataset
-  start: <int>,       # starting position of the sequence
-  end: <int>          # ending position of the sequence
 }
 ```

@@ -148,8 +148,8 @@ class ServerTest(unittest.TestCase):
     ret_data = json.loads(ret.data)
     self.assertTrue(len(ret_data['values']) > 0,
                 'Length of list of values must be positive')
-    self.assertTrue(type(ret_data['values'][0]) == dict,
-                'Each value must be a dict')
+    self.assertTrue(type(ret_data['values'][0]) == tuple,
+                'Each value must be a tuple')
 
 
 if __name__=='__main__':

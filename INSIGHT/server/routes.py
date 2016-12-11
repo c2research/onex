@@ -294,12 +294,7 @@ def api_get_group_values():
     values = onex.getGroupValues(current_ds_index, length, index)
 
     def resolveGroupValue(v):
-      return {
-        'values': onex.getSubsequence(current_ds_index, v[0], v[1], v[2]),
-        'seq': v[0],
-        'start': v[1],
-        'end': v[2]
-      } 
+      return (onex.getSubsequence(current_ds_index, v[0], v[1], v[2]), v[0], v[1],v[2])
 
     values = map(resolveGroupValue, values)
     return jsonify(values=values, requestID=request_id)
