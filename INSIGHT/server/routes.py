@@ -62,8 +62,8 @@ def api_dataset_load():
 @app.route('/dataset/init/')
 def api_dataset_init():
   global current_collection_index, current_ds_index
-  request_id          = request.args.get('requestID', -1, type=int)
-  ds_collection_index = request.args.get('dsCollectionIndex', -1, type=int)
+  request_id          = request.args.get('requestID', type=int)
+  ds_collection_index = request.args.get('dsCollectionIndex', type=int)
   st                  = request.args.get('st', 0.2, type=float)
 
   with lock:
@@ -101,9 +101,9 @@ def api_dataset_init():
 
 @app.route('/dataset/get/')
 def get_a_sequence_from_dataset():
-  request_id          = request.args.get('requestID', -1, type=int)
+  request_id          = request.args.get('requestID', type=int)
   from_data_set       = request.args.get('fromDataset', 1, type=int)
-  q_seq               = request.args.get('qSeq', -1, type=int)
+  q_seq               = request.args.get('qSeq', type=int)
   with lock:
     ds_index = current_ds_index if from_data_set else current_q_index
 
@@ -123,12 +123,12 @@ def get_a_sequence_from_dataset():
 
 @app.route('/query/find/')
 def api_find_best_match():
-  request_id               = request.args.get('requestID', -1, type=int)
-  ds_collection_index      = request.args.get('dsCollectionIndex', -1, type=int)
+  request_id               = request.args.get('requestID', type=int)
+  ds_collection_index      = request.args.get('dsCollectionIndex', type=int)
   q_find_with_custom_query = request.args.get('qFindWithCustomQuery', 0, type=int)
-  q_seq                    = request.args.get('qSeq', -1, type=int)
-  q_start                  = request.args.get('qStart', -1, type=int)
-  q_end                    = request.args.get('qEnd', -1, type=int)
+  q_seq                    = request.args.get('qSeq', type=int)
+  q_start                  = request.args.get('qStart', type=int)
+  q_end                    = request.args.get('qEnd', type=int)
 
   if q_start > q_end or q_start < 0 or q_end < 0:
     raise InvalidUsage('Invalid starting and ending position')
@@ -178,6 +178,48 @@ def api_find_best_match():
                    requestID=request_id)
 
 
+@app.route('/query/distance/')
+def api_get_distance():
+  request_id       = request.args.get('requestID', type=int)
+  from_upload_set  = request.args.get('fromUploadSet', type=int)
+  get_warping_path = request.args.get('getWarpingPath', type=int)
+  q_seq            = request.args.get('qSeq', type=int)
+  q_start          = request.args.get('qStart', type=int)
+  q_end            = request.args.get('qEnd', type=int)
+  r_seq            = request.args.get('rSeq', type=int)
+  r_start          = request.args.get('rStart', type=int)
+  r_end            = request.args.get('rEnd', type=int)
+
+  if q_start > q_end or q_start < 0 or q_end < 0:
+    raise InvalidUsage('Invalid starting and ending position')
+
+  if r_start > r_end or r_start < 0 or r_end < 0:
+    raise InvalidUsage('Invalid starting and ending position')
+
+  with lock:
+    # Index of the dataset containing the query, by default set to the same dataset
+    # where the best match will be searched from
+    q_ds_index = current_ds_index
+    if from_upload_set:
+      if current_q_index == -1:
+        raise InvalidUsage('No custom query is loaded')
+      # If find with custom query, set to the dataset containing the custom query
+      q_ds_index = current_q_index
+
+    app.logger.debug('Finding distance between [ds %d] seq %d (%d:%d) and [ds %d] seq %d (%d: %d)',
+                    q_ds_index, q_seq, q_start, q_end, current_ds_index, r_seq, r_start, r_end)
+
+    distance = onex.getDistance(q_ds_index, q_seq, q_start, q_end,
+                                current_ds_index, r_seq, r_start, r_end)
+    warpingPath = []
+    if get_warping_path:
+      warpingPath = onex.getWarpingPath(q_ds_index, q_seq, q_start, q_end,
+                                      current_ds_index, r_seq, r_start, r_end)
+    return jsonify(distance=distance,
+                   warpingPath=warpingPath,
+                   requestID=request_id)
+
+
 @app.route('/query/upload', methods=['POST'])
 def api_upload_query():
   if UPLOAD_PART_NAME not in request.files:
@@ -199,7 +241,7 @@ def api_upload_query():
   app.logger.info('Saved custom query to %s', query_path)
 
   global current_q_index
-  request_id = request.args.get('requestID', -1, type=int)
+  request_id = request.args.get('requestID', type=int)
 
   with lock:
     # Unload the current custom query in memory
@@ -217,10 +259,10 @@ def api_upload_query():
 
 @app.route('/seasonal')
 def api_get_seasonal():
-  request_id               = request.args.get('requestID', -1, type=int)
-  ds_collection_index      = request.args.get('dsCollectionIndex', -1, type=int)
-  q_seq                    = request.args.get('qSeq', -1, type=int)
-  length                   = request.args.get('length', -1, type=int)
+  request_id               = request.args.get('requestID', type=int)
+  ds_collection_index      = request.args.get('dsCollectionIndex', type=int)
+  q_seq                    = request.args.get('qSeq', type=int)
+  length                   = request.args.get('length', type=int)
   with lock:
     if not (ds_collection_index == current_collection_index):
       raise InvalidUsage('Dataset {} is not loaded yet'.format(ds_collection_index))
@@ -230,7 +272,7 @@ def api_get_seasonal():
 
 @app.route('/representatives')
 def api_get_representatives():
-  request_id = request.args.get('requestID', -1, type=int)
+  request_id = request.args.get('requestID', type=int)
   with lock:
     representatives = onex.getGroupRepresentatives(current_ds_index)
     representatives.sort(key=lambda x:x[1], reverse=True) # sort on group size
@@ -240,7 +282,7 @@ def api_get_representatives():
 
 @app.route('/dataset/queries')
 def api_get_dataset_queries():
-  request_id = request.args.get('requestID', -1, type=int)
+  request_id = request.args.get('requestID', type=int)
   with lock:
     queries = onex.getAllSequences(current_ds_index, 2)
     queries = map(_to_string, queries)

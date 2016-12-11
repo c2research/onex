@@ -245,7 +245,7 @@ var InsightSimilarityResultView = React.createClass({
       var start = timeSeries.getStart();
       var end = timeSeries.getEnd();
       var dataset = timeSeries.getName();
-      var context = 'matching subseuquence: '+ index + 'th entry in ' + dataset + ', length ' + (end - start) + ' from indices ' + start + ' - ' + end;
+      var context = 'matching subsequence: '+ index + 'th entry in ' + dataset + ', length ' + (end - start) + ' from indices ' + start + ' - ' + end;
       return context;
     } else {
       return '';

@@ -174,6 +174,30 @@ py::list getAllSequences(int dbIndex, int binSize)
 }
 
 /**
+ * Get the distance between two subsequence.
+ *
+ * \param dbIndexA index of the first dataset in memory
+ * \param dbSeqA index of a sequence in the first dataset
+ * \param startA starting position of the first subsequence
+ * \param endA ending position of the first subsequence
+ * \param dbIndexB index of the second dataset in memory
+ * \param dbSeqB index of a sequence in the second dataset
+ * \param startB starting position of the second subsequence
+ * \param endB ending position of the second subsequence
+ * \return a Python list containing Python tuples representing pairs of
+ *         indices each of which matches a point from the first subsequence
+ *         to a point in the second subsequence.
+ */
+seqitem_t getDistance(int dbIndexA, int dbSeqA, int startA, int endA,
+                     int dbIndexB, int dbSeqB, int startB, int endB)
+{
+  seqitem_t distance = os.findDist(dbIndexA, dbIndexB, dbSeqA, dbSeqB,
+                                  TimeInterval(startA, endA), TimeInterval(startB, endB),
+                                  getDistMetric("dtw_lp2"));
+  return distance;
+}
+
+/**
  * Get the warping path between two subsequence.
  *
  * \param dbIndexA index of the first dataset in memory
@@ -336,6 +360,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("getAllSequences", getAllSequences);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);
+  py::def("getDistance", getDistance);
   py::def("getWarpingPath", getWarpingPath);
   py::def("getSeasonal", getSeasonal);
   py::def("getGroupRepresentatives", getGroupRepresentatives);
