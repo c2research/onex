@@ -80,9 +80,6 @@ var InsightSimilarityResultView = React.createClass({
     var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
     var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
     var warpingPath = this.props.warpingPath;
-    // console.log(selectedSubsequence.getValues().map((x) => x[1]));
-    // console.log(selectedMatch.getValues().map((x) => x[1]));
-    // console.log(this.props.warpingPath);
     var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
       return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
     });

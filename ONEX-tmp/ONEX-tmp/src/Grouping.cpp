@@ -540,7 +540,7 @@ TimeSeriesGroup *TimeSeriesGrouping::getGroup(int index)
     return groups[index];
 }
 
-vector<TimeSeriesGroup*> TimeSeriesGrouping::getGroups()
+const vector<TimeSeriesGroup*>& TimeSeriesGrouping::getGroups()
 {
     return groups;
 }
@@ -550,7 +550,7 @@ TimeSeriesGrouping *TimeSeriesSetGrouping::getFullGroup()
     return groups.back();
 }
 
-int TimeSeriesGrouping::getCount(void)
+unsigned int TimeSeriesGrouping::getCount(void)
 {
     return groups.size();
 }
@@ -651,7 +651,6 @@ vector<vector<kBest>> TimeSeriesGrouping::getSeasonal(int seq)
 vector<TimeSeriesInterval> TimeSeriesGroup::getGroupValues(void)
 {
   vector<TimeSeriesInterval> result;
-
   for (unsigned int i = 0; i < members.size(); i++) {
     if (members[i]) {
       int seqNum = i / perSeq;
@@ -661,6 +660,7 @@ vector<TimeSeriesInterval> TimeSeriesGroup::getGroupValues(void)
       result.push_back(tsInterval);
     }
   }
+
   return result;
 }
 

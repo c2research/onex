@@ -28,6 +28,7 @@ var previewData = {
 var groupViewData = {
   // A list of TimeSeries
   showingRepresentatives: true,
+  groupIndex: [],
   groupList: [],
   groupSelectedIndex: -1
 };
@@ -225,6 +226,7 @@ var InsightStoreSimilarity = assign({}, {
           // groupViewData.groupList = [resultTimeSeries];
           // groupViewData.groupSelectedIndex = 0;
           // groupViewData.showingRepresentatives = false;
+          groupViewData.groupIndex = response.groupIndex;
           resultViewData.selectedMatch = resultTimeSeries;
           resultViewData.warpingPath = response.warpingPath;
           // var result = { //structure of query result pair
@@ -261,9 +263,6 @@ var InsightStoreSimilarity = assign({}, {
     return groupViewData;
   },
 
-  /**
-   * gets the dtw bias
-   */
   getResultViewData: function() {
     return resultViewData;
   },
@@ -282,10 +281,6 @@ var InsightStoreSimilarity = assign({}, {
     previewData.previewRange = [];
   },
 
-  /**
-   * initial request to the server for information on
-   * a dataset
-   */
   requestGroupRepresentatives: function() {
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 
@@ -297,7 +292,7 @@ var InsightStoreSimilarity = assign({}, {
     requestID.requestGroupRepresentatives += 1;
 
     $.ajax({
-      url: '/representatives',
+      url: '/group/representatives',
       data: {
         dsCollectionIndex : dsCollectionIndex,
         requestID: requestID.requestGroupRepresentatives
@@ -328,10 +323,10 @@ var InsightStoreSimilarity = assign({}, {
     });
   },
 
-  /**
-   * initial request to the server for information on
-   * a dataset
-   */
+  requestGroupValues: function() {
+
+  },
+
   requestDatasetQueries: function() {
     var dsCollectionIndex = InsightStore.getDSCollectionIndex();
 

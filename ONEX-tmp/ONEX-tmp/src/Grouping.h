@@ -173,9 +173,9 @@ public:
     void fromFile(istream &in);
 
     TimeSeriesGroup *getGroup(int index);
-    vector<TimeSeriesGroup*> getGroups();
+    const vector<TimeSeriesGroup*>& getGroups();
 
-    int getCount(void);
+    unsigned int getCount(void);
 
     void genGroups(seqitem_t ST=0.5);
     void clearGroups(void);

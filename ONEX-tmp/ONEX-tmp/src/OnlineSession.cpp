@@ -169,11 +169,11 @@ pair<int, int> OnlineSession::getGroupIndex(int dbIndex, int dbSeq, TimeInterval
 {
   int length = interval.length();
   int index = -1;
-
   GroupableTimeSeriesSet* currentDS = datasets[dbIndex];
   TimeSeriesSetGrouping* allGroups = currentDS->getGrouping();
-  TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(interval.length());
-  vector<TimeSeriesGroup*> groups = sameLengthGroups->getGroups();
+  TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(interval.length() - 1);
+  const vector<TimeSeriesGroup*> &groups = sameLengthGroups->getGroups();
+
   for (unsigned int i = 0; i < groups.size(); i++) {
     if (groups[i]->isMember(dbSeq, interval.start)) {
       index = i;
@@ -195,7 +195,7 @@ vector<TimeSeriesInterval> OnlineSession::getGroupValues(int dbIndex, int length
     //be getting a group of max size so we get the 'full group'
     GroupableTimeSeriesSet* currentDS = datasets[dbIndex];
     TimeSeriesSetGrouping* allGroups = currentDS->getGrouping();
-    TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(length);
+    TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(length - 1);
     TimeSeriesGroup* targetGroup = sameLengthGroups->getGroup(groupIndex);
 
     return targetGroup->getGroupValues();

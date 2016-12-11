@@ -164,11 +164,16 @@ def api_find_best_match():
 
     r_dist, r_seq, r_start, r_end = \
       onex.findSimilar(current_ds_index, q_ds_index, q_seq, q_start, q_end, 0, -1)
+
+    group_index = onex.getGroupIndex(current_ds_index, r_seq, r_start, r_end)
+    app.logger.debug('Result group index: (%d, %d)', group_index[0], group_index[1])
+
     result = _to_string(onex.getSubsequence(current_ds_index, r_seq, r_start, r_end))
     warpingPath = onex.getWarpingPath(q_ds_index, q_seq, q_start, q_end,
                                       current_ds_index, r_seq, r_start, r_end)
 
     return jsonify(result=result,
+                   groupIndex=group_index,
                    warpingPath=warpingPath,
                    dist=r_dist,
                    dsName=datasets[current_collection_index],
@@ -270,7 +275,7 @@ def api_get_seasonal():
     return jsonify(seasonal=seasonal, requestID=request_id)
 
 
-@app.route('/representatives')
+@app.route('/group/representatives')
 def api_get_representatives():
   request_id = request.args.get('requestID', type=int)
   with lock:
@@ -278,6 +283,16 @@ def api_get_representatives():
     representatives.sort(key=lambda x:x[1], reverse=True) # sort on group size
     #representatives = [x[0] for x in representatives]
     return jsonify(representatives=representatives, requestID=request_id)
+
+
+# @app.route('/group/values')
+# def api_get_group_values():
+#   request_id = request.args.get('requestID', type=int)
+#   length     = request.args.get('length', type=int)
+#   index      = request.args.get('index', type=int)
+#   with lock:
+
+#     return jsonify(representatives=representatives, requestID=request_id)
 
 
 @app.route('/dataset/queries')

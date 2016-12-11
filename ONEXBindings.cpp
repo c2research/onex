@@ -314,7 +314,13 @@ py::list getGroupValues(int dbIndex, int length, int groupIndex)
 }
 
 /**
- * ...
+ * Get a group index of a time series. 
+ * \param dbIndex index of the a dataset
+ * \param dbSeq index of a sequence in the dataset
+ * \param start starting position of the sequence
+ * \param end ending position of the sequence
+ * \return a tuple (len, idx) where len is the length of the time series
+ *         and idx is the index of the group among the set of groups of length len. 
  */
 py::tuple getGroupIndex(int dbIndex, int dbSeq, int start, int end)
 {
