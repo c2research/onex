@@ -141,17 +141,17 @@ py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
   return getSubsequence(dbIndex, dbSeq, dbStart, dbEnd, 1);
 }
 
-py::list getSequences(int dbIndex, py::list indices, int binSize)
-{
-  py::list seqs;
-  int seqLength = os.getdbseqlength(dbIndex);
-  for (int i = 0; i < py::len(indices); i++) {
-    int index = py::extract<int>(indices[i]);
-    py::list seq = getSubsequence(dbIndex, index, 0, seqLength - 1, binSize);
-    seqs.append(seq);
-  }
-  return seqs;
-}
+// py::list getSequences(int dbIndex, py::list indices, int binSize)
+// {
+//   py::list seqs;
+//   int seqLength = os.getdbseqlength(dbIndex);
+//   for (int i = 0; i < py::len(indices); i++) {
+//     int index = py::extract<int>(indices[i]);
+//     py::list seq = getSubsequence(dbIndex, index, 0, seqLength - 1, binSize);
+//     seqs.append(seq);
+//   }
+//   return seqs;
+// }
 
 /**
  * Get all sequences in a dataset.
@@ -360,7 +360,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
   py::def("getSubsequence", getSubsequenceDefault);
-  py::def("getSequences", getSequences);
+  // py::def("getSequences", getSequences);
   py::def("getAllSequences", getAllSequences);
   py::def("getDatasetSeqCount", getDatasetSeqCount);
   py::def("getDatasetSeqLength", getDatasetSeqLength);

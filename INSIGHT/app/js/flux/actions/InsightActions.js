@@ -67,11 +67,22 @@ var InsightActions = {
       id: index
     });
   },
-  selectSimilarityGroup: function(index) {
+  selectGroup: function(index) {
     AppDispatcher.dispatch({
-      actionType: InsightConstants.SIMILARITY_SELECT_GROUP,
+      actionType: InsightConstants.SELECT_GROUP,
       id: index
     });
+  },
+  selectGroupSequence: function(index) {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.SELECT_GROUP_SEQUENCE,
+      id: index
+    })
+  },
+  loadGroupSequence: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.LOAD_GROUP_SEQUENCE,
+    })
   },
   /**
    * load the current selected query
@@ -104,12 +115,7 @@ var InsightActions = {
       actionType: InsightConstants.FIND_MATCH,
     });
   },
-  selectResult: function(index) {
-    AppDispatcher.dispatch({
-      actionType: InsightConstants.SIMILARITY_SELECT_RESULT,
-      id: index
-    });
-  },
+
   updateDTWBias: function(value) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_DTW_BIAS,

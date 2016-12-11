@@ -64,24 +64,24 @@ var InsightActions = {
       id: val
     });
   },
-  /**
-   * initiates function seq to set the start range of a query
-   */
-  selectSimilarityStartQ: function(val) {
-    AppDispatcher.dispatch({
-      actionType: InsightConstants.SIMILARITY_SELECT_START_Q,
-      id: val
-    });
-  },
-  /**
-   * initiates function seq to set the end range of a query
-   */
-  selectSimilarityEndQ: function(val) {
-    AppDispatcher.dispatch({
-      actionType: InsightConstants.SIMILARITY_SELECT_END_Q,
-      id: val
-    });
-  },
+  // /**
+  //  * initiates function seq to set the start range of a query
+  //  */
+  // selectSimilarityStartQ: function(val) {
+  //   AppDispatcher.dispatch({
+  //     actionType: InsightConstants.SIMILARITY_SELECT_START_Q,
+  //     id: val
+  //   });
+  // },
+  // /**
+  //  * initiates function seq to set the end range of a query
+  //  */
+  // selectSimilarityEndQ: function(val) {
+  //   AppDispatcher.dispatch({
+  //     actionType: InsightConstants.SIMILARITY_SELECT_END_Q,
+  //     id: val
+  //   });
+  // },
   /**
    * initiates function seq to process a data set
    */

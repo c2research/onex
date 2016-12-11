@@ -32,8 +32,9 @@ var groupViewData = {
   representativesSelectedIndex: -1,
 
   groupIndex: [],
-  groupList: [],
-  groupSelectedIndex: -1
+  // A list of TimeSeries
+  groupSequenceList: [],
+  groupSequenceSelectedIndex: -1
 };
 
 var previewData = {
@@ -47,7 +48,8 @@ var resultViewData = {
   dtwBias: 0,
   selectedSubsequence: null,
   selectedMatch: null,
-  warpingPath: []
+  warpingPath: [],
+  distance: -1,
 };
 
 /*
@@ -57,7 +59,8 @@ var requestID = {
   findMatch: 0,
   requestGroupRepresentatives: 0,
   requestGroupValues: 0,
-  datasetQueries: 0
+  datasetQueries: 0,
+  distanceAndWarpingPath: 0
 }
 
 var InsightStoreSimilarity = assign({}, {
@@ -125,7 +128,7 @@ var InsightStoreSimilarity = assign({}, {
                                       queryListViewData.querySelectedIndexUpload;
     var queryName = fromDataset ? queryListViewData.queryListDataset[selectedQuery] :
                                   queryListViewData.queryListUpload[selectedQuery];
-    InsightStore.requestSequence(fromDataset + 0, selectedQuery,
+    InsightStore.requestSequence(fromDataset + 0, selectedQuery, -1, -1,
       function(endlist) {
         var newTimeSeries = new TimeSeries(endlist,
                                            queryName,
@@ -228,8 +231,8 @@ var InsightStoreSimilarity = assign({}, {
                                                 response.end);
 
            // TODO: currently not switching view to group
-          // groupViewData.groupList = [resultTimeSeries];
-          // groupViewData.groupSelectedIndex = 0;
+          // groupViewData.groupSequenceList = [resultTimeSeries];
+          // groupViewData.groupSequenceSelectedIndex = 0;
           // groupViewData.showingRepresentatives = false;
           groupViewData.groupIndex = response.groupIndex;
           resultViewData.selectedMatch = resultTimeSeries;
@@ -261,8 +264,32 @@ var InsightStoreSimilarity = assign({}, {
     });
   },
 
-  setGroupSelectedIndex: function(i) {
-    groupViewData.groupSelectedIndex = i;
+  requestGroupSequence: function() {
+    var selectedGroupSequence = groupViewData.groupSequenceList[groupViewData.groupSequenceSelectedIndex];
+    var seq = selectedGroupSequence.getSeq();
+    var start = selectedGroupSequence.getStart();
+    var end = selectedGroupSequence.getEnd();
+    var that = this;
+    InsightStore.requestSequence(1, seq, start, end,
+      function(result) {
+        var newTimeSeries = new TimeSeries(result, '', 0, seq, start, end);
+        resultViewData.selectedMatch = newTimeSeries;
+        InsightStore.emitChange();
+        that.requestDistanceAndWarpingPath();
+       }
+    );
+  },
+
+  setGroupSequenceSelectedIndex: function(i) {
+    groupViewData.groupSequenceSelectedIndex = i;
+  },
+
+  setGroupRepresentativesSelectedIndex: function(i) {
+    groupViewData.representativesSelectedIndex = i;
+  },
+
+  setGroupShowRepresentatives: function(show) {
+    groupViewData.showingRepresentatives = show;
   },
 
   getGroupViewData: function() {
@@ -308,10 +335,10 @@ var InsightStoreSimilarity = assign({}, {
         if (response.requestID != requestID.requestGroupRepresentatives) {
             console.log(requestID, response.requestID);
         }
-        var length = queryListViewData.queryListDataset.length;
-        groupViewData.groupSelectedIndex = -1;
+        var length = InsightStore.getDSCurrentLength();
+        groupViewData.groupSequenceSelectedIndex = -1;
         groupViewData.showingRepresentatives = true;
-        groupViewData.groupList = response.representatives.map(function(tuple, i) {
+        groupViewData.representatives = response.representatives.map(function(tuple, i) {
           var [array, count] = tuple;
           var values = array.map(function(x, j) { return [j,x]});
           return new TimeSeries(values, (count / length),
@@ -351,14 +378,13 @@ var InsightStoreSimilarity = assign({}, {
         if (response.requestID != requestID.requestGroupValues) {
             console.log(requestID, response.requestID);
         }
-        groupViewData.groupSelectedIndex = -1;
-        groupViewData.showingRepresentatives = true;
-        groupViewData.groupList = response.values.map(function(tuple, i) {
+        groupViewData.groupSequenceSelectedIndex = -1;
+        groupViewData.groupSequenceList = response.values.map(function(tuple, i) {
           var [array, seq, start, end] = tuple;
           var values = array.map(function(x, j) { return [j + start,x]});
           return new TimeSeries(values, '', 0, seq, start, end);
         });
-        console.log(groupViewData.groupList);
+        groupViewData.showingRepresentatives = false;
         InsightStore.emitChange();
       },
       error: function(xhr) {
@@ -406,6 +432,47 @@ var InsightStoreSimilarity = assign({}, {
         console.log("error requesting dataset queries");
       }
     });
+  },
+
+  requestDistanceAndWarpingPath: function() {
+    var dsCollectionIndex = InsightStore.getDSCollectionIndex();
+
+    if (dsCollectionIndex == null){
+      console.log("index null, no need to req");
+      return;
+    }
+
+    requestID.distanceAndWarpingPath += 1;
+
+    var selectedSubsequence = resultViewData.selectedSubsequence;
+    var selectedMatch = resultViewData.selectedMatch;
+
+    $.ajax({
+      url: '/query/distance',
+      data: {
+        requestID: requestID.datasetQueries,
+        fromUploadSet : selectedSubsequence.getLocation(),
+        getWarpingPath: 1,
+        qSeq          : selectedSubsequence.getSeq(),            
+        qStart        : selectedSubsequence.getStart(),
+        qEnd          : selectedSubsequence.getEnd(),
+        rSeq          : selectedMatch.getSeq(),
+        rStart        : selectedMatch.getStart(),
+        rEnd          : selectedMatch.getEnd()
+      },
+      dataType: 'json',
+      success: function(response) {
+        if (response.requestID != requestID.datasetQueries) {
+            console.log(requestID, response.requestID);
+        }
+        resultViewData.distance = response.distance;
+        resultViewData.warpingPath = response.warpingPath;
+        InsightStore.emitChange();
+      },
+      error: function(xhr) {
+        console.log("error requesting distance");
+      }
+    });
   }
 
 });
@@ -438,11 +505,6 @@ AppDispatcher.register(function(action) {
       InsightStoreSimilarity.uploadQuery(action.id);
       break;
 
-    case InsightConstants.SIMILARITY_SELECT_GROUP:
-      InsightStoreSimilarity.setGroupSelectedIndex(action.id);
-      InsightStore.emitChange();
-      break;
-
     case InsightConstants.SIMILARITY_SELECT_QUERY:
 
       if (queryListViewData.queryLocation != action.id) {
@@ -472,9 +534,18 @@ AppDispatcher.register(function(action) {
       InsightStoreSimilarity.requestFindMatch();
       break;
 
-    case InsightConstants.SIMILARITY_SELECT_RESULT:
-      InsightStoreSimilarity.setGroupSelectedIndex(action.id);
+    case InsightConstants.SELECT_GROUP:
+      InsightStoreSimilarity.setGroupRepresentativesSelectedIndex(action.id);
       InsightStore.emitChange();
+      break;
+
+    case InsightConstants.SELECT_GROUP_SEQUENCE:
+      InsightStoreSimilarity.setGroupSequenceSelectedIndex(action.id);
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.LOAD_GROUP_SEQUENCE:
+      InsightStoreSimilarity.requestGroupSequence();
       break;
 
     case InsightConstants.SELECT_DTW_BIAS:

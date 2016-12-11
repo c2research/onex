@@ -306,7 +306,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
   /**
    * requests server for a sequence within the dataset
    */
-  requestSequence: function(fromDataset, sequenceIndex, callback) {
+  requestSequence: function(fromDataset, sequenceIndex, start, end, callback) {
 
     requestID.fromDataset += 1;
 
@@ -315,8 +315,11 @@ var InsightStore = assign({}, EventEmitter.prototype, {
       data: {
         fromDataset : fromDataset,
         qSeq : sequenceIndex,
+        qStart : start,
+        qEnd : end,
         requestID : requestID.fromDataset
       },
+      start: start,
       dataType: 'json',
       success: function(response) {
         if (response.requestID != requestID.fromDataset) {
@@ -324,11 +327,10 @@ var InsightStore = assign({}, EventEmitter.prototype, {
           //if someone else is using this. ill add another loading thing to make it more clear
           return;
         }
-
+        var start = Math.max(this.start, 0);
         var endlist = response.query.map(function(query, i) {
-          return [i, query];
+          return [i + start, query];
         });
-
         callback(endlist);
       },
       error: function(xhr) {

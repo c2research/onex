@@ -104,6 +104,8 @@ def get_a_sequence_from_dataset():
   request_id          = request.args.get('requestID', type=int)
   from_data_set       = request.args.get('fromDataset', 1, type=int)
   q_seq               = request.args.get('qSeq', type=int)
+  q_start             = request.args.get('qStart', -1, type=int)
+  q_end               = request.args.get('qEnd', -1, type=int)
   with lock:
     ds_index = current_ds_index if from_data_set else current_q_index
 
@@ -111,12 +113,16 @@ def get_a_sequence_from_dataset():
     if (q_seq < 0 or q_seq >= ds_length):
       raise InvalidUsage('Sequence index is out of bound')
 
-    app.logger.debug('Get sequence %d, fromDataSet = %s',
-                     q_seq,
+    seq_length = onex.getDatasetSeqLength(ds_index);
+    if (q_start < 0) or (q_end < 0):
+      q_start = 0
+      q_end = seq_length - 1
+
+    app.logger.debug('Get sequence %d (%d, %d), fromDataSet = %s',
+                     q_seq, q_start, q_end,
                      from_data_set)
 
-    seq_length = onex.getDatasetSeqLength(ds_index);
-    query = _to_string(onex.getSubsequence(ds_index, q_seq, 0, seq_length - 1))
+    query = _to_string(onex.getSubsequence(ds_index, q_seq, q_start, q_end))
 
     return jsonify(query=query, requestID=request_id)
 
@@ -294,7 +300,7 @@ def api_get_group_values():
     values = onex.getGroupValues(current_ds_index, length, index)
 
     def resolveGroupValue(v):
-      return (onex.getSubsequence(current_ds_index, v[0], v[1], v[2]), v[0], v[1],v[2])
+      return (onex.getSubsequence(current_ds_index, v[0], v[1], v[2]), v[0], v[1], v[2])
 
     values = map(resolveGroupValue, values)
     return jsonify(values=values, requestID=request_id)
