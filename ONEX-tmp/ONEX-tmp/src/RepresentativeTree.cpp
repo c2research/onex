@@ -66,6 +66,7 @@ int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warp
 
   while(current != NULL)
   {
+    //switch this to a distance that does not dropout
     TimeSeriesGroup* g = current->group;
     TimeSeriesIntervalEnvelope groupEnv = g->getEnvelope();
     diff = groupEnv.cascadeDist(query, warps, bsfDist);

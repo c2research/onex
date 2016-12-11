@@ -924,8 +924,8 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
     for (int i = 0; i < count; i++) {
 
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
-        int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
-        //int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
+        //int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
