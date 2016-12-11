@@ -88,10 +88,8 @@ Perform loading and grouping on a dataset.
 ```
 
 <br/>
-### 4. Get DTW distance and warping path between two time series
-Get the DTW distance and optionally warping path between two time series.
-One time series (q) is either from the loaded dataset or from an upload set,
-the other (r) is from the loaded dataset
+### 4. Get full dataset (for the purpose of providing queries)
+Get a list of time series in the current dataset
 
 **HTTP method and URL**
 
@@ -102,29 +100,55 @@ the other (r) is from the loaded dataset
   requestID: int
     A unique ID of the request. This ID is used to match up this request with its response.
 
-  from_upload_set: int
-    1 if the q time series is from the upload set, 0 otherwise
+**Success Response**
 
-  get_warping_path: int
-    1 to request the warping path, 0 to return an empty list for warping path
+Status: **200**
++ Content:
+```
+{
+  queries: [[<double>]] # A list of list of doubles
+  requestID: <int>  # The requestID sent with the request
+}
+```
 
-  q_seq: int
-    Index of the q sequence
+<br/>
+### 5. Get DTW distance and warping path between two time series
+Get the DTW distance and optionally warping path between two time series.
+One time series (q) is either from the loaded dataset or from an upload set,
+the other (r) is from the loaded dataset
 
-  q_start: int
-    Starting position of the q sequence
+**HTTP method and URL**
 
-  q_end: int
-    Ending position of the q sequence
+  GET /dataset/queries
 
-  r_seq: int
-    Index of the r sequence
+**URL params**
 
-  r_start: int
-    Starting position of the r sequence
+    requestID: int
+      A unique ID of the request. This ID is used to match up this request with its response.
 
-  r_end: int
-    Ending position of the r sequence
+    from_upload_set: int
+      1 if the q time series is from the upload set, 0 otherwise
+
+    get_warping_path: int
+      1 to request the warping path, 0 to return an empty list for warping path
+
+    q_seq: int
+      Index of the q sequence
+
+    q_start: int
+      Starting position of the q sequence
+
+    q_end: int
+      Ending position of the q sequence
+
+    r_seq: int
+      Index of the r sequence
+
+    r_start: int
+      Starting position of the r sequence
+
+    r_end: int
+      Ending position of the r sequence
 
 **Success Response**
 
@@ -138,7 +162,7 @@ Status: **200**
 ```
 
 <br />
-### 5. Find best match
+### 6. Find best match
 Find the best match with a subsequence in a dataset from all subsequences in another dataset.
 
 **HTTP method and URL**
@@ -183,7 +207,7 @@ Find the best match with a subsequence in a dataset from all subsequences in ano
 ```
 
 <br/>
-### 6. Upload custom query
+### 7. Upload custom query
 Upload a custom query file to the server.
 
 **HTTP method and URL**
@@ -216,7 +240,7 @@ Status: **200**
 ```
 
 <br/>
-### 7. Get seasonal patterns
+### 8. Get seasonal patterns
 Get a list of seasonal patterns within a given time series.
 
 **HTTP method and URL**
@@ -254,7 +278,7 @@ Status: **200**
 ```
 
 <br/>
-### 8. Get group representatives
+### 9. Get group representatives
 Get a list of representatives of underlying groups (of the max length only)
 
 **HTTP method and URL**
@@ -263,8 +287,8 @@ Get a list of representatives of underlying groups (of the max length only)
 
 **URL params**
 
-  requestID: int
-    A unique ID of the request. This ID is used to match up this request with its response.
+    requestID: int
+      A unique ID of the request. This ID is used to match up this request with its response.
 
 **Success Response**
 
@@ -273,30 +297,6 @@ Status: **200**
 ```
 {
   representatives: [[<double>]] # A list of list of doubles
-  requestID: <int>  # The requestID sent with the request
-}
-```
-
-<br/>
-### 9. Get full dataset (for the purpose of providing queries)
-Get a list of time series in the current dataset
-
-**HTTP method and URL**
-
-  GET /dataset/queries
-
-**URL params**
-
-  requestID: int
-    A unique ID of the request. This ID is used to match up this request with its response.
-
-**Success Response**
-
-Status: **200**
-+ Content:
-```
-{
-  queries: [[<double>]] # A list of list of doubles
   requestID: <int>  # The requestID sent with the request
 }
 ```
@@ -311,14 +311,14 @@ Get a list of time series inside a group
 
 **URL params**
 
-  requestID: int
-    A unique ID of the request. This ID is used to match up this request with its response.
+    requestID: int
+      A unique ID of the request. This ID is used to match up this request with its response.
 
-  length: int
-    The length set that the group belongs to
+    length: int
+      The length set that the group belongs to
 
-  index: int
-    Index of group in the length set
+    index: int
+      Index of group in the length set
 
 **Success Response**
 
