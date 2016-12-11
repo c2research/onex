@@ -285,14 +285,24 @@ def api_get_representatives():
     return jsonify(representatives=representatives, requestID=request_id)
 
 
-# @app.route('/group/values')
-# def api_get_group_values():
-#   request_id = request.args.get('requestID', type=int)
-#   length     = request.args.get('length', type=int)
-#   index      = request.args.get('index', type=int)
-#   with lock:
+@app.route('/group/values/')
+def api_get_group_values():
+  request_id = request.args.get('requestID', type=int)
+  length     = request.args.get('length', type=int)
+  index      = request.args.get('index', type=int)
+  with lock:
+    values = onex.getGroupValues(current_ds_index, length, index)
 
-#     return jsonify(representatives=representatives, requestID=request_id)
+    def resolveGroupValue(v):
+      return {
+        'values': onex.getSubsequence(current_ds_index, v[0], v[1], v[2]),
+        'seq': v[0],
+        'start': v[1],
+        'end': v[2]
+      } 
+
+    values = map(resolveGroupValue, values)
+    return jsonify(values=values, requestID=request_id)
 
 
 @app.route('/dataset/queries')

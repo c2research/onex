@@ -135,5 +135,22 @@ class ServerTest(unittest.TestCase):
     self.assertTrue(len(ret_data['warpingPath']) > 0,
                 'Length of returned warping path must be positive')
 
+
+  def test_get_group_values(self):
+    dataset = 0
+    self._init_dataset(dataset, 0.3)
+    ret = self.app.get('/group/values/',
+                       query_string={
+                             'requestID': 0,
+                             'length': 5,
+                             'index': 0,
+                      })
+    ret_data = json.loads(ret.data)
+    self.assertTrue(len(ret_data['values']) > 0,
+                'Length of list of values must be positive')
+    self.assertTrue(type(ret_data['values'][0]) == dict,
+                'Each value must be a dict')
+
+
 if __name__=='__main__':
   unittest.main()
