@@ -10,7 +10,7 @@
 #ifndef GROUPABLETIMESRIESSET_H
 #define GROUPABLETIMESRIESSET_H
 
-#define FIND_DISTINCT 1
+#define FIND_DISTINCT 0
 //set to 0 to revert to original similar function
 
 #include "TimeSeries.h"

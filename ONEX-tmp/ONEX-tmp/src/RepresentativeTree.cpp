@@ -82,6 +82,7 @@ int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warp
     TimeSeriesGroup* g = current->group;
     TimeSeriesIntervalEnvelope groupEnv = g->getEnvelope();
     diff = groupEnv.cascadeDist(query, warps, bsfDist);
+    //diff = groupEnv.cascadeDist(query, warps, INF);
 
     if (bsfDist > diff) {
       //update best group found so far

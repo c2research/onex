@@ -599,7 +599,7 @@ void TimeSeriesGrouping::genGroups(seqitem_t ST)
 
     //create the tree after groups are created
     //clock_t start = clock();
-    genRepresentativeTree(ST);
+    // genRepresentativeTree(ST);
     // clock_t end = clock();
     // double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.;
     // cout << "Tree Generated: "<< time << " ms" << endl;
@@ -632,6 +632,7 @@ int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t
     for (unsigned int i = 0; i < groups.size(); i++) {
 
         seqitem_t dist = groups[i]->getEnvelope().cascadeDist(query, warps, bsfDist);
+        // seqitem_t dist = groups[i]->getEnvelope().cascadeDist(query, warps, INF);
 
         if ((dist < bsfDist) || (bsfDist == INF)) {
             bsfDist = dist;
@@ -643,6 +644,7 @@ int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t
     }
 
     *dist = bsfDist;
+    // printf("Without Tree - Length: %d. Group id: %d. Distance to rep: %lf\n", length, bsfIndex, bsfDist);
 
     return bsfIndex;
 }
@@ -664,10 +666,14 @@ int TimeSeriesGrouping::getBestGroupTree(TimeSeriesIntervalEnvelope query, seqit
     if (warps < 0)
         warps = query.interval.length() * 2;
 
+<<<<<<< 9464d0ae3effd2b39fe968c22b97e470e1358aab
     if (representativeTree == NULL){
       genGroups(ST);
     }
+=======
+>>>>>>> Disable tree optimization and added new datasets
     int groupIndex = representativeTree->findBestGroup(query, warps, dist);
+    // printf("With Tree - Length: %d. Group id: %d. Distance to rep: %lf\n", length, groupIndex, *dist);
     return groupIndex;
 }
 
@@ -888,8 +894,8 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
         // this finds the best set of groups of a length
         seqitem_t dist;
         // this looks through each group of a certain length finding the best of those groups and setting dist
-        // int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
-        int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
+        int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        // int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
@@ -900,6 +906,7 @@ kBest TimeSeriesSetGrouping::getBestInterval(int len, seqitem_t *data, SearchStr
         if (bsf == 0.0)
             break;
     }
+    // printf("BEST GROUP: %d. LENGTH: %d. DISTANCE TO REP: %lf\n",bsfGroup, bsfLen, bsf);
 
     free(order);
 
@@ -938,7 +945,7 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
 
         int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
-        //int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
+        // int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;

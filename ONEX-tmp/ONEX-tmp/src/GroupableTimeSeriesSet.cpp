@@ -231,15 +231,16 @@ kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSe
         return best;
     }
 
-#ifdef FIND_DISTINCT
-    best = grouping->getBestDistinctInterval(otherInt.length(),
-                                           other->dataset->getRawData(otherSeq, otherInt.start),
-                                           strat, warps, otherSeq);
-#else
+//#ifdef FIND_DISTINCT
+//     best = grouping->getBestDistinctInterval(otherInt.length(),
+//                                            other->dataset->getRawData(otherSeq, otherInt.start),
+//                                            strat, warps, otherSeq);
+// //#else
+    // printf("Running non distinct\n");
     best = grouping->getBestInterval(otherInt.length(),
                                        other->dataset->getRawData(otherSeq, otherInt.start),
                                        strat, warps);
-#endif
+// #endif
 
     return best;
 }
