@@ -64,8 +64,7 @@ var InsightSimilarityPreview = React.createClass({
     var style = {
       height: height,
       width: width,
-      overflow: 'hidden',
-      borderLeft: '1px dashed gray'
+      overflow: 'hidden'
     };
     return (
       <div style={style}>
