@@ -234,6 +234,7 @@ var InsightStoreSimilarity = assign({}, {
           // groupViewData.groupSequenceList = [resultTimeSeries];
           // groupViewData.groupSequenceSelectedIndex = 0;
           // groupViewData.showingRepresentatives = false;
+          console.log('distance = ' + response.dist);
           groupViewData.groupIndex = response.groupIndex;
           resultViewData.selectedMatch = resultTimeSeries;
           resultViewData.warpingPath = response.warpingPath;

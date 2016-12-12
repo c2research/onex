@@ -129,25 +129,27 @@ seqitem_t _basic_dtw(TimeSeriesInterval &a, TimeSeriesInterval &b,
 
         for(int i = 1; i < m; i++) {
             for(int j = 1; j < n; j++) {
+                if (warping_path != NULL) {
+                    vector<seqitem_t> tmp;
+                    tmp.push_back(cost[i - 1][j]);
+                    tmp.push_back(cost[i][j - 1]);
+                    tmp.push_back(cost[i - 1][j - 1]);
+
+                    auto mpe = min_element(tmp.begin(), tmp.end());
+                    if (mpe == tmp.begin()) {
+                        trace[i][j] = make_pair(i - 1, j);
+                    }
+                    else if (mpe == tmp.begin() + 1) {
+                        trace[i][j] = make_pair(i, j - 1);
+                    }
+                    else if (mpe == tmp.begin() + 2) {
+                        trace[i][j] = make_pair(i - 1, j - 1);
+                    }
+                }
+
                 seqitem_t mp = std::min(cost[i-1][j],
                                         std::min(cost[i][j-1],
                                                  cost[i-1][j-1]));
-                vector<seqitem_t> tmp;
-                tmp.push_back(cost[i - 1][j]);
-                tmp.push_back(cost[i][j - 1]);
-                tmp.push_back(cost[i - 1][j - 1]);
-
-                auto mpe = min_element(tmp.begin(), tmp.end());
-                if (mpe == tmp.begin()) {
-                    trace[i][j] = make_pair(i - 1, j);
-                }
-                else if (mpe == tmp.begin() + 1) {
-                    trace[i][j] = make_pair(i, j - 1);
-                }
-                else if (mpe == tmp.begin() + 2) {
-                    trace[i][j] = make_pair(i - 1, j - 1);
-                }
-
                 if (mp != cost[i-1][j-1])
                     warpcount++;
 

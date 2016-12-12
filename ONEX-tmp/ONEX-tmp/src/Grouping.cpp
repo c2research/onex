@@ -598,11 +598,11 @@ void TimeSeriesGrouping::genGroups(seqitem_t ST)
     std::sort(groups.begin(), groups.end(), &_group_gt_op);
 
     //create the tree after groups are created
-    clock_t start = clock();
+    //clock_t start = clock();
     genRepresentativeTree(ST);
-    clock_t end = clock();
-    double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.;
-    cout << "Tree Generated: "<< time << " ms" << endl;
+    // clock_t end = clock();
+    // double time = (double) (end-start) / CLOCKS_PER_SEC * 1000.;
+    // cout << "Tree Generated: "<< time << " ms" << endl;
 }
 
 void TimeSeriesGrouping::clearGroups(void)
@@ -831,6 +831,7 @@ int TimeSeriesSetGrouping::group(void)
     int count = 0;
 
     groups[0] = new TimeSeriesGrouping(dataset, 1);
+    groups[0]->genGroups(ST);
     for (unsigned int i = 1; i < groups.size(); i++) { // Don't group zero length.
 
         groups[i] = new TimeSeriesGrouping(dataset, i+1);
@@ -919,13 +920,13 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
     int bsfLen = -1;
     seqitem_t dist;
 
-    clock_t start = clock();
+    // clock_t start = clock();
 
     for (int i = 0; i < count; i++) {
 
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
-        //int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
-        int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
+        int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
+        //int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 
         if ((dist < bsf) || (bsf == INF)) {
             bsf = dist;
@@ -937,9 +938,9 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
             break;
     }
 
-    clock_t end = clock();
-    double t = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
-    cout << "TIME: " << t << endl; //94.01 - 13.478  vs 0.534
+    // clock_t end = clock();
+    // double t = (double) (end-start) / CLOCKS_PER_SEC * 1000.0;
+    // cout << "TIME: " << t << endl; //94.01 - 13.478  vs 0.534
 
     free(order);
     return groups[bsfLen - 1]->getGroup(bsfGroup)->getBestDistinctMatch(qenv, groups.size()*2, INF, qSeq);

@@ -25,12 +25,12 @@ protected:
   treeNode *root;
   seqitem_t ST;
 
-  void addNode(TimeSeriesGroup* group, int groupIndex);
+  int addNode(TimeSeriesGroup* group, int groupIndex);
   void postorder(treeNode* p, int indent=0);
 
 public:
   RepresentativeTree(){ root=NULL; ST=1; };
-  RepresentativeTree(vector<TimeSeriesGroup*> groups, seqitem_t ST);
+  RepresentativeTree(const vector<TimeSeriesGroup*>& groups, seqitem_t ST);
   int findBestGroup(TimeSeriesIntervalEnvelope query, int warps, seqitem_t* dist); //returns the indice of the best group
   ~RepresentativeTree();
   void deleteTree(treeNode* current);

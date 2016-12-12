@@ -2,18 +2,20 @@
 #include "TimeSeries.h"
 #include <iomanip>
 
-RepresentativeTree::RepresentativeTree(vector<TimeSeriesGroup*> groups, seqitem_t threshold)
+RepresentativeTree::RepresentativeTree(const vector<TimeSeriesGroup*> &groups, seqitem_t threshold)
 {
   ST = threshold;
-  root = NULL;
-  cout << "Number of Groups " << groups.size() << endl;
-  cout << "Length in Groups " << groups[0]->getLength() << endl;
+  root = NULL;  
+  // cout << "Number of Groups " << groups.size() << endl;
+  // cout << "Length in Groups " << groups[0]->getLength() << endl;
+  int maxDepth = 0;
   for (unsigned int i = 0; i < groups.size(); i++) {
-    addNode(groups[i], i);
+    int depth = addNode(groups[i], i);
+    maxDepth = std::max(maxDepth, depth);
   }
 }
 
-void RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
+int RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
 {
   treeNode* newNode = new treeNode; //allocate memory for struct
   newNode->group = group;
@@ -23,18 +25,14 @@ void RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
 
   if (root == NULL) {
     root = newNode;
-    return;
+    return 0;
   }
 
   treeNode* current = root;
-
-  while (true) {
-    if (current == NULL) {
-      break;
-    }
-
+  int depth = 0;
+  while (current != NULL) {
+    depth++;
     seqitem_t diff = current->group->distance(group->getCentroid(), &dtw_lp2_dist, INF);
-
     if (diff > ST) { //go right
       if (current->right != NULL) {
         current = current->right;
@@ -51,7 +49,7 @@ void RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
       }
     }
   }
-  return;
+  return depth;
 }
 
 int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warps, seqitem_t *dist)
@@ -71,7 +69,7 @@ int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warp
     TimeSeriesIntervalEnvelope groupEnv = g->getEnvelope();
     diff = groupEnv.cascadeDist(query, warps, bsfDist);
 
-    if (bsfDist < diff) {
+    if (bsfDist > diff) {
       bsfDist = diff;
       bsfNode = current;
     }
