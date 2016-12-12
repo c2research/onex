@@ -647,13 +647,24 @@ int TimeSeriesGrouping::getBestGroup(TimeSeriesIntervalEnvelope query, seqitem_t
     return bsfIndex;
 }
 
+/**
+ * Utilizes the representative tree embedded in each TimeSeriesGrouping to find
+ * the index of the 'best' group.
+ *
+ * \param query an envelope for calculating the query
+ * \param dist sets this pointer to the distance of the lowest group
+ * \param warps the max warp distance, although currently not utilized
+ * \param dropout assists with speeding up dtw caclulation by discarding comparisons early
+ * \param ST the threshold
+ *
+ * \return index of the dataset in the dataset list.
+ */
 int TimeSeriesGrouping::getBestGroupTree(TimeSeriesIntervalEnvelope query, seqitem_t *dist, int warps, double dropout, seqitem_t ST)
 {
     if (warps < 0)
         warps = query.interval.length() * 2;
 
     if (representativeTree == NULL){
-      //TODO(cuong): this indicates the TimeSeriesGrouping was not grouped. How can this happen?
       genGroups(ST);
     }
     int groupIndex = representativeTree->findBestGroup(query, warps, dist);
@@ -925,6 +936,7 @@ kBest TimeSeriesSetGrouping::getBestDistinctInterval(int len, seqitem_t *data, S
     for (int i = 0; i < count; i++) {
 
    //     printf("[%3d] Checking groups of length %3d. Best: %3d@%2d\n", i, order[i] + 1, bsfGroup, bsfLen);
+
         int g = groups[order[i]]->getBestGroup(qenv, &dist, groups.size()*2, bsf);
         //int g = groups[order[i]]->getBestGroupTree(qenv, &dist, groups.size()*2, bsf, ST);
 

@@ -5,9 +5,8 @@
 RepresentativeTree::RepresentativeTree(const vector<TimeSeriesGroup*> &groups, seqitem_t threshold)
 {
   ST = threshold;
-  root = NULL;  
-  // cout << "Number of Groups " << groups.size() << endl;
-  // cout << "Length in Groups " << groups[0]->getLength() << endl;
+  root = NULL;
+
   int maxDepth = 0;
   for (unsigned int i = 0; i < groups.size(); i++) {
     int depth = addNode(groups[i], i);
@@ -15,6 +14,14 @@ RepresentativeTree::RepresentativeTree(const vector<TimeSeriesGroup*> &groups, s
   }
 }
 
+/**
+ * Adds a node to the tree, storing it in the representativeTree
+ *
+ * \param group the group this node repreresents (used for comparisons)
+ * \param groupIndex the index of the group (used for future access)
+ *
+ * \return the depth of the node added
+ */
 int RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
 {
   treeNode* newNode = new treeNode; //allocate memory for struct
@@ -52,24 +59,32 @@ int RepresentativeTree::addNode(TimeSeriesGroup* group, int groupIndex)
   return depth;
 }
 
+/**
+ * Searches the tree for the best group
+ *
+ * \param query an envelope for calculating the query
+ * \param dist sets this pointer to the distance of the lowest group
+ * \param warps the max warp distance, although currently not utilized
+ *
+ * \return the index of the best group
+ */
 int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warps, seqitem_t *dist)
 {
   seqitem_t diff;
   seqitem_t bsfDist = INF;
-  if (this->root == NULL) {
-    cout << "ROOT NULL" << endl;
-  }
+
   treeNode* bsfNode = root;
   treeNode* current = root;
 
   while(current != NULL)
   {
-    //switch this to a distance that does not dropout
+    //switch this to a distance that does not dropout(?)
     TimeSeriesGroup* g = current->group;
     TimeSeriesIntervalEnvelope groupEnv = g->getEnvelope();
     diff = groupEnv.cascadeDist(query, warps, bsfDist);
 
     if (bsfDist > diff) {
+      //update best group found so far
       bsfDist = diff;
       bsfNode = current;
     }
@@ -85,7 +100,7 @@ int RepresentativeTree::findBestGroup(TimeSeriesIntervalEnvelope query, int warp
 
   }
 
-  *dist = bsfDist;
+  *dist = bsfDist;//update the distance
   return bsfNode->groupIndex;
 }
 
