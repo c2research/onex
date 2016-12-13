@@ -19,7 +19,7 @@ var datasetData = {
 var thresholdData = {
   thresholdRange: [0.0, 1.0],
   thresholdCurrent: 0.3,
-  thresholdStep: 0.1,
+  thresholdStep: 0.05,
 };
 
 var data = {
