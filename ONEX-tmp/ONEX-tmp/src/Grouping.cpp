@@ -666,12 +666,6 @@ int TimeSeriesGrouping::getBestGroupTree(TimeSeriesIntervalEnvelope query, seqit
     if (warps < 0)
         warps = query.interval.length() * 2;
 
-<<<<<<< 9464d0ae3effd2b39fe968c22b97e470e1358aab
-    if (representativeTree == NULL){
-      genGroups(ST);
-    }
-=======
->>>>>>> Disable tree optimization and added new datasets
     int groupIndex = representativeTree->findBestGroup(query, warps, dist);
     // printf("With Tree - Length: %d. Group id: %d. Distance to rep: %lf\n", length, groupIndex, *dist);
     return groupIndex;
