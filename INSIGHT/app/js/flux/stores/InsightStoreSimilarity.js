@@ -184,6 +184,8 @@ var InsightStoreSimilarity = assign({}, {
 
     // Clear result view
     resultViewData.selectedSubsequence = previewSequence.slice(qStart, qEnd + 1);
+    var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+    resultViewData.selectedSubsequence._name = name; //TODO(cuong): strange error w/o this. getName returns object.
     resultViewData.selectedMatch = null;
     resultViewData.warpingPath = [];
     InsightStore.emitChange();
@@ -234,28 +236,11 @@ var InsightStoreSimilarity = assign({}, {
           // groupViewData.groupSequenceList = [resultTimeSeries];
           // groupViewData.groupSequenceSelectedIndex = 0;
           // groupViewData.showingRepresentatives = false;
-          console.log('distance = ' + response.dist);
+          resultViewData.distance = response.dist; //TODO(charlie): unify api docs etc
           groupViewData.groupIndex = response.groupIndex;
           resultViewData.selectedMatch = resultTimeSeries;
           resultViewData.warpingPath = response.warpingPath;
           that.requestGroupValues();
-          // var result = { //structure of query result pair
-          //   qSeq: currentState.qSeq,
-          //   qStart: currentState.qStart,
-          //   qEnd: currentState.qEnd,
-          //   qValues: currentState.qValues,
-          //   qThreshold: currentState.threshold,
-          //   qDistanceType: null,
-          //   qDsCollectionIndex: currentState.qDsCollectionIndex,
-          //   rSeq: response.seq,
-          //   rStart: response.start,
-          //   rEnd: response.end,
-          //   rValues: endlist,
-          //   dsName: response.dsName,
-          //   warpingPath: response.warpingPath,
-          //   similarityValue: response.dist
-          // }
-          // InsightStoreSimilarity.addQueryResultPair(result);//response.result.warpingPath,
           InsightStore.emitChange();
       },
       error: function(xhr) {
@@ -273,7 +258,8 @@ var InsightStoreSimilarity = assign({}, {
     var that = this;
     InsightStore.requestSequence(1, seq, start, end,
       function(result) {
-        var newTimeSeries = new TimeSeries(result, '', 0, seq, start, end);
+        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        var newTimeSeries = new TimeSeries(result, name, 0, seq, start, end);
         resultViewData.selectedMatch = newTimeSeries;
         InsightStore.emitChange();
         that.requestDistanceAndWarpingPath();
@@ -413,10 +399,11 @@ var InsightStoreSimilarity = assign({}, {
             console.log(requestID, response.requestID);
         }
         groupViewData.groupSequenceSelectedIndex = -1;
+        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
         groupViewData.groupSequenceList = response.values.map(function(tuple, i) {
           var [array, seq, start, end] = tuple;
           var values = array.map(function(x, j) { return [j + start,x]});
-          return new TimeSeries(values, '', 0, seq, start, end);
+          return new TimeSeries(values, name, 0, seq, start, end);
         });
         groupViewData.showingRepresentatives = false;
         InsightStoreSimilarity.findMatchingGroup();

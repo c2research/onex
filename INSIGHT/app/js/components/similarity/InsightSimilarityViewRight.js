@@ -12,7 +12,7 @@ var InsightSimilarityViewRight = React.createClass({
   },
 
   render: function() {
-    var resultProportion = 0.55;
+    var resultProportion = 0.60;
     var resultDimensions = {
       width: this.props.width,
       height: this.props.height * resultProportion

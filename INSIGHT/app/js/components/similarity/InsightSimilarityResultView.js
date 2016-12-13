@@ -27,7 +27,7 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
-    var contextHeight = this.props.selectedMatch !== null ? 25 : 0;
+    var contextHeight = this.props.selectedMatch !== null ? 55 : 0;
     var graphHeight = height - contextHeight;
 
     var InsightMenuBarResultJSX =
@@ -57,10 +57,10 @@ var InsightSimilarityResultView = React.createClass({
       textAlign: 'center',
       position: 'absolute',
       left: 0,
-      bottom: 0
+      bottom: 5
     }
 
-    var context = this.generateContext(this.props.selectedMatch);
+    var context = this.generateContext(this.props.selectedSubsequence, this.props.selectedMatch, this.props.distance);
 
     return (
       <div style={style}>
@@ -236,13 +236,50 @@ var InsightSimilarityResultView = React.createClass({
             title={title} />;
   },
 
-  generateContext: function(timeSeries) {
-    if (timeSeries !== null) {
-      var index = timeSeries.getSeq();
-      var start = timeSeries.getStart();
-      var end = timeSeries.getEnd();
-      var dataset = timeSeries.getName();
-      var context = 'matching subsequence: '+ index + 'th entry in ' + dataset + ', length ' + (end - start) + ' from indices ' + start + ' - ' + end;
+  generateContext: function(query, result, distance) {
+    if (result !== null && query != null) {
+
+      var style = {
+        table: {
+          color: '#333',
+          borderCollapse: 'collapse',
+          borderSpacing: 0
+        },
+        td: {
+          border: '1 solid transparent',
+          height: 30
+        },
+        th: {
+          background: '#FAFAFA',
+          texAlign: 'center'
+        },
+
+      }
+
+      var queryName = query.getName();
+      var querySeq = query.getSeq();
+      var resultName = result.getName();
+      var resultSeq = result.getSeq();
+
+      var context =
+        <table style={style.table}>
+        <tbody>
+          <tr>
+          	<td>{'query:'}</td>
+            <td>{queryName}</td>
+            <td>{querySeq}</td>
+            <td>{'['+ query.getStart() + ', ' + query.getEnd() + ']'}</td>
+            <td>{'dist: ' + distance.toFixed(3)}</td>
+          </tr>
+          <tr >
+          	<td>{'result:'}</td>
+            <td>{resultName}</td>
+            <td>{resultSeq}</td>
+            <td>{'['+ result.getStart() + ', ' + result.getEnd() + ']'}</td>
+          </tr>
+          </tbody>
+        </table>
+
       return context;
     } else {
       return '';

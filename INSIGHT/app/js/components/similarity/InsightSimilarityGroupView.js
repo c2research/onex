@@ -49,7 +49,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, selectedIndex, ...props
 
 var NameCell = function({rowIndex, data, selectedIndex, ...props}) {
   var ts = data[rowIndex];
-  var name = ts.getName() + ' - ' + ts.getSeq() + ' (' + ts.getStart() + ', ' + ts.getEnd() + ')';
+  var name = ts.getName() + ' - ' + ts.getSeq() + ' [' + ts.getStart() + ', ' + ts.getEnd() + ']';
   var style = selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
   return <Cell {...props} style={style}>
            {name}
@@ -122,7 +122,8 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
 
 var InsightSimilarityGroupViewSequence = React.createClass({
   render: function() {
-    var columnGroupHeader = 'Group ' + this.props.groupIndex[1] + ' of length ' + this.props.groupIndex[0];
+    //TODO(cuong): thoughts on of length? its pretty verbose.
+    var columnGroupHeader = 'Exploring Group ' + this.props.groupIndex[1]; // + ' of length ' + this.props.groupIndex[0];
     var widthIndex = this.props.width * 0.3;
     var widthChart = this.props.width * 0.7;
     var ColumnGroupsJSX =
@@ -154,8 +155,7 @@ var InsightSimilarityGroupViewSequence = React.createClass({
         groupHeaderHeight={40}
         headerHeight={40}
         scrollToRow={this.props.groupSequenceSelectedIndex}
-        onRowClick={(e, rowIndex) => {InsightActions.selectGroupSequence(rowIndex);}}
-        onRowDoubleClick={(e, rowIndex) => {
+        onRowClick={(e, rowIndex) => {
           InsightActions.selectGroupSequence(rowIndex);
           InsightActions.loadGroupSequence();
         }}>
