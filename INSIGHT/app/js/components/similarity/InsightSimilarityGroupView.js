@@ -7,34 +7,18 @@ var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
+var selectedColor = '#ff9a3d';
 
-// var color = d3.scaleThreshold()
-//               .domain([0.05, 0.1, 0.15, 0.2, 0.4, 0.8, 1])
-//               .range(["#C6E2FF", "#BFEFFF", "#CAE1FF", "#7EC0EE", "#4973AB", "#58768f"]);
-var color;
-function shadeColor(percent) {
-  return color(percent);
-}
-
-var NameCell = function({rowIndex, data, groupSelectedIndex, showingRepresentatives, ...props}) {
+var PercentageCell = function({rowIndex, data, colorFunc, ...props}) {
   var percent = data[rowIndex].getName();
-  var style = {
-    backgroundColor: shadeColor(percent) //(1 - percent/100)) //dbd9bb
-  };
-  // if (groupSelectedIndex == rowIndex) {
-  //   style = {
-  //     backgroundColor: '#bbcddb'
-  //   }
-  // }
-  var name = showingRepresentatives ? ((100 * percent).toFixed(2) + '%') : rowIndex;
-
+  var name = (100* percent).toFixed(2) + '%';
   return (
-    <Cell {...props} style={style} >
+    <Cell {...props} style={{backgroundColor: colorFunc(percent)}} >
       {name}
     </Cell>);
-}
+};
 
-var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...props}) {
+var MultiTimeSeriesChartCell = function({rowIndex, data, selectedIndex, ...props}) {
   var timeSeries = data[rowIndex];
   var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
 
@@ -55,87 +39,171 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, groupSelectedIndex, ...
       showToolTip={false}
     />
 
-   var style = {};
-   if (groupSelectedIndex == rowIndex) {
-     style = {
-       backgroundColor: '#ff9a3d'
-     }
-   }
+  //TODO(charlie): when we add viewing the group this can be used
+  var style = {}; //selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
   return (
     <Cell {...props} style={style}>
       {chart}
     </Cell>);
-}
+};
+
+var NameCell = function({rowIndex, data, selectedIndex, ...props}) {
+  var ts = data[rowIndex];
+  var name = ts.getName() + ' - ' + ts.getSeq() + ' (' + ts.getStart() + ', ' + ts.getEnd() + ')';
+  var style = selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
+  return <Cell {...props} style={style}>
+           {name}
+         </Cell>;
+};
 
 var InsightSimilarityGroupView = React.createClass({
   render: function() {
-    var style = {
-      width: this.props.width,
-      height: this.props.height
+    var GroupsJSX = null;
+    if (this.props.showingRepresentatives) {
+      GroupsJSX = <InsightSimilarityGroupViewRepresentatives {...this.props} />
     }
+    else {
+      GroupsJSX = <InsightSimilarityGroupViewSequence {...this.props} />
+    }
+    return GroupsJSX;
+  }
+});
 
-    var percents = this.props.groupList.map(function(timeSeries){
+var InsightSimilarityGroupViewRepresentatives = React.createClass({
+  render: function() {
+    var percents = this.props.representatives.map(function(timeSeries){
       return timeSeries.getName();
     });
 
-    color = d3.scalePow()
-              .exponent(0.5)
-              .domain([Math.min(...percents), Math.max(...percents)])
-              .range(["#efefef", "#357cb7"])
-              .interpolate(d3.interpolateCubehelix);
+    var colorFunc = d3.scalePow()
+                      .exponent(0.5)
+                      .domain([Math.min(...percents), Math.max(...percents)])
+                      .range(["#efefef", "#357cb7"])
+                      .interpolate(d3.interpolateCubehelix);
 
     var widthIndex = this.props.width * 0.2;
     var widthChart = this.props.width * 0.8;
 
-    var [title, firstColumnName, secondColumnName] = this.props.showingRepresentatives
-      ? ['Dataset Overview', 'Percent', 'Cluster Representatives']
-      : ['Similarity Overview', 'Kth Nearest','Top Matches'];
+    var ColumnGroupsJSX =
+          <ColumnGroup
+            header={<TableHeader title={"Dataset Overview"} icon={"toggle-off"}/>}>
 
-    var GroupsJSX =
-      <ColumnGroup
-        header={<Cell>{title}</Cell>}>
-        <Column
-          header={<Cell>{firstColumnName}</Cell>}
-          cell={<NameCell data={this.props.groupList}
-                          groupSelectedIndex={this.props.groupSelectedIndex}
-                          showingRepresentatives={this.props.showingRepresentatives} />}
-          width={widthIndex}
-          groupSelectedIndex={this.props.groupSelectedIndex}
-        />
-        <Column
-          header={<Cell>{secondColumnName}</Cell>}
-          cell={<MultiTimeSeriesChartCell data={this.props.groupList}
-                                          groupSelectedIndex={this.props.groupSelectedIndex} />}
-          width={widthChart}
-          groupSelectedIndex={this.props.groupSelectedIndex}
-        />
-      </ColumnGroup>
-
-    var tableJSX =
-      <div className="viewTable">
-        <Table
-          rowHeight={50}
-          rowsCount={this.props.groupList.length}
-          width={this.props.width}
-          height={this.props.height}
-          groupHeaderHeight={40}
-          headerHeight={40}
-          onRowClick={this._selectGroup}>
-          {GroupsJSX}
-        </Table>
-      </div>;
-
-    return (
-      <div style={style}>
-        {tableJSX}
-      </div>);
-  },
-  _selectGroup: function(e, rowIndex) {
-    InsightActions.selectSimilarityGroup(rowIndex);
-  },
-  _toggleGroupView: function(e) {
-    InsightActions.toggleGroupView();
+            <Column
+              header={<Cell>Percent</Cell>}
+              cell={<PercentageCell data={this.props.representatives}
+                                    colorFunc={colorFunc} />}
+              width={widthIndex}
+            />
+            <Column
+              header={<Cell>Cluster Representatives</Cell>}
+              cell={<MultiTimeSeriesChartCell data={this.props.representatives}
+                                              selectedIndex={this.props.representativesSelectedIndex} />}
+              width={widthChart}
+            />
+          </ColumnGroup>;
+    var style = {
+      width: this.props.width,
+      height: this.props.height
+    }
+    return <div style={style}>
+      <Table
+        rowHeight={50}
+        rowsCount={this.props.representatives.length}
+        width={this.props.width}
+        height={this.props.height}
+        groupHeaderHeight={40}
+        headerHeight={40}
+        onRowClick={(e, rowIndex) => InsightActions.selectGroup(rowIndex)}>
+        {ColumnGroupsJSX}
+      </Table>;
+    </div>
   }
 });
+
+var InsightSimilarityGroupViewSequence = React.createClass({
+  render: function() {
+    var columnGroupHeader = 'Group ' + this.props.groupIndex[1] + ' of length ' + this.props.groupIndex[0];
+    var widthIndex = this.props.width * 0.3;
+    var widthChart = this.props.width * 0.7;
+    var ColumnGroupsJSX =
+          <ColumnGroup
+            header={<TableHeader title={columnGroupHeader} icon={"toggle-on"} />}>
+            <Column
+              header={<Cell>Index</Cell>}
+              cell={<NameCell data={this.props.groupSequenceList}
+                              selectedIndex={this.props.groupSequenceSelectedIndex}/>}
+              width={widthIndex}
+            />
+            <Column
+              header={<Cell>Time Series</Cell>}
+              cell={<MultiTimeSeriesChartCell data={this.props.groupSequenceList}
+                                              selectedIndex={this.props.groupSequenceSelectedIndex} />}
+              width={widthChart}
+            />
+          </ColumnGroup>;
+    var style = {
+      width: this.props.width,
+      height: this.props.height
+    }
+    return <div style={style}>
+      <Table
+        rowHeight={50}
+        rowsCount={this.props.groupSequenceList.length}
+        width={this.props.width}
+        height={this.props.height}
+        groupHeaderHeight={40}
+        headerHeight={40}
+        scrollToRow={this.props.groupSequenceSelectedIndex}
+        onRowClick={(e, rowIndex) => {InsightActions.selectGroupSequence(rowIndex);}}
+        onRowDoubleClick={(e, rowIndex) => {
+          InsightActions.selectGroupSequence(rowIndex);
+          InsightActions.loadGroupSequence();
+        }}>
+        {ColumnGroupsJSX}
+      </Table>;
+    </div>
+  }
+});
+
+var TableHeader = React.createClass({
+  render: function() {
+    var style = {
+      wrapper: {
+        padding: 0,
+        margin: 0,
+        width: '100%'
+      },
+      title: {
+        padding: 0,
+        paddingLeft: 10,
+        margin: 0,
+        padding: 0,
+        display: 'inline'
+      },
+      icon: {
+        position: 'absolute',
+        textAlign: 'right',
+        padding: 7,
+        right: 0
+      }
+    }
+
+    var iconClassName = "fa fa-"+ this.props.icon + " fa-1.5x";
+
+    <i class="fa fa-toggle-off" aria-hidden="true"></i>
+
+    var headerJSX =
+      <div style={style.wrapper}>
+        <h4 style={style.title} className={'dataTableLeft'}>
+          {this.props.title}
+          <span style={style.icon}>
+            <i className={iconClassName} style={style.icon} onClick ={(e) => InsightActions.toggleGroupView()} ></i>
+          </span>
+        </h4>
+      </div>;
+
+    return headerJSX;
+  }
+})
 
 module.exports = InsightSimilarityGroupView;

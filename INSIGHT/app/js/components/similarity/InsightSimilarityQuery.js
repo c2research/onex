@@ -33,7 +33,7 @@ var InsightSimilarityQuery = React.createClass({
 
      var panelJSX =
        <div style={noSpaceStyle}>
-         <h4 style={queryStyle} className={'query'}> Queries </h4>
+         <h4 style={queryStyle} className={'dataTableLeft'}> Queries </h4>
           <div style={wrapperStyle}>
             <div style={floatStyle}>
               <QueryTypeRadio queryLocation={this.props.queryLocation}/>
