@@ -293,6 +293,10 @@ var InsightStoreSimilarity = assign({}, {
     groupViewData.showingRepresentatives = show;
   },
 
+  toggleGroupShowRepresentatives: function() {
+    groupViewData.showingRepresentatives = !groupViewData.showingRepresentatives;
+  },
+
   getGroupViewData: function() {
     return groupViewData;
   },
@@ -572,6 +576,11 @@ AppDispatcher.register(function(action) {
 
     case InsightConstants.SELECT_GROUP_SEQUENCE:
       InsightStoreSimilarity.setGroupSequenceSelectedIndex(action.id);
+      InsightStore.emitChange();
+      break;
+
+    case InsightConstants.TOGGLE_GROUP_VIEW:
+      InsightStoreSimilarity.toggleGroupShowRepresentatives();
       InsightStore.emitChange();
       break;
 

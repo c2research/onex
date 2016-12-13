@@ -77,7 +77,13 @@ var InsightActions = {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SELECT_GROUP_SEQUENCE,
       id: index
-    })
+    });
+  },
+  toggleGroupView: function() {
+    AppDispatcher.dispatch({
+      actionType: InsightConstants.TOGGLE_GROUP_VIEW,
+      id: -1
+    });
   },
   loadGroupSequence: function() {
     AppDispatcher.dispatch({
@@ -92,7 +98,7 @@ var InsightActions = {
       actionType: InsightConstants.SIMILARITY_LOAD_QUERY
     });
   },
-  
+
   selectPreviewRange: function(range) {
     AppDispatcher.dispatch({
       actionType: InsightConstants.SIMILARITY_SELECT_PREVIEW_RANGE,

@@ -27,6 +27,7 @@ var InsightConstants = keyMirror({
   QUERY_LOCATION_UPLOAD: null,
   SELECT_GROUP: null,
   SELECT_GROUP_SEQUENCE: null,
+  TOGGLE_GROUP_VIEW: null,
   LOAD_GROUP_SEQUENCE: null,
 
   GRAPH_TYPE_LINE: null,
