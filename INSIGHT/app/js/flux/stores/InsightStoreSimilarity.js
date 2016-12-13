@@ -302,6 +302,35 @@ var InsightStoreSimilarity = assign({}, {
   },
 
   /*
+   * helper functions to filter through a list of TimeSeries looking
+   * for two equivalent TimeSeries, and then returns the index of the match
+   *
+   * @param array - array to filter through
+   * @param x - the time series we're searching for
+   *
+   * @return - the index of the found match
+   */
+  _findIndice: function(array, x) {
+    for (var j = 0; j < array.length; j++) {
+      if (array[j].equivalent(x)) {
+        return j;
+      }
+    }
+    return -1;
+  },
+
+  /*
+   * On a match, filter through groups to find the member of the group
+   * which is the match and set it as the selected sequence.
+   */
+  findMatchingGroup: function() {
+    var index = this._findIndice(groupViewData.groupSequenceList, resultViewData.selectedMatch);
+    if (index > 0) {
+      groupViewData.groupSequenceSelectedIndex = index;
+    }
+  },
+
+  /*
    * clears data to maintain flow
    */
   clearResultViewData: function() {
@@ -386,6 +415,7 @@ var InsightStoreSimilarity = assign({}, {
           return new TimeSeries(values, '', 0, seq, start, end);
         });
         groupViewData.showingRepresentatives = false;
+        InsightStoreSimilarity.findMatchingGroup();
         InsightStore.emitChange();
       },
       error: function(xhr) {
@@ -454,7 +484,7 @@ var InsightStoreSimilarity = assign({}, {
         requestID: requestID.datasetQueries,
         fromUploadSet : selectedSubsequence.getLocation(),
         getWarpingPath: 1,
-        qSeq          : selectedSubsequence.getSeq(),            
+        qSeq          : selectedSubsequence.getSeq(),
         qStart        : selectedSubsequence.getStart(),
         qEnd          : selectedSubsequence.getEnd(),
         rSeq          : selectedMatch.getSeq(),

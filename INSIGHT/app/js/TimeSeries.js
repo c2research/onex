@@ -1,5 +1,5 @@
 class TimeSeries {
-  
+
   constructor(values, name, loc, seq, start, end) {
     this._values = values;
     this._loc = loc; // = 0: from dataset, = 1: from query file
@@ -31,6 +31,16 @@ class TimeSeries {
 
   getName() {
     return this._name;
+  }
+
+  /*
+   * tests for value equality, EXCLUDING the actual values and the name
+   */
+  equivalent(other) {
+    return this._start === other.getStart() &&
+           this._end === other.getEnd() &&
+           this._loc === other.getLocation() &&
+           this._seq === other.getSeq();
   }
 
   slice(start, end) {
