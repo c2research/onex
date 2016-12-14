@@ -80,13 +80,26 @@ def api_dataset_init():
 
     # Load the new dataset
     current_collection_index = ds_collection_index
-    ds_path                  = str(datasets[current_collection_index]['path'])
-    ds_name                  = str(datasets[current_collection_index]['name'])
+    ds_path                  = str(datasets[current_collection_index].get('path'))
+    ds_name                  = str(datasets[current_collection_index].get('name'))
+    ds_metadata              = datasets[current_collection_index].get('metadata')
     current_ds_index         = onex.loadDataset(ds_path)
+
+    metadata = None
+    if ds_metadata:
+      with open(ds_metadata) as metadata_file:
+        metadata = json.load(metadata_file)
+    else:
+      app.logger.info('No metadata found for dataset %s', ds_name)
 
     app.logger.debug('Loaded dataset %d [%s]', current_collection_index, ds_name)
 
-    # Group the new dataset%f' % (ds_collection_index, st)
+    # Normalize the new dataset
+    app.logger.debug('Normalizing dataset %d', current_collection_index)
+    normalization = onex.normalizeDataset(current_ds_index)
+    app.logger.info('Normalized dataset %d', current_collection_index)
+
+    # Group the new dataset
     app.logger.debug('Grouping dataset %d with st = %f',
                      current_collection_index, st)
     num_groups = onex.groupDataset(current_ds_index, st)
@@ -96,7 +109,11 @@ def api_dataset_init():
     # Return number of sequences in the dataset
     ds_length = onex.getDatasetSeqCount(current_ds_index);
 
-    return jsonify(dsLength=ds_length, numGroups=num_groups, requestID=request_id)
+    return jsonify(dsLength=ds_length,
+                   metadata=metadata,
+                   normalization=normalization,
+                   numGroups=num_groups, 
+                   requestID=request_id)
 
 
 @app.route('/dataset/get/')

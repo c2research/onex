@@ -12,7 +12,8 @@ var InsightSimilarityPreview = React.createClass({
     width: React.PropTypes.number,
     height: React.PropTypes.number,
     previewSequence: React.PropTypes.object,
-    previewRange: React.PropTypes.array
+    previewRange: React.PropTypes.array,
+    metadata: React.PropTypes.object
   },
 
   render: function() {
@@ -29,12 +30,13 @@ var InsightSimilarityPreview = React.createClass({
 
     var previewSequence = this.props.previewSequence || new TimeSeries([], '', -1, 0, 0, 0);
     var previewRange = this.props.previewRange || [0, 1];
+    var YDomain = [previewSequence.getMin(), previewSequence.getMax()];
     var selectedSequence = previewSequence.getValues().slice(previewRange[0], previewRange[1] + 1);
 
     var selectedViewData = {
       series: [{ values: selectedSequence,
                  color: '#74a2cc' }],
-      domains: { x: previewRange, y: [0, 1] },
+      domains: { x: previewRange, y: YDomain },
     };
 
     var selectedMargins = {left: 35, right: 20, top: 20, bottom: 20};
@@ -48,7 +50,7 @@ var InsightSimilarityPreview = React.createClass({
                         />;
     var overviewData = {
       series: [{ values: previewSequence.getValues()}, { values: selectedSequence } ],
-      domains: { x: [previewSequence.getStart(), previewSequence.getEnd()], y: [0, 1] },
+      domains: { x: [previewSequence.getStart(), previewSequence.getEnd()], y: YDomain },
     }
     var overviewMargins = {left: 35, right: 20, top: 5, bottom: 35};
     var OverviewD3JSX = <OverviewChart

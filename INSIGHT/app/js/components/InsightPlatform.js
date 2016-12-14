@@ -124,6 +124,7 @@ var InsightPlatform = React.createClass({
                                                  resultViewData={this.state.resultViewData}
                                                  groupViewData={this.state.groupViewData}
                                                  queryListViewData={this.state.queryListViewData}
+                                                 metadata={this.state.datasetData.metadata}
                                                  />
         break;
       case InsightConstants.VIEW_MODE_SEASONAL:

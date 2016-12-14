@@ -9,7 +9,7 @@ var noSpaceStyle = {
   padding: 0
 }
 
-var InsightSimilarityQuery = React.createClass({
+var InsightSimilarityQueryOptions = React.createClass({
    render: function() {
      var divStyle = {width: this.props.width};
      var uploadQueryJSX = <UploadQuery />;
@@ -88,4 +88,4 @@ var UploadQuery = React.createClass({
   }
 });
 
-module.exports = InsightSimilarityQuery;
+module.exports = InsightSimilarityQueryOptions;

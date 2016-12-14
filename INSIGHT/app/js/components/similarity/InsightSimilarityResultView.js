@@ -18,6 +18,7 @@ var InsightSimilarityResultView = React.createClass({
     selectedSubsequence: React.PropTypes.object,
     selectedMatch: React.PropTypes.object,
     warpingPath: React.PropTypes.array,
+    metadata: React.PropTypes.object
   },
 
   render: function() {
@@ -77,6 +78,7 @@ var InsightSimilarityResultView = React.createClass({
 
   generateGraph: function(width, height) {
     var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
+
     var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
     var warpingPath = this.props.warpingPath;
     var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
@@ -243,7 +245,9 @@ var InsightSimilarityResultView = React.createClass({
         table: {
           color: '#333',
           borderCollapse: 'collapse',
-          borderSpacing: 0
+          borderSpacing: 0,
+          width: '100%',
+          height: '100%'
         },
         td: {
           border: '1 solid transparent',

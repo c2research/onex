@@ -33,6 +33,14 @@ class TimeSeries {
     return this._name;
   }
 
+  getMax() {
+    return Math.max(...this._values.map((x) => x[1]));
+  }
+
+  getMin() {
+    return Math.min(...this._values.map((x) => x[1]));
+  }
+
   /*
    * tests for value equality, EXCLUDING the actual values and the name
    */

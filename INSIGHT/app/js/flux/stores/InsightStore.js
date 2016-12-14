@@ -13,7 +13,9 @@ var datasetData = {
 
   //current dataset information
   dsCurrentLength: 0, //used for determing start and end positions in a subsequence
-  dsCurrentSize: 0
+  dsCurrentSize: 0,
+
+  metadata: null,
 };
 
 var thresholdData = {
@@ -112,13 +114,6 @@ var InsightStore = assign({}, EventEmitter.prototype, {
   },
 
   /**
-   * @param {Object} - the current representation of state data
-   */
-  getStateData: function() {
-    return data;
-  },
-
-  /**
    * @return {Object} - return the list of datasets [{string, boolean}], name, preprocessed
    */
   getDSCollectionList: function() {
@@ -130,6 +125,14 @@ var InsightStore = assign({}, EventEmitter.prototype, {
    */
   getDSCurrentLength: function() {
     return datasetData.dsCurrentLength;
+  },
+
+  getMetadata: function() {
+    return datasetData.metadata;
+  },
+
+  getCurrentDSName: function() {
+    return this.getDSCollectionList()[this.getDSCollectionIndex()].label;
   },
 
   /**
@@ -290,6 +293,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
             console.log(requestID, response.requestID);
         }
         datasetData.dsCurrentLength = response.dsLength;
+        datasetData.metadata = response.metadata;
         InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
         InsightStore.emitChange();
 

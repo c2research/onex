@@ -49,7 +49,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, selectedIndex, ...props
 
 var NameCell = function({rowIndex, data, selectedIndex, ...props}) {
   var ts = data[rowIndex];
-  var name = ts.getName() + ' - ' + ts.getSeq() + ' [' + ts.getStart() + ', ' + ts.getEnd() + ']';
+  var name = ts.getName();
   var style = selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
   return <Cell {...props} style={style}>
            {name}

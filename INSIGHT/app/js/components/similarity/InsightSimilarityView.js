@@ -5,7 +5,7 @@ var InsightSimilarityViewRight = require('./InsightSimilarityViewRight');
 var InsightConstants = require('./../../flux/constants/InsightConstants');
 
 var InsightSimilarityView = React.createClass({
-
+  
   render: function() {
 
     var divStyle = {
@@ -31,11 +31,13 @@ var InsightSimilarityView = React.createClass({
           <div style={floatStyle}>
             <InsightSimilarityViewLeft groupViewData={this.props.groupViewData}
                                        queryListViewData={this.props.queryListViewData}
+                                       metadata={this.props.metadata}
                                        {...leftDimensions}/>
           </div>
           <div style={floatStyle}>
             <InsightSimilarityViewRight resultViewData={this.props.resultViewData}
                                         previewData={this.props.previewData}
+                                        metadata={this.props.metadata}
                                         {...rightDimensions}/>
           </div>
         </div>

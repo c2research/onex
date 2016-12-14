@@ -123,11 +123,17 @@ var InsightStoreSimilarity = assign({}, {
 
   requestQuery: function() {
     var fromDataset = (queryListViewData.queryLocation == InsightConstants.QUERY_LOCATION_DATASET) + 0;
-
-    var selectedQuery = fromDataset ? queryListViewData.querySelectedIndexDataset :
-                                      queryListViewData.querySelectedIndexUpload;
-    var queryName = fromDataset ? queryListViewData.queryListDataset[selectedQuery] :
-                                  queryListViewData.queryListUpload[selectedQuery];
+    var selectedQuery;
+    var queryName;
+    if (fromDataset) {
+      selectedQuery = queryListViewData.querySelectedIndexDataset;
+      var metadata = InsightStore.getMetadata();
+      queryName = metadata ? metadata.names[selectedQuery] : InsightStore.getCurrentDSName();
+    }
+    else {
+      selectedQuery = queryListViewData.querySelectedIndexUpload;
+      queryName = queryListViewData.queryListUpload[selectedQuery];
+    }
     InsightStore.requestSequence(fromDataset + 0, selectedQuery, -1, -1,
       function(endlist) {
         var newTimeSeries = new TimeSeries(endlist,
@@ -184,8 +190,6 @@ var InsightStoreSimilarity = assign({}, {
 
     // Clear result view
     resultViewData.selectedSubsequence = previewSequence.slice(qStart, qEnd + 1);
-    var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
-    resultViewData.selectedSubsequence._name = name; //TODO(cuong): strange error w/o this. getName returns object.
     resultViewData.selectedMatch = null;
     resultViewData.warpingPath = [];
     InsightStore.emitChange();
@@ -225,7 +229,8 @@ var InsightStoreSimilarity = assign({}, {
           var endlist = response.result.map(function(val, i) {
             return [i + response.start, val];
           });
-          var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+          var metadata = InsightStore.getMetadata();
+          var name = metadata ? metadata.names[response.seq] : InsightStore.getCurrentDSName();
           var resultTimeSeries = new TimeSeries(endlist, name,
                                                 currentState.qFindWithCustomQuery,
                                                 response.seq,
@@ -256,9 +261,12 @@ var InsightStoreSimilarity = assign({}, {
     var start = selectedGroupSequence.getStart();
     var end = selectedGroupSequence.getEnd();
     var that = this;
+
+    var dsName = InsightStore.getCurrentDSName();
+    var metadata = InsightStore.getMetadata();
     InsightStore.requestSequence(1, seq, start, end,
       function(result) {
-        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        var name = metadata ? metadata.names[seq] : dsName;
         var newTimeSeries = new TimeSeries(result, name, 0, seq, start, end);
         resultViewData.selectedMatch = newTimeSeries;
         InsightStore.emitChange();
@@ -399,9 +407,11 @@ var InsightStoreSimilarity = assign({}, {
             console.log(requestID, response.requestID);
         }
         groupViewData.groupSequenceSelectedIndex = -1;
-        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        var metadata = InsightStore.getMetadata();
+
         groupViewData.groupSequenceList = response.values.map(function(tuple, i) {
           var [array, seq, start, end] = tuple;
+          var name = (metadata ? metadata.names[seq] : seq) + ' [' + start + ', ' + end + ']';
           var values = array.map(function(x, j) { return [j + start,x]});
           return new TimeSeries(values, name, 0, seq, start, end);
         });
@@ -436,13 +446,13 @@ var InsightStoreSimilarity = assign({}, {
         if (response.requestID != requestID.datasetQueries) {
             console.log(requestID, response.requestID);
         }
-        var name = InsightStore.getDSCollectionList()[InsightStore.getDSCollectionIndex()].label;
+        var dsName = InsightStore.getCurrentDSName();
+        var metadata = InsightStore.getMetadata();
+
         queryListViewData.queryListDataset = response.queries.map(function(array, i) {
+          var name = metadata ? metadata.names[i] : dsName + " - " + i;
           var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, name + " - " + i ,InsightConstants.QUERY_LOCATION_DATASET,
-                                                i,
-                                                0,
-                                                array.length - 1);
+          return new TimeSeries(values, name, 0, i, 0, array.length - 1);
         });
 
         queryListViewData.querySelectedIndexDataset = -1;

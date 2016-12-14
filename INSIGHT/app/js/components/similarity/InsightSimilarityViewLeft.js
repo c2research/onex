@@ -9,6 +9,7 @@ var InsightSimilarityViewLeft = React.createClass({
     height: React.PropTypes.number,
     groupViewData: React.PropTypes.object,
     queryListViewData: React.PropTypes.object,
+    metadata: React.PropTypes.object
   },
 
   render: function() {
@@ -19,8 +20,12 @@ var InsightSimilarityViewLeft = React.createClass({
 
     return (
       <div style={{height: this.props.height, width: this.props.width}}>
-        <InsightSimilarityGroupView {...this.props.groupViewData} {...dimensions}/>
-        <InsightSimilarityQueryView {...this.props.queryListViewData} {...dimensions}/>
+        <InsightSimilarityGroupView metadata={this.props.metadata}
+                                    {...this.props.groupViewData}
+                                    {...dimensions}/>
+        <InsightSimilarityQueryView metadata={this.props.metadata}
+                                    {...this.props.queryListViewData}
+                                    {...dimensions}/>
       </div>);
   }
 });

@@ -3,7 +3,7 @@ var InsightConstants = require('./../../flux/constants/InsightConstants');
 var InsightActions = require('./../../flux/actions/InsightActions');
 
 var MultiTimeSeriesChart = require('./../charts/MultiTimeSeriesChart');
-var InsightSimilarityQuery = require('./InsightSimilarityQuery');
+var InsightSimilarityQueryOptions = require('./InsightSimilarityQueryOptions');
 
 var {Table, Column, ColumnGroup, Cell} = require('fixed-data-table');
 
@@ -23,10 +23,10 @@ var NameCell = function({rowIndex, data, queryIndex, ...props}) {
 var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) {
   var timeSeries = data[rowIndex];
   var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
-
+  var YDomain = [timeSeries.getMin(), timeSeries.getMax()];
   var chartData = {
     series: [{values: timeSeries.getValues()}],
-    domains: { x: commonXDomain, y: [0, 1]},
+    domains: { x: commonXDomain, y: YDomain},
   };
 
   var margins = {top: 0, bottom: 0, left: 0, right: 0};
@@ -65,7 +65,7 @@ var InsightSimilarityQueryView = React.createClass({
     var queryLocation = this.props.queryLocation;
     var QueriesJSX =
       <ColumnGroup
-        header={<InsightSimilarityQuery queryLocation={queryLocation}/>}>
+        header={<InsightSimilarityQueryOptions queryLocation={queryLocation}/>}>
         <Column
           header={<Cell>Index</Cell>}
           cell={<NameCell data={queryList} queryIndex={queryIndex} />}
@@ -76,8 +76,8 @@ var InsightSimilarityQueryView = React.createClass({
           cell={<MultiTimeSeriesChartCell data={queryList} queryIndex={queryIndex} />}
           width={widthChart}
         />
-      </ColumnGroup>
-
+      </ColumnGroup>;
+      
     var tableJSX =
       <div className="viewTable">
         <Table
