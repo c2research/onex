@@ -81,8 +81,8 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
                       .range(["#efefef", "#357cb7"])
                       .interpolate(d3.interpolateCubehelix);
 
-    var widthIndex = this.props.width * 0.2;
-    var widthChart = this.props.width * 0.8;
+    var widthIndex = this.props.width * 0.4;
+    var widthChart = this.props.width * 0.6;
 
     var ColumnGroupsJSX =
           <ColumnGroup
@@ -124,8 +124,8 @@ var InsightSimilarityGroupViewSequence = React.createClass({
   render: function() {
     //TODO(cuong): thoughts on of length? its pretty verbose.
     var columnGroupHeader = 'Exploring Group ' + this.props.groupIndex[1]; // + ' of length ' + this.props.groupIndex[0];
-    var widthIndex = this.props.width * 0.3;
-    var widthChart = this.props.width * 0.7;
+    var widthIndex = this.props.width * 0.4;
+    var widthChart = this.props.width * 0.6;
     var ColumnGroupsJSX =
           <ColumnGroup
             header={<TableHeader title={columnGroupHeader} icon={"toggle-on"} />}>
