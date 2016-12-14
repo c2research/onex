@@ -15,6 +15,8 @@ var datasetData = {
   dsCurrentLength: 0, //used for determing start and end positions in a subsequence
   dsCurrentSize: 0,
 
+  normalization: null,
+
   metadata: null,
 };
 
@@ -129,6 +131,10 @@ var InsightStore = assign({}, EventEmitter.prototype, {
 
   getMetadata: function() {
     return datasetData.metadata;
+  },
+
+  getNormalization: function() {
+    return datasetData.normalization;
   },
 
   getCurrentDSName: function() {
@@ -294,6 +300,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
         }
         datasetData.dsCurrentLength = response.dsLength;
         datasetData.metadata = response.metadata;
+        datasetData.normalization = response.normalization;
         InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
         InsightStore.emitChange();
 

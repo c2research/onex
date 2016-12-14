@@ -142,6 +142,8 @@ var InsightStoreSimilarity = assign({}, {
                                            selectedQuery,
                                            0,
                                            endlist.length - 1);
+        console.log(InsightStore.getNormalization());
+        newTimeSeries.denormalize(...InsightStore.getNormalization());
         previewData.previewSequence = newTimeSeries;
         previewData.previewRange = [0, endlist.length - 1];
         InsightStore.emitChange();

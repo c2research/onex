@@ -1,3 +1,5 @@
+var d3 = require('d3');
+
 class TimeSeries {
 
   constructor(values, name, loc, seq, start, end) {
@@ -39,6 +41,11 @@ class TimeSeries {
 
   getMin() {
     return Math.min(...this._values.map((x) => x[1]));
+  }
+
+  denormalize(oriMax, oriMin) {
+    var diff = oriMax - oriMin;
+    this._values = this._values.map((x) => [x[0], (x[1] * diff + oriMin).toFixed(2)]);
   }
 
   /*

@@ -39,7 +39,7 @@ var InsightSimilarityPreview = React.createClass({
       domains: { x: previewRange, y: YDomain },
     };
 
-    var selectedMargins = {left: 35, right: 20, top: 20, bottom: 20};
+    var selectedMargins = {left: 50, right: 20, top: 20, bottom: 20};
     var SelectedD3JSX = <MultiTimeSeriesChart
                           margins={selectedMargins}
                           width={graphWidth - selectedMargins.left - selectedMargins.right}
@@ -52,7 +52,7 @@ var InsightSimilarityPreview = React.createClass({
       series: [{ values: previewSequence.getValues()}, { values: selectedSequence } ],
       domains: { x: [previewSequence.getStart(), previewSequence.getEnd()], y: YDomain },
     }
-    var overviewMargins = {left: 35, right: 20, top: 5, bottom: 35};
+    var overviewMargins = {left: 50, right: 20, top: 5, bottom: 35};
     var OverviewD3JSX = <OverviewChart
                           margins={overviewMargins}
                           width={graphWidth - overviewMargins.left - overviewMargins.right}

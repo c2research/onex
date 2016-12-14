@@ -87,7 +87,7 @@ var InsightSimilarityResultView = React.createClass({
     alignedSelectedMatchValues = alignedSelectedMatchValues || [];
 
     var data = {};
-    var margins = {left: 35, right: 15, top: 35, bottom: 40};
+    var margins = {left: 50, right: 15, top: 35, bottom: 40};
     var title = 'Similarity Results';
     var resultGraph = null;
     var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);

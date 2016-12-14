@@ -53,6 +53,8 @@ Perform loading and grouping on a dataset.
 ```
 {
   dsLength: <int>  # Length of the dataset
+  metadata: <object> # Object containing metadata of the dataset
+  normalization: <list> # List of values used for denormalization of the time series
   requestID: <int> # The requestID sent with the request
 }
 ```
