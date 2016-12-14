@@ -274,7 +274,7 @@ var InsightSimilarityResultView = React.createClass({
             <td>{queryName}</td>
             <td>{querySeq}</td>
             <td>{'['+ query.getStart() + ', ' + query.getEnd() + ']'}</td>
-            <td>{'dist: ' + distance.toFixed(3)}</td>
+            <td rowSpan="2">{'dist: ' + distance.toFixed(3)}</td>
           </tr>
           <tr >
           	<td>{'result:'}</td>
