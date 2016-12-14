@@ -40,6 +40,8 @@ public:
     int loadolddb(const char *path, int seqCount, int seqLength, int newlineDrop);
     int saveolddb(int index, const char *path);
 
+    pair<seqitem_t, seqitem_t> normalize(int dbIndex);
+
     int initdbgroups(int index, seqitem_t ST=-1);
     int killdbgroups(int index);
     int savedbgroups(int index, const char *path);

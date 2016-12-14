@@ -138,14 +138,9 @@ int GroupableTimeSeriesSet::groupsFromFile(const char *path)
     return res;
 }
 
-void GroupableTimeSeriesSet::normalize(void)
+pair<int, int> GroupableTimeSeriesSet::normalize(void)
 {
-    if (!valid()) {
-        cerr << "Warning: Attempted to normalize invalid dataset." << endl;
-        return;
-    }
-
-    dataset->normalize();
+    return dataset->normalize();
 }
 
 int GroupableTimeSeriesSet::genGrouping(seqitem_t ST)
@@ -232,14 +227,14 @@ kBest GroupableTimeSeriesSet::similar(GroupableTimeSeriesSet *other, int otherSe
     }
 
 //#ifdef FIND_DISTINCT
-//     best = grouping->getBestDistinctInterval(otherInt.length(),
-//                                            other->dataset->getRawData(otherSeq, otherInt.start),
-//                                            strat, warps, otherSeq);
+    best = grouping->getBestDistinctInterval(otherInt.length(),
+                                           other->dataset->getRawData(otherSeq, otherInt.start),
+                                           strat, warps, otherSeq);
 // //#else
     // printf("Running non distinct\n");
-    best = grouping->getBestInterval(otherInt.length(),
-                                       other->dataset->getRawData(otherSeq, otherInt.start),
-                                       strat, warps);
+    // best = grouping->getBestInterval(otherInt.length(),
+    //                                    other->dataset->getRawData(otherSeq, otherInt.start),
+    //                                    strat, warps);
 // #endif
 
     return best;

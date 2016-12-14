@@ -109,6 +109,13 @@ int OnlineSession::saveolddb(int index, const char *path)
     return -1;
 }
 
+/**
+ * Normalize a dataset and return the min and max values of the dataset.
+ */
+pair<seqitem_t, seqitem_t> OnlineSession::normalize(int dbIndex) {
+    return datasets[dbIndex]->normalize();
+}
+
 int OnlineSession::initdbgroups(int index, seqitem_t ST)
 {
     if (ST == -1)

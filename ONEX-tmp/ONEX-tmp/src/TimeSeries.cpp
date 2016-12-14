@@ -694,13 +694,13 @@ void TimeSeriesSet::zero(void)
     min = max = 0;
 }
 
-void TimeSeriesSet::normalize(void)
+pair<seqitem_t, seqitem_t> TimeSeriesSet::normalize(void)
 {
     seqitem_t diff = max - min;
 
     if (diff == 0.0) {
         if (max == 0)
-            return;
+            return make_pair(max, min);
         else
             zero();
     }
@@ -708,8 +708,13 @@ void TimeSeriesSet::normalize(void)
     for (int i = 0; i < seqCount * seqLength; i++)
         data[i] = (data[i] - min)/diff;
 
+    seqitem_t oriMax = max;
+    seqitem_t oriMin = min;
+
     min = 0.0;
     max = 1.0;
+    
+    return make_pair(oriMax, oriMin);
 }
 
 void TimeSeriesSet::recalcMinMax(void)

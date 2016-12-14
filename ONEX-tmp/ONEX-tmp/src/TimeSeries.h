@@ -144,7 +144,7 @@ public:
     seqitem_t *getRawData(int seqNum, int seqIndex);
 
     // Modifying operations.
-    void normalize(void);
+    std::pair<seqitem_t, seqitem_t> normalize(void);
     void zero(void);
     void recalcMinMax(void);
 

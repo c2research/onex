@@ -108,8 +108,10 @@ public:
 
     /**
      * Normalize the dataset.
+     * \return a pair of maximum and minimum value (following this order) in the 
+     *         original dataset. These values are used to denormalized a time series.
      */
-    void normalize(void);
+    pair<int, int> normalize(void);
 
     /**
      * Group dataset using the provided Similarity Threshold.
