@@ -70,6 +70,12 @@ int unloadDataset(int index)
   return os.killdb(index);
 }
 
+py::tuple normalizeDataset(int index)
+{
+  pair<seqitem_t, seqitem_t> normalization = os.normalize(index);
+  return py::make_tuple(normalization.first, normalization.second);
+}
+
 /**
  * Perform grouping on dataset given its index and ST.
  *
@@ -356,6 +362,7 @@ BOOST_PYTHON_MODULE(ONEXBindings)
   py::def("loadDataset", loadDataset);
   py::def("loadDatasetWithParams", loadDatasetWithParams);
   py::def("unloadDataset", unloadDataset);
+  py::def("normalizeDataset", normalizeDataset);
   py::def("groupDataset", groupDataset);
   py::def("findSimilar", findSimilar);
   py::def("getSubsequence", getSubsequence);
