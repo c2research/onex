@@ -21,10 +21,10 @@ var PercentageCell = function({rowIndex, data, colorFunc, ...props}) {
 var MultiTimeSeriesChartCell = function({rowIndex, data, selectedIndex, ...props}) {
   var timeSeries = data[rowIndex];
   var commonXDomain = [timeSeries.getStart(), timeSeries.getEnd()];
-
+  var commonYDomain = [timeSeries.getMin(), timeSeries.getMax()];
   var chartData = {
     series: [{values: timeSeries.getValues()}],
-    domains: { x: commonXDomain, y: [0, 1]},
+    domains: { x: commonXDomain, y: commonYDomain },
   };
 
   var margins = {top: 0, bottom: 0, left: 0, right: 0};

@@ -132,7 +132,7 @@ var InsightStoreSimilarity = assign({}, {
     }
     else {
       selectedQuery = queryListViewData.querySelectedIndexUpload;
-      queryName = queryListViewData.queryListUpload[selectedQuery];
+      queryName = queryListViewData.queryListUpload[selectedQuery].getName();
     }
     InsightStore.requestSequence(fromDataset + 0, selectedQuery, -1, -1,
       function(endlist) {
