@@ -45,7 +45,7 @@ class TimeSeries {
 
   denormalize(oriMax, oriMin) {
     var diff = oriMax - oriMin;
-    this._values = this._values.map((x) => [x[0], (x[1] * diff + oriMin).toFixed(2)]);
+    this._values = this._values.map((x) => [x[0], (x[1] * diff + oriMin).toPrecision(4)]);
   }
 
   /*
