@@ -1,7 +1,6 @@
 var React = require('react');
 
 var InsightDatasetSection = require('./InsightDatasetSection');
-var InsightSimilarityQuery = require('./similarity/InsightSimilarityQuery');
 var InsightSeasonalQuery = require('./seasonal/InsightSeasonalQuery');
 var InsightTab = require('./InsightTab');
 var InsightFind = require('./similarity/InsightFind');
