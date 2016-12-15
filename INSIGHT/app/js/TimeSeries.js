@@ -75,7 +75,7 @@ class TimeSeries {
   equivalent(other) {
     return this._start === other.getStart() &&
            this._end === other.getEnd() &&
-           this._loc === other.getLocation() &&
+           //this._loc === other.getLocation() &&
            this._seq === other.getSeq();
   }
 
