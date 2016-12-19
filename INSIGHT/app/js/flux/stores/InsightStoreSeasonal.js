@@ -51,7 +51,7 @@ var InsightStoreSeasonal = assign({}, {
   },
 
   requestQueryFromDataset: function() {
-    InsightStore.requestSequence(1, seasonalQueryInfo.qSeq,
+    InsightStore.requestSequence(1, seasonalQueryInfo.qSeq, -1, -1,
       function(endlist) {
         InsightStoreSeasonal.setQValues(endlist);
         InsightStore.calculateDimensions();
