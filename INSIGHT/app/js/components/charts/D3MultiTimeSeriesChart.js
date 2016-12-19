@@ -154,13 +154,13 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   var p = d3.precisionFixed(0.5),
       f = d3.format("." + p + "f");
 
-  // The ticks are spaced with 40 pixels.
+  // The ticks are spaced with 30 pixels.
   // Set tickSizeInner to -width and -height to create a grid
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
-                       .ticks(Math.round(height / 40))
-                       .tickFormat(f);
+                       .ticks(Math.round(height / 30));
+
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)

@@ -115,7 +115,8 @@ D3OverviewChart.prototype._drawAxis = function(svg, data) {
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
-                       .ticks(Math.round(height / 40));
+                       .ticks(Math.round(height / 30));
+                       
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)
