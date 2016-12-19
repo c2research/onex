@@ -53,7 +53,7 @@
   ],
   "domainX": [2009, 2015],
   "labels": {
-    "x": "State",
+    "x": "Year",
     "y":  "Percent"
   }
 }

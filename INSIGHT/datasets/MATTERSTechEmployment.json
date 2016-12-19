@@ -53,7 +53,7 @@
   ],
   "domainX": [1990, 2013],
   "labels": {
-    "x": "State",
+    "x": "Year",
     "y":  "Persons"
   }
 }

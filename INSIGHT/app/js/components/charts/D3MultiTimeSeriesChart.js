@@ -24,6 +24,7 @@ Example data:
            }],
   domains: {x: [0, 20], y: [0, 1]},
   warpingPath: [[18, 14], [17, 13], [16, 12], [15, 11], [14, 10], [13, 9], [12, 8], [11, 7], [10, 6], [9, 5], [8, 4], [7, 3], [6, 2], [5, 1], [4, 1], [3, 1], [2, 1], [1, 1], [0, 0]]
+  labels: { x: "foo", y: "bar" }
 },
 
 */
@@ -148,6 +149,7 @@ D3MultiTimeSeriesChart.prototype.destroy = function(el) {
 D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   var height = this.props.height;
   var width = this.props.width;
+  var margins = this.props.margins;
   var domains = data.domains;
   var scales = this._scales(domains);
 
@@ -167,12 +169,26 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
                        .ticks(Math.min(Math.round(width / 40), domains.x[1]))
                        .tickFormat(d3.format('d'));
 
-  // Actually draw the axes
+  // Actually draw the axis
   svg.select('g.xaxisWrapper')
      .call(xaxisWrapper);
 
   svg.select('g.yaxisWrapper')
      .call(yaxisWrapper);
+
+  // Draw labels
+  // console.log(data.labels)
+  if (data.labels) {
+    svg.append("text")             
+      .attr("x", width / 2 + margins.left)
+      .attr("y", height + margins.top + 30)
+      .text(data.labels.x);
+    svg.append("text")             
+       .attr("transform", "rotate(-90)")
+       .attr("x", -(height) / 2 - margins.bottom - margins.top)
+       .attr("y", margins.left - 40)
+       .text(data.labels.y);
+  }
 
   // Set a low opacity of the tick lines so that it won't obscure the content.
   svg.selectAll('.tick line')
