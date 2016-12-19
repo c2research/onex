@@ -5,6 +5,11 @@
     "metadata": "datasets/MATTERSTechEmployment.json"
   },
   {
+    "name": "MATTERS - GrowthRate",
+    "path": "datasets/MATTERSGrowthRate.txt",
+    "metadata": "datasets/MATTERSGrowthRate.json"
+  },
+  {
     "name": "ECG",
     "path": "datasets/ECG.txt"
   },
@@ -27,10 +32,6 @@
   {
     "name": "FaceAll",
     "path": "datasets/FaceAll.txt"
-  },
-  {
-    "name": "ShapesAll",
-    "path": "datasets/ShapesAll.txt"
   },
   {
     "name": "SwedishLeaf",
