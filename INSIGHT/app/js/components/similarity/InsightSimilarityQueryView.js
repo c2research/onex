@@ -54,27 +54,38 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, queryIndex, ...props}) 
 }
 
 var InsightSimilarityQueryView = React.createClass({
+
+  getInitialState: function() {
+    return {
+      indexColumnWidth: 200,
+    };
+  },
+
+  _onColumnResizeEndCallback: function(newColumnWidth, columnKey) {
+    this.setState({indexColumnWidth: newColumnWidth});
+  },
+
   render: function() {
     var [queryList, queryIndex] = (this.props.queryLocation == InsightConstants.QUERY_LOCATION_DATASET)
       ? [this.props.queryListDataset, this.props.querySelectedIndexDataset]
       : [this.props.queryListUpload, this.props.querySelectedIndexUpload];
-
-    var widthIndex = this.props.width * 0.4;
-    var widthChart = this.props.width * 0.6;
 
     var queryLocation = this.props.queryLocation;
     var QueriesJSX =
       <ColumnGroup
         header={<InsightSimilarityQueryOptions queryLocation={queryLocation}/>}>
         <Column
+          columnKey="index"
           header={<Cell>Index</Cell>}
           cell={<NameCell data={queryList} queryIndex={queryIndex} />}
-          width={widthIndex}
+          width={this.state.indexColumnWidth}
+          isResizable={true}
         />
         <Column
           header={<Cell>Time Series Query</Cell>}
           cell={<MultiTimeSeriesChartCell data={queryList} queryIndex={queryIndex} />}
-          width={widthChart}
+          width={0}
+          flexGrow={1}
         />
       </ColumnGroup>;
       
@@ -87,6 +98,8 @@ var InsightSimilarityQueryView = React.createClass({
           height={this.props.height}
           groupHeaderHeight={60}
           headerHeight={40}
+          onColumnResizeEndCallback={this._onColumnResizeEndCallback}
+          isColumnResizing={false}
           onRowClick={this._selectQuery}>
           {QueriesJSX}
         </Table>

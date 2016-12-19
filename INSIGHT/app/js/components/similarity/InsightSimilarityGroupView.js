@@ -70,6 +70,17 @@ var InsightSimilarityGroupView = React.createClass({
 });
 
 var InsightSimilarityGroupViewRepresentatives = React.createClass({
+
+  getInitialState: function() {
+    return {
+      percentColumnWidth: 100,
+    };
+  },
+
+  _onColumnResizeEndCallback: function(newColumnWidth, columnKey) {
+    this.setState({percentColumnWidth: newColumnWidth});
+  },
+
   render: function() {
     var percents = this.props.representatives.map(function(timeSeries){
       return timeSeries.getName();
@@ -81,24 +92,24 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
                       .range(["#efefef", "#357cb7"])
                       .interpolate(d3.interpolateCubehelix);
 
-    var widthIndex = this.props.width * 0.4;
-    var widthChart = this.props.width * 0.6;
-
     var ColumnGroupsJSX =
           <ColumnGroup
             header={<TableHeader title={"Dataset Overview"} icon={"toggle-off"}/>}>
 
             <Column
+              columnKey="percent"
               header={<Cell>Percent</Cell>}
               cell={<PercentageCell data={this.props.representatives}
                                     colorFunc={colorFunc} />}
-              width={widthIndex}
+              width={this.state.percentColumnWidth}
+              isResizable={true}
             />
             <Column
               header={<Cell>Cluster Representatives</Cell>}
               cell={<MultiTimeSeriesChartCell data={this.props.representatives}
                                               selectedIndex={this.props.representativesSelectedIndex} />}
-              width={widthChart}
+              width={0}
+              flexGrow={1}
             />
           </ColumnGroup>;
     var style = {
@@ -113,6 +124,8 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
         height={this.props.height}
         groupHeaderHeight={40}
         headerHeight={40}
+        onColumnResizeEndCallback={this._onColumnResizeEndCallback}
+        isColumnResizing={false}
         onRowClick={(e, rowIndex) => InsightActions.selectGroup(rowIndex)}>
         {ColumnGroupsJSX}
       </Table>;
@@ -121,25 +134,37 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
 });
 
 var InsightSimilarityGroupViewSequence = React.createClass({
+
+  getInitialState: function() {
+    return {
+      indexColumnWidth: 200,
+    };
+  },
+
+  _onColumnResizeEndCallback: function(newColumnWidth, columnKey) {
+    this.setState({indexColumnWidth: newColumnWidth});
+  },
+
   render: function() {
     //TODO(cuong): thoughts on of length? its pretty verbose.
     var columnGroupHeader = 'Exploring Group ' + this.props.groupIndex[1]; // + ' of length ' + this.props.groupIndex[0];
-    var widthIndex = this.props.width * 0.4;
-    var widthChart = this.props.width * 0.6;
     var ColumnGroupsJSX =
           <ColumnGroup
             header={<TableHeader title={columnGroupHeader} icon={"toggle-on"} />}>
             <Column
+              columnKey="index"
               header={<Cell>Index</Cell>}
               cell={<NameCell data={this.props.groupSequenceList}
                               selectedIndex={this.props.groupSequenceSelectedIndex}/>}
-              width={widthIndex}
+              width={this.state.indexColumnWidth}
+              isResizable={true}
             />
             <Column
               header={<Cell>Time Series</Cell>}
               cell={<MultiTimeSeriesChartCell data={this.props.groupSequenceList}
                                               selectedIndex={this.props.groupSequenceSelectedIndex} />}
-              width={widthChart}
+              width={0}
+              flexGrow={1}
             />
           </ColumnGroup>;
     var style = {
@@ -155,6 +180,8 @@ var InsightSimilarityGroupViewSequence = React.createClass({
         groupHeaderHeight={40}
         headerHeight={40}
         scrollToRow={this.props.groupSequenceSelectedIndex}
+        onColumnResizeEndCallback={this._onColumnResizeEndCallback}
+        isColumnResizing={false}
         onRowClick={(e, rowIndex) => {
           InsightActions.selectGroupSequence(rowIndex);
           InsightActions.loadGroupSequence();
