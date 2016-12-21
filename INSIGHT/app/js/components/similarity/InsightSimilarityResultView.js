@@ -209,7 +209,7 @@ var InsightSimilarityResultView = React.createClass({
       labels: data.labels
     };
     var marginsTop    = {left: 60, right: 15, top: 35, bottom: 30};
-    var marginsBottom = {left: 60, right: 15, top: 35, bottom: 30}
+    var marginsBottom = {left: 60, right: 15, top: 25, bottom: 30}
 
     return <div>
       <MultiTimeSeriesChart

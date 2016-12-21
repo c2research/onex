@@ -27,7 +27,7 @@ Example data:
 // Object constructor
 var D3RadialChart = function() {
   this._legendProps = { 
-    marginTop: 15,
+    padding: 20,
     boxSize: 9,
     spacing: 10,
   };
@@ -73,7 +73,7 @@ D3RadialChart.prototype.create = function(el, props, data) {
   svg.append('g')
     .classed('legend', true)
     .attr('transform', 'translate(' + (margins.left) + ','
-                                    + (this._legendProps.marginTop) + ')');
+                                    + (margins.top - this._legendProps.padding) + ')');
 
   svg.append('g')
      .classed('voronoiWrapper', true);

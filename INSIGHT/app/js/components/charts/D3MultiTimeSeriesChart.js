@@ -34,7 +34,7 @@ var D3MultiTimeSeriesChart = function() {
   this._pointRadius = 3;
   this._pointColor = '#ff4000';
   this._legendProps = { 
-    marginTop: 15,
+    padding: 20,
     boxSize: 9,
     spacing: 10,
   };
@@ -89,7 +89,7 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
   svg.append('g')
     .classed('legend', true)
     .attr('transform', 'translate(' + (margins.left) + ','
-                                    + (this._legendProps.marginTop) + ')');
+                                    + (margins.top - this._legendProps.padding) + ')');
 
   svg.append('g')
      .classed('pointsWrapper', true)
