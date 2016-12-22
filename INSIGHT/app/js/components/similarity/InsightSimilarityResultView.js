@@ -76,9 +76,10 @@ var InsightSimilarityResultView = React.createClass({
     var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
     var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
     var scaleX = this.props.metadata && this.props.metadata.scaleX;
+    var denormalizeY = this.props.metadata && this.props.metadata.normalization;
 
-    var selectedSubsequenceValues = selectedSubsequence.getValues(scaleX);
-    var selectedMatchValues = selectedMatch.getValues(scaleX);
+    var selectedSubsequenceValues = selectedSubsequence.getValues(scaleX, denormalizeY);
+    var selectedMatchValues = selectedMatch.getValues(scaleX, denormalizeY);
     var warpingPath = this.props.warpingPath;
     var alignedSelectedMatchValues = selectedMatchValues.map(function(x) {
       return [x[0] - (selectedMatch.getStart(scaleX) - selectedSubsequence.getStart(scaleX)), x[1]];
@@ -94,8 +95,8 @@ var InsightSimilarityResultView = React.createClass({
                              selectedMatch.getEnd(scaleX) - selectedMatch.getStart(scaleX));
     // var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
     var commonXDomain = [selectedSubsequence.getStart(scaleX), selectedSubsequence.getStart(scaleX) + maxLength];
-    var commonYDomain = [Math.min(selectedMatch.getMin(), selectedSubsequence.getMin()), 
-                         Math.max(selectedMatch.getMax(), selectedSubsequence.getMax())];
+    var commonYDomain = [Math.min(selectedMatch.getMin(denormalizeY), selectedSubsequence.getMin(denormalizeY)), 
+                         Math.max(selectedMatch.getMax(denormalizeY), selectedSubsequence.getMax(denormalizeY))];
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
         data = {

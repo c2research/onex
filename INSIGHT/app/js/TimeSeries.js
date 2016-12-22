@@ -24,8 +24,8 @@ class TimeSeries {
   _getDenormalizer(d) {
     var denormalizer = (x) => x;
     if (d) {
-      var diff = denormalizeY.max - denormalizeY.min;
-      denormalizer = (x) => (x * diff + denormalizeY.min).toPrecision(4);
+      var diff = d.max - d.min;
+      denormalizer = (x) => x * diff + d.min;
     }
     return denormalizer;
   }

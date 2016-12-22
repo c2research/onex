@@ -32,6 +32,4 @@ D3BaseChart.prototype._addTitle = function(svg) {
   }
 };
 
-
-
 module.exports = D3BaseChart;

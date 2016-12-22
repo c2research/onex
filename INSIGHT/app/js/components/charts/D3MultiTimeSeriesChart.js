@@ -153,14 +153,12 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   var domains = data.domains;
   var scales = this._scales(domains);
 
-  var p = d3.precisionFixed(0.5),
-      f = d3.format("." + p + "f");
-
   // Set tickSizeInner to -width and -height to create a grid
   var yaxisWrapper = d3.axisLeft(scales.y)
                        .tickSizeInner(-width)
                        .tickPadding(7)
-                       .ticks(Math.round(height / 30));
+                       .ticks(Math.round(height / 30))
+                       .tickFormat(d3.format('.3s'));
 
   var maxValueLength = Math.max(...data.series.map((s) => (s.values.length)));
   var xaxisWrapper = d3.axisBottom(scales.x)
@@ -329,7 +327,8 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                  that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), d.data[1]);
+                  that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), 
+                                    d3.format(".5n")(d.data[1]));
               })
               .on('mouseout', function(d, i) {
                 d3.select('circle.circle_' + i)

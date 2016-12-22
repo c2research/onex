@@ -138,7 +138,7 @@ int GroupableTimeSeriesSet::groupsFromFile(const char *path)
     return res;
 }
 
-pair<int, int> GroupableTimeSeriesSet::normalize(void)
+pair<seqitem_t, seqitem_t> GroupableTimeSeriesSet::normalize(void)
 {
     return dataset->normalize();
 }

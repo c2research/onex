@@ -111,7 +111,7 @@ public:
      * \return a pair of maximum and minimum value (following this order) in the 
      *         original dataset. These values are used to denormalized a time series.
      */
-    pair<int, int> normalize(void);
+    pair<seqitem_t, seqitem_t> normalize(void);
 
     /**
      * Group dataset using the provided Similarity Threshold.
