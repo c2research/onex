@@ -51,7 +51,10 @@
     "UT - Utah",
     "OH - Ohio"
   ],
-  "domainX": [1990, 2013],
+  "scaleX": {
+    "domain": [0, 13],
+    "range": [1990, 2013]
+  },
   "labels": {
     "x": "Year",
     "y":  "Persons"

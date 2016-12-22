@@ -51,7 +51,10 @@
     "UT - Utah",
     "OH - Ohio"
   ],
-  "domainX": [2009, 2015],
+  "scaleX": {
+    "domain": [0, 6],
+    "range": [2009, 2015]
+  },   
   "labels": {
     "x": "Year",
     "y":  "Percent"

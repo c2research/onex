@@ -74,11 +74,14 @@ var InsightSimilarityResultView = React.createClass({
 
   generateGraph: function(width, height) {
     var selectedSubsequence = this.props.selectedSubsequence || new TimeSeries([], '', -1, 0, 0, 0);
-
     var selectedMatch = this.props.selectedMatch || new TimeSeries([], '', -1, 0, 0, 0);
+    var scaleX = this.props.metadata && this.props.metadata.scaleX;
+
+    var selectedSubsequenceValues = selectedSubsequence.getValues(scaleX);
+    var selectedMatchValues = selectedMatch.getValues(scaleX);
     var warpingPath = this.props.warpingPath;
-    var alignedSelectedMatchValues = selectedMatch.getValues().map(function(x) {
-      return [x[0] - (selectedMatch.getStart() - selectedSubsequence.getStart()), x[1]];
+    var alignedSelectedMatchValues = selectedMatchValues.map(function(x) {
+      return [x[0] - (selectedMatch.getStart(scaleX) - selectedSubsequence.getStart(scaleX)), x[1]];
     });
     alignedSelectedMatchValues = alignedSelectedMatchValues || [];
 
@@ -87,17 +90,17 @@ var InsightSimilarityResultView = React.createClass({
     var margins = {left: 60, right: 15, top: 35, bottom: 30};
     var title = 'Similarity Results';
     var resultGraph = null;
-    var maxLength = Math.max(selectedSubsequence.getValues().length, selectedMatch.getValues().length);
-    var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
-    // var commonXDomain = (metadata && metadata.domainX) || [];
+    var maxLength = Math.max(selectedSubsequence.getEnd(scaleX) - selectedSubsequence.getStart(scaleX), 
+                             selectedMatch.getEnd(scaleX) - selectedMatch.getStart(scaleX));
+    // var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
+    var commonXDomain = [selectedSubsequence.getStart(scaleX), selectedSubsequence.getStart(scaleX) + maxLength];
     var commonYDomain = [Math.min(selectedMatch.getMin(), selectedSubsequence.getMin()), 
                          Math.max(selectedMatch.getMax(), selectedSubsequence.getMax())];
-
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
         data = {
-          series: [{ values: selectedSubsequence.getValues()},
-                   { values: alignedSelectedMatchValues}],
+          series: [{ values: selectedSubsequenceValues },
+                   { values: alignedSelectedMatchValues }],
           warpingPath: warpingPath,
           domains: { x: [0, 1], y: [0, 1] },
           color: 'blue',
@@ -109,7 +112,7 @@ var InsightSimilarityResultView = React.createClass({
         var bias = 0.05 * this.props.dtwBias;
         var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+          series: [{ values: selectedSubsequenceValues, color: '#74a2cc', legend: 'query'},
                    { values: biasedMatchValues, color: bias == 0 ? 'green' : "#c05a53",
                      legend: bias == 0 ? 'match' : 'match (added bias = ' + bias.toFixed(2) + ')'}],
           domains: { x: commonXDomain, y: commonYDomain },
@@ -120,7 +123,7 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_LINE:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+          series: [{ values: selectedSubsequenceValues, color: '#74a2cc', legend: 'query'},
                    { values: alignedSelectedMatchValues, color: 'green', legend: 'match'}],
           domains: { x: commonXDomain, y: commonYDomain },
           labels: metadata && metadata.labels
@@ -129,7 +132,7 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_RADIAL:
         data = {
-          series: [{ values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
+          series: [{ values: selectedSubsequenceValues, color: '#74a2cc', legend: 'query'},
                    { values: alignedSelectedMatchValues, color: 'green', legend: 'match'}],
           domains: { x: commonXDomain, y: commonYDomain },
         }
@@ -137,20 +140,20 @@ var InsightSimilarityResultView = React.createClass({
         break;
       case InsightConstants.GRAPH_TYPE_SPLIT:
         data = {
-          seriesQ: { values: selectedSubsequence.getValues(), color: '#74a2cc', legend: 'query'},
-          seriesR: { values: selectedMatch.getValues(), color: 'green', legend: 'match'},
-          domainsQ: { x: [selectedSubsequence.getStart(), selectedSubsequence.getEnd()], y: commonYDomain },
-          domainsR: { x: [selectedMatch.getStart(), selectedMatch.getEnd()], y: commonYDomain },
+          seriesQ: { values: selectedSubsequenceValues, color: '#74a2cc', legend: 'query'},
+          seriesR: { values: selectedMatchValues, color: 'green', legend: 'match'},
+          domainsQ: { x: [selectedSubsequence.getStart(scaleX), selectedSubsequence.getEnd(scaleX)], y: commonYDomain },
+          domainsR: { x: [selectedMatch.getStart(scaleX), selectedMatch.getEnd(scaleX)], y: commonYDomain },
           labels: metadata && metadata.labels
         };
         resultGraph = this.generateSplitChart(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_ERROR:
         data = {
-          series: [{ values: selectedSubsequence.getValues() },
+          series: [{ values: selectedSubsequenceValues },
                    { values: alignedSelectedMatchValues }],
           warpingPath: warpingPath,
-          maxDomainY: 0.2
+          maxDomainY: commonYDomain[1] - commonYDomain[0]
         };
         resultGraph =  this.generateErrorChart(data, margins, width, height, title);
         break;

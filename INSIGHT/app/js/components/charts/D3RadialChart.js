@@ -157,10 +157,11 @@ D3RadialChart.prototype._drawRadialAxis = function(svg, data) {
   var scales = this._polarScales(data.domains);
   var axesGroup = svg.select('g.radial-axes')
 
-  var ticks = scales.theta.ticks(Math.min(32, data.domains.x[1]));
-  var tickFormat = scales.theta.tickFormat(Math.min(32, data.domains.x[1]), 'd');
+  var maxValueLength = Math.max(...data.series.map((s) => (s.values.length)));
+  var ticks = scales.theta.ticks(Math.min(32, maxValueLength));
+  var tickFormat = scales.theta.tickFormat(Math.min(32, maxValueLength), 'd');
   ticks = ticks.map(tickFormat);
-  var tickNum = ticks.length;
+  var tickNum = ticks.length - 1;
 
   var angles = [];
   for (var i = 0; i < tickNum; i++) {
@@ -182,7 +183,7 @@ D3RadialChart.prototype._drawRadialAxis = function(svg, data) {
        .attr('stroke-width', 1);
   lines.exit().remove();
 
-  var padding = 10;
+  var padding = 15;
   var texts = axesGroup.selectAll('text').data(angles);
   texts.enter()
        .append('text')

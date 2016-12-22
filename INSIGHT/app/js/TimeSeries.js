@@ -15,32 +15,53 @@ class TimeSeries {
     return this._loc;
   }
 
-  getValues() {
-    return this._values;
+  _getScale(s) {
+    var scale = (x) => x;
+    if (s) scale = d3.scaleLinear().domain(s.domain).range(s.range);
+    return scale;
+  }
+
+  _getDenormalizer(d) {
+    var denormalizer = (x) => x;
+    if (d) {
+      var diff = denormalizeY.max - denormalizeY.min;
+      denormalizer = (x) => (x * diff + denormalizeY.min).toPrecision(4);
+    }
+    return denormalizer;
+  }
+
+  getValues(scaleX, denormalizeY) {
+    var scale = this._getScale(scaleX);
+    var denormalizer = this._getDenormalizer(denormalizeY);
+    return this._values.map((x) => [scale(x[0]), denormalizer(x[1])]);
   }
 
   getSeq() {
     return this._seq;
   }
 
-  getStart() {
-    return this._start;
+  getStart(scaleX) {
+    var scale = this._getScale(scaleX);
+    return scale(this._start);
   }
 
-  getEnd() {
-    return this._end;
+  getEnd(scaleX) {
+    var scale = this._getScale(scaleX);
+    return scale(this._end);
   }
 
   getName() {
     return this._name;
   }
 
-  getMax() {
-    return Math.max(...this._values.map((x) => x[1]));
+  getMax(denormalizeY) {
+    var denormalizer = this._getDenormalizer(denormalizeY);
+    return Math.max(...this._values.map((x) => denormalizer(x[1])));
   }
 
-  getMin() {
-    return Math.min(...this._values.map((x) => x[1]));
+  getMin(denormalizeY) {
+    var denormalizer = this._getDenormalizer(denormalizeY);
+    return Math.min(...this._values.map((x) => denormalizer(x[1])));
   }
 
   denormalize(oriMax, oriMin) {
