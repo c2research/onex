@@ -93,7 +93,6 @@ var InsightSimilarityResultView = React.createClass({
     var resultGraph = null;
     var maxLength = Math.max(selectedSubsequence.getEnd(scaleX) - selectedSubsequence.getStart(scaleX), 
                              selectedMatch.getEnd(scaleX) - selectedMatch.getStart(scaleX));
-    // var commonXDomain = [selectedSubsequence.getStart(), selectedSubsequence.getStart() + maxLength];
     var commonXDomain = [selectedSubsequence.getStart(scaleX), selectedSubsequence.getStart(scaleX) + maxLength];
     var commonYDomain = [Math.min(selectedMatch.getMin(denormalizeY), selectedSubsequence.getMin(denormalizeY)), 
                          Math.max(selectedMatch.getMax(denormalizeY), selectedSubsequence.getMax(denormalizeY))];
@@ -110,7 +109,8 @@ var InsightSimilarityResultView = React.createClass({
         resultGraph = this.generateConnectedScatterPlot(data, margins, width, height, title);
         break;
       case InsightConstants.GRAPH_TYPE_WARP:
-        var bias = 0.05 * this.props.dtwBias;
+        var biasStep = (commonYDomain[1] - commonYDomain[0]) / 10;
+        var bias = biasStep * this.props.dtwBias;
         var biasedMatchValues = alignedSelectedMatchValues.map(function(x) { return [x[0], x[1] + bias]});
         data = {
           series: [{ values: selectedSubsequenceValues, color: '#74a2cc', legend: 'query'},

@@ -97,7 +97,7 @@ def api_dataset_init():
     # Normalize the new dataset
     app.logger.debug('Normalizing dataset %d', current_collection_index)
     normalization = onex.normalizeDataset(current_ds_index)
-    print normalization
+
     normalization = { 'max': normalization[0], 'min': normalization[1] }
     app.logger.info('Normalized dataset %d', current_collection_index)
 

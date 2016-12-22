@@ -294,7 +294,7 @@ var InsightStore = assign({}, EventEmitter.prototype, {
         }
         datasetData.dsCurrentLength = response.dsLength;
         datasetData.metadata = response.metadata;
-        if (typeof datasetData.metadata == "object") {
+        if (datasetData.metadata) {
           datasetData.metadata.normalization = response.normalization;
         }
         InsightStore.setDatasetIconMode(InsightConstants.ICON_DATASET_INIT_LOADED);
