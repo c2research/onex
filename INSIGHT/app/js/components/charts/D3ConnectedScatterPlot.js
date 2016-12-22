@@ -43,13 +43,13 @@ D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
 
   //in order to keep it centered and have the axis 'correct' from 0 to 1
   //we need to update the scales function.
-  this._scales = function(domains) {
+  this._scales = function() {
       var x = d3.scaleLinear()
-                .domain(domains.x)
+                .domain(data.domains.x)
                 .range([0, width]);
 
       var y = d3.scaleLinear()
-                .domain(domains.y)
+                .domain(data.domains.y)
                 .range([height, 0]);
       return {x: x, y: y};
   }
@@ -145,7 +145,7 @@ D3ConnectedScatterPlot.prototype.update = function(el, d) {
   var color = d.color || 'red';
 
   //All current values are
-  var domains = {x: [0, 1], y: [0, 1]}
+  var domains = this._scales(d.domains);
 
   var data = {
     values: values,

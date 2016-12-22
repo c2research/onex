@@ -91,18 +91,20 @@ var InsightSimilarityResultView = React.createClass({
     var margins = {left: 60, right: 15, top: 35, bottom: 30};
     var title = 'Similarity Results';
     var resultGraph = null;
-    var maxLength = Math.max(selectedSubsequence.getEnd(scaleX) - selectedSubsequence.getStart(scaleX), 
+
+    var maxLength = Math.max(selectedSubsequence.getEnd(scaleX) - selectedSubsequence.getStart(scaleX),
                              selectedMatch.getEnd(scaleX) - selectedMatch.getStart(scaleX));
     var commonXDomain = [selectedSubsequence.getStart(scaleX), selectedSubsequence.getStart(scaleX) + maxLength];
-    var commonYDomain = [Math.min(selectedMatch.getMin(denormalizeY), selectedSubsequence.getMin(denormalizeY)), 
+    var commonYDomain = [Math.min(selectedMatch.getMin(denormalizeY), selectedSubsequence.getMin(denormalizeY)),
                          Math.max(selectedMatch.getMax(denormalizeY), selectedSubsequence.getMax(denormalizeY))];
+
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
         data = {
           series: [{ values: selectedSubsequenceValues },
                    { values: alignedSelectedMatchValues }],
           warpingPath: warpingPath,
-          domains: { x: [0, 1], y: [0, 1] },
+          domains: { x: commonYDomain, y: commonYDomain },
           color: 'blue',
           strokeWidth: '1.5'
         };
