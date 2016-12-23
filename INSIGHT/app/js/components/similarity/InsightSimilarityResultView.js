@@ -45,7 +45,7 @@ var InsightSimilarityResultView = React.createClass({
     var style = {
       height: height,
       width: width,
-      overflow: 'scroll',
+      overflow: 'hidden',
       borderBottom: '1px solid #e6e6e6',
       position: 'relative'
     };

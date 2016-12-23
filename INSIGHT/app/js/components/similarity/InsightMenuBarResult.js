@@ -18,6 +18,9 @@ var InsightMenuBarResult = React.createClass({
       background: '#f2f2f2',
       paddingTop: 10,
       paddingLeft: 5,
+      position: 'absolute',
+      right: 0,
+      top: 0
     }
 
     var graphTypeList = [InsightConstants.GRAPH_TYPE_LINE,
