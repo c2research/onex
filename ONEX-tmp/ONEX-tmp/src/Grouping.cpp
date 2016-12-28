@@ -842,7 +842,7 @@ int TimeSeriesSetGrouping::group(void)
     int count = 0;
 
     groups[0] = new TimeSeriesGrouping(dataset, 1);
-    groups[0]->genGroups(ST);
+    //groups[0]->genGroups(ST);
     for (unsigned int i = 1; i < groups.size(); i++) { // Don't group zero length.
 
         groups[i] = new TimeSeriesGrouping(dataset, i+1);
