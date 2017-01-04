@@ -6,7 +6,7 @@
   "scripts": {
     "build": "NODE_ENV=development browserify -t [ babelify --presets [ latest react ]  --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js",
     "watch": "NODE_ENV=development watchify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] app/js/app.js -o server/static/js/bundle.js",
-    "production-build": "NODE_ENV=production browserify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] -t envify -g uglifyify app/js/app.js -o server/static/js/bundle.js"
+    "prodBuild": "NODE_ENV=production browserify -t [ babelify --presets [ latest react ] --plugins [ transform-object-rest-spread ] ] -t envify -g uglifyify app/js/app.js -o server/static/js/bundle.js"
   },
   "author": "Charles Lovering & Cuong Nguyen",
   "license": "ISC",
