@@ -10,6 +10,11 @@
     "metadata": "datasets/MATTERSGrowthRate.json"
   },
   {
+    "name": "MATTERS - Stem",
+    "path": "datasets/MATTERSStem.txt",
+    "metadata": "datasets/MATTERSStem.json"
+  },
+  {
     "name": "ECG",
     "path": "datasets/ECG.txt"
   },
