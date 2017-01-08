@@ -35,7 +35,7 @@ D3ConnectedScatterPlot.prototype.constructor = D3ConnectedScatterPlot;
 
 // Append a new chart within a given DOM element. The props and data used
 // to drawn the chart are kept inside the current object.
-//Does not use passed in domain - constructs it from given values
+// note: Does not use passed in domain - constructs it from given values
 D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
   this.props = props;
   var width = props.width > 0.3 ? props.height : props.width;
@@ -45,11 +45,11 @@ D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
   //we need to update the scales function.
   this._scales = function() {
       var x = d3.scaleLinear()
-                .domain(data.domains.x)
+                .domain(data.domains.x) //[0, 0.04]) //data.domains.x
                 .range([0, width]);
 
       var y = d3.scaleLinear()
-                .domain(data.domains.y)
+                .domain(data.domains.y)//[0, 0.04]) //data.domains.y
                 .range([height, 0]);
       return {x: x, y: y};
   }
@@ -122,7 +122,7 @@ D3ConnectedScatterPlot.prototype.create = function(el, props, data) {
                 .style('font-family', 'sans-serif')
                 .style('text-anchor', 'middle');
 
-  this._addTitle(svg);
+  this._addTitle(svg, (props.width - width));
   this.update(el, data);
 };
 
@@ -151,7 +151,8 @@ D3ConnectedScatterPlot.prototype.update = function(el, d) {
     values: values,
     color: color,
     strokeWidth: d.strokeWidth || 3,
-    domains: domains
+    domains: domains,
+    labels: d.labels
   }
 
   this._drawAxis(svg, data);
@@ -180,13 +181,13 @@ D3ConnectedScatterPlot.prototype._drawAxis = function(svg, data) {
                        .tickSizeInner(-width)
                        .tickPadding(7)
                        .ticks(10)
-                       .tickFormat(f);
+                       .tickFormat(d3.format('.3s'));
 
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)
                        .ticks(10)
-                       .tickFormat(f);
+                       .tickFormat(d3.format('.2s'));
 
   // Actually draw the axes
   svg.select('g.xaxisWrapper')
@@ -198,6 +199,22 @@ D3ConnectedScatterPlot.prototype._drawAxis = function(svg, data) {
   // Set a low opacity of the tick lines so that it won't obscure the content.
   svg.selectAll('.tick line')
      .style('opacity', 0.2);
+
+  var margins = this.props.margins;
+
+  if (data.labels) {
+    svg.append("text")
+       .attr("x", width / 2 + margins.left/2 )
+       .attr("y", height + margins.top + 30)
+       .text(data.labels.x);
+
+    svg.append("text")
+       .attr("transform", "rotate(-90)")
+       .attr("x", -(height) / 2 - margins.bottom - margins.top)
+       .attr("y", margins.left - 40)
+       .text(data.labels.y);
+  }
+  console.log('asdf!!')
 }
 
 // Draw lines of the series

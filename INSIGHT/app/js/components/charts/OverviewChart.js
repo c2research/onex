@@ -11,7 +11,6 @@ var OverviewChart = React.createClass({
     onBrushSelection: React.PropTypes.func,
     title: React.PropTypes.string
   },
-
   _recursiveEqualityCheck: function(fieldOld, fieldNew) {
     var type = typeof fieldOld;
     switch(type) {

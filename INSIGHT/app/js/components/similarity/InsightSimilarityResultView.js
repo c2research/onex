@@ -100,13 +100,16 @@ var InsightSimilarityResultView = React.createClass({
 
     switch(this.props.graphType) {
       case InsightConstants.GRAPH_TYPE_CONNECTED:
+        var x_title = this.props.selectedSubsequence ? this.props.selectedSubsequence.getName() : 'Selected Subsequence';
+        var y_title = this.props.selectedMatch ? this.props.selectedMatch.getName() : 'Matched Subsequence';
         data = {
           series: [{ values: selectedSubsequenceValues },
                    { values: alignedSelectedMatchValues }],
           warpingPath: warpingPath,
           domains: { x: commonYDomain, y: commonYDomain },
           color: 'blue',
-          strokeWidth: '1.5'
+          strokeWidth: '1.5',
+          labels: { x: x_title, y: y_title}
         };
         resultGraph = this.generateConnectedScatterPlot(data, margins, width, height, title);
         break;
