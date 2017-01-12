@@ -15,6 +15,10 @@
     "metadata": "datasets/MATTERSStem.json"
   },
   {
+    "name": "ElectricityLoadDiagrams2011",
+    "path": "datasets/ElectricityLoadDiagrams2011.txt"
+  },
+  {
     "name": "ECG",
     "path": "datasets/ECG.txt"
   },
