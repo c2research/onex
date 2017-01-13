@@ -11,7 +11,7 @@ var InsightThresholdSlider = React.createClass({
 
      var panelJSX =
      <div className = "panel">
-        <h4> Choose a Similarity Threshold </h4>
+        <h4> Similarity Threshold </h4>
         <div className="options">
           <AnnotatedSlider
             max={this.props.thresholdRange[1]}
