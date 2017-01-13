@@ -33,7 +33,7 @@ Example data:
 var D3MultiTimeSeriesChart = function() {
   this._pointRadius = 3;
   this._pointColor = '#ff4000';
-  this._legendProps = { 
+  this._legendProps = {
     padding: 20,
     boxSize: 9,
     spacing: 10,
@@ -177,14 +177,14 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   // Draw labels
   // console.log(data.labels)
   if (data.labels) {
-    svg.append("text")             
+    svg.append("text")
       .attr("x", width / 2 + margins.left)
-      .attr("y", height + margins.top + 30)
+      .attr("y", height + margins.top + 40)
       .text(data.labels.x);
-    svg.append("text")             
+    svg.append("text")
        .attr("transform", "rotate(-90)")
-       .attr("x", -(height) / 2 - margins.bottom - margins.top)
-       .attr("y", margins.left - 40)
+       .attr("x", -(height) / 2 - margins.top)
+       .attr("y", margins.left - 38)
        .text(data.labels.y);
   }
 
@@ -327,7 +327,7 @@ D3MultiTimeSeriesChart.prototype._drawVoronoi = function(svg, data) {
               .on('mouseover', function(d, i) {
                 d3.select('circle.circle_' + i)
                   .attr('fill', 'red');
-                  that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]), 
+                  that._showToolTip(svg, scales.x(d.data[0]), scales.y(d.data[1]),
                                     d3.format(".5n")(d.data[1]));
               })
               .on('mouseout', function(d, i) {
