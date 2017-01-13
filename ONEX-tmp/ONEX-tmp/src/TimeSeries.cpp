@@ -184,7 +184,7 @@ seqitem_t _dtw_lp1(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropo
     return _basic_dtw(a, b, _lp1_dist, _sum_pull, dropout);
 }
 
-warping_path_t _dtw_lp1_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+warping_path_t _dtw_lp1_wp(TimeSeriesInterval &a, TimeSeriesInterval &b)
 {
     warping_path_t path;
     _basic_dtw(a, b, _lp1_dist, _sum_pull, INF, &path);
@@ -196,7 +196,7 @@ seqitem_t _dtw_lp2(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropo
     return sqrt(_basic_dtw(a, b, _lp2_dist, _sum_pull, dropout));
 }
 
-warping_path_t _dtw_lp2_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+warping_path_t _dtw_lp2_wp(TimeSeriesInterval &a, TimeSeriesInterval &b)
 {
     warping_path_t path;
     _basic_dtw(a, b, _lp2_dist, _sum_pull, INF, &path);
@@ -208,7 +208,7 @@ seqitem_t _dtw_lpinf(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dro
     return _basic_dtw(a, b, _lp1_dist, _max_pull, dropout);
 }
 
-warping_path_t _dtw_lpinf_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+warping_path_t _dtw_lpinf_wp(TimeSeriesInterval &a, TimeSeriesInterval &b)
 {
     warping_path_t path;
     _basic_dtw(a, b, _lp1_dist, _max_pull, INF, &path);
@@ -221,12 +221,12 @@ seqitem_t _dtw_lp1_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t 
 
     // Correct dropout for normalization.
     if (dropout != INF)
-        dropout = dropout * len;
+        dropout = dropout * 2 * len;
 
-    return _basic_dtw(a, b, _lp1_dist, _sum_pull, dropout)/len;
+    return _basic_dtw(a, b, _lp1_dist, _sum_pull, dropout)/(2 * len);
 }
 
-warping_path_t _dtw_lp1_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+warping_path_t _dtw_lp1_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b)
 {
     warping_path_t path;
     _basic_dtw(a, b, _lp1_dist, _sum_pull, INF, &path);
@@ -239,12 +239,12 @@ seqitem_t _dtw_lp2_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t 
 
     // Correct dropout for normalization and sqrt.
     if (dropout != INF)
-        dropout = dropout*dropout * len;
+        dropout = dropout * 2 * len * dropout * 2 *len;
 
-    return sqrt(_basic_dtw(a, b, _lp2_dist, _sum_pull, dropout)/len);
+    return sqrt(_basic_dtw(a, b, _lp2_dist, _sum_pull, dropout))/ (2 * len);
 }
 
-warping_path_t _dtw_lp2_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b) 
+warping_path_t _dtw_lp2_norm_wp(TimeSeriesInterval &a, TimeSeriesInterval &b)
 {
     warping_path_t path;
     _basic_dtw(a, b, _lp2_dist, _sum_pull, INF, &path);
@@ -306,7 +306,7 @@ seqitem_t _lp2(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout)
 
 seqitem_t _lp2_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout)
 {
-    seqitem_t smax = sqrt(std::max(a.length(), b.length()) - 1);
+    seqitem_t smax = sqrt(std::max(a.length(), b.length()));
 
     // Correct for normalization.
     if (dropout != INF)
@@ -534,6 +534,7 @@ TimeSeriesSet::TimeSeriesSet(const char *path)
     }
 
     in >> seqCount >> seqLength;
+    printf("sc, sl = %d %d\n", seqCount, seqLength);
     if (seqCount <= 0 || seqLength <= 0) {
         fprintf(stderr, "Failed to read file %s: Given invalid sequence count or length.\n", path);
         seqCount = seqLength = min = max = 0;
@@ -713,7 +714,7 @@ pair<seqitem_t, seqitem_t> TimeSeriesSet::normalize(void)
 
     min = 0.0;
     max = 1.0;
-    
+
     return make_pair(oriMax, oriMin);
 }
 

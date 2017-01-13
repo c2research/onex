@@ -4,12 +4,14 @@ var InsightStore = require('./InsightStore');
 var assign = require('object-assign');
 var $ = require('jquery');
 
+var TimeSeries = require('./../../TimeSeries');
+
 var CHANGE_EVENT = 'change';
 
 var seasonalQueryInfo = {
-  qSeq: 0,
-  qLength: 3,
-  qValues: []
+  seq: 0,
+  length: 3,
+  ts: null,
 };
 
 var seasonalResult = {
@@ -27,16 +29,16 @@ var InsightStoreSeasonal = assign({}, {
     return seasonalResult;
   },
 
-  setQSeq: function(seq) {
-    seasonalQueryInfo.qSeq = seq;
+  setSeq: function(seq) {
+    seasonalQueryInfo.seq = seq;
   },
 
-  setQLength: function(length) {
-    seasonalQueryInfo.qLength = length;
+  setLength: function(length) {
+    seasonalQueryInfo.length = length;
   },
 
-  setQValues: function(values) {
-    seasonalQueryInfo.qValues = values;
+  setTS: function(ts) {
+    seasonalQueryInfo.ts = ts;
   },
 
   clearResult: function() {
@@ -51,9 +53,11 @@ var InsightStoreSeasonal = assign({}, {
   },
 
   requestQueryFromDataset: function() {
-    InsightStore.requestSequence(1, seasonalQueryInfo.qSeq, -1, -1,
+    var seq = seasonalQueryInfo.seq;
+    InsightStore.requestSequence(1, seq, -1, -1,
       function(endlist) {
-        InsightStoreSeasonal.setQValues(endlist);
+        var newTimeSeries = new TimeSeries(endlist, "", 0, seq, 0, endlist.length - 1);
+        InsightStoreSeasonal.setTS(newTimeSeries);
         InsightStore.calculateDimensions();
         InsightStore.emitChange();
        }
@@ -65,8 +69,8 @@ var InsightStoreSeasonal = assign({}, {
       url: '/seasonal',
       data: {
         dsCollectionIndex: InsightStore.getDSCollectionIndex(),
-        qSeq: seasonalQueryInfo.qSeq,
-        length: seasonalQueryInfo.qLength,
+        qSeq: seasonalQueryInfo.seq,
+        length: seasonalQueryInfo.length,
         requestID: -1
       },
       dataType: 'json',
@@ -91,21 +95,21 @@ AppDispatcher.register(function(action) {
       if (InsightStore.getViewMode() == InsightConstants.VIEW_MODE_SEASONAL) {
         InsightStore.requestDatasetInit(function() {
           InsightStoreSeasonal.clearResult();
-          InsightStoreSeasonal.setQSeq(0);
+          InsightStoreSeasonal.setSeq(0);
           InsightStoreSeasonal.requestQueryFromDataset();
         });
       }
       break;
     case InsightConstants.SEASONAL_SELECT_QUERY:
       InsightStoreSeasonal.clearResult();
-      InsightStoreSeasonal.setQSeq(action.id);
+      InsightStoreSeasonal.setSeq(action.id);
       InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_LOAD_QUERY:
       InsightStoreSeasonal.requestQueryFromDataset();
       break;
     case InsightConstants.SEASONAL_SELECT_LENGTH:
-      InsightStoreSeasonal.setQLength(action.id);
+      InsightStoreSeasonal.setLength(action.id);
       InsightStore.emitChange();
       break;
     case InsightConstants.SEASONAL_SELECT_PATTERN_INDEX:

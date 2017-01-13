@@ -86,9 +86,7 @@ var InsightControlPanel = React.createClass({
 
   _getSeasonalQueryControls: function() {
     var queryJSX = <InsightSeasonalQuery dsCurrentLength={this.props.dsCurrentLength}
-                                         qValues={this.props.qValues}
-                                         qSeq={this.props.qSeq}
-                                         qLength={this.props.qLength}/>;
+                                         {...this.props.seasonal} />;
     return <div>
       {queryJSX}
     </div>;

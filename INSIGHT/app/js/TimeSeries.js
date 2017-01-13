@@ -36,6 +36,10 @@ class TimeSeries {
     return this._values.map((x) => [scale(x[0]), denormalizer(x[1])]);
   }
 
+  getLength() {
+    if (this._values) return this._values.length; else return 0;
+  }
+
   getSeq() {
     return this._seq;
   }

@@ -133,6 +133,7 @@ var InsightPlatform = React.createClass({
                                               height={this.state.metadata.sizing.displayHeight}
                                               seasonalQueryInfo={this.state.seasonalQueryInfo}
                                               results={this.state.seasonalResults}
+                                              metadata={this.state.datasetData.metadata}
                                               />
         break;
       case InsightConstants.VIEW_MODE_CLUSTER:
@@ -151,7 +152,7 @@ var InsightPlatform = React.createClass({
                              datasetIconMode={this.state.metadata.datasetIconMode}
                              {...this.state.datasetData}
                              {...this.state.thresholdData}
-                             {...this.state.seasonalQueryInfo}/>
+                             seasonal={this.state.seasonalQueryInfo}/>
         {insightViewJSX}
        </div>
     );

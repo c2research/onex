@@ -128,7 +128,8 @@ var InsightStoreSimilarity = assign({}, {
     if (fromDataset) {
       selectedQuery = queryListViewData.querySelectedIndexDataset;
       var metadata = InsightStore.getMetadata();
-      queryName = metadata ? metadata.names[selectedQuery] : InsightStore.getCurrentDSName();
+      queryName = (metadata && metadata.names) ? metadata.names[selectedQuery] :
+                                                 InsightStore.getCurrentDSName();
     }
     else {
       selectedQuery = queryListViewData.querySelectedIndexUpload;
@@ -231,7 +232,8 @@ var InsightStoreSimilarity = assign({}, {
             return [i + response.start, val];
           });
           var metadata = InsightStore.getMetadata();
-          var name = metadata ? metadata.names[response.seq] : InsightStore.getCurrentDSName();
+          var name = (metadata && metadata.name) ? metadata.names[response.seq] :
+                                                   InsightStore.getCurrentDSName();
           var resultTimeSeries = new TimeSeries(endlist, name,
                                                 currentState.qFindWithCustomQuery,
                                                 response.seq,
@@ -451,7 +453,7 @@ var InsightStoreSimilarity = assign({}, {
         var metadata = InsightStore.getMetadata();
 
         queryListViewData.queryListDataset = response.queries.map(function(array, i) {
-          var name = metadata ? metadata.names[i] : dsName + " - " + i;
+          var name = (metadata && metadata.names) ? metadata.names[i] : dsName + " - " + i;
           var values = array.map(function(x, j) { return [j,x]});
           return new TimeSeries(values, name, 0, i, 0, array.length - 1);
         });

@@ -16,7 +16,8 @@
   },
   {
     "name": "ElectricityLoadDiagrams2011",
-    "path": "datasets/ElectricityLoadDiagrams2011.txt"
+    "path": "datasets/ElectricityLoadDiagrams2011.txt",
+    "metadata": "datasets/ElectricityLoadDiagrams2011.json"
   },
   {
     "name": "ECG",

@@ -9,17 +9,19 @@ var InsightSeasonalQuery = React.createClass({
   render: function() {
 
     var querySlider = <InsightQuerySlider
-                        qSeq={this.props.qSeq} 
-                        dsCurrentLength={this.props.dsCurrentLength} 
+                        qSeq={this.props.seq}
+                        dsCurrentLength={this.props.dsCurrentLength}
                         onChange={this._handleQueryChange} />
 
+
+    var maxLength = this.props.ts && this.props.ts.getLength() || 0;
     var lengthSlider = <div className="panel" >
                         <h4>Select the length of each pattern</h4>
                           <div className="options">
                             <AnnotatedSlider
-                              value={this.props.qLength}
+                              value={this.props.length}
                               min={3}
-                              max={this.props.qValues.length - 1}
+                              max={maxLength - 1}
                               step={1}
                               onChange={this._handleLengthChange}/>
                           </div>
