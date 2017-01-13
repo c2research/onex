@@ -179,12 +179,12 @@ D3MultiTimeSeriesChart.prototype._drawAxis = function(svg, data) {
   if (data.labels) {
     svg.append("text")
       .attr("x", width / 2 + margins.left)
-      .attr("y", height + margins.top + 30)
+      .attr("y", height + margins.top + 40)
       .text(data.labels.x);
     svg.append("text")
        .attr("transform", "rotate(-90)")
-       .attr("x", -(height) / 2 - margins.bottom - margins.top)
-       .attr("y", margins.left - 40)
+       .attr("x", -(height) / 2 - margins.top)
+       .attr("y", margins.left - 38)
        .text(data.labels.y);
   }
 

@@ -28,8 +28,9 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
-    var contextHeight = this.props.selectedMatch !== null ? 55 : 0;
-    var graphHeight = height - contextHeight;
+    var graphHeight = 350;
+
+    var contextHeight = height - graphHeight;
 
     var InsightMenuBarResultJSX =
       <InsightMenuBarResult
@@ -88,7 +89,7 @@ var InsightSimilarityResultView = React.createClass({
 
     var metadata = this.props.metadata
     var data = {};
-    var margins = {left: 60, right: 15, top: 35, bottom: 30};
+    var margins = {left: 60, right: 15, top: 35, bottom: 45};
     var title = 'Similarity Results';
     var resultGraph = null;
 
@@ -217,8 +218,8 @@ var InsightSimilarityResultView = React.createClass({
       domains: data.domainsR,
       labels: data.labels
     };
-    var marginsTop    = {left: 60, right: 15, top: 35, bottom: 30};
-    var marginsBottom = {left: 60, right: 15, top: 25, bottom: 30}
+    var marginsTop    = {left: 60, right: 15, top: 35, bottom: 45};
+    var marginsBottom = {left: 60, right: 15, top: 25, bottom: 45}
 
     return <div>
       <MultiTimeSeriesChart

@@ -15,8 +15,9 @@ var InsightSeasonalView = React.createClass({
     var values = this.props.seasonalQueryInfo.qValues;
     var patterns = this.props.results.patterns;
     var showingPatternIndex = this.props.results.showingPatternIndex;
+    var metadata = this.props.metadata;
 
-    var margins = {left: 35, right: 15, top: 20, bottom: 20};
+    var margins = {left: 60, right: 30, top: 20, bottom: 60};
 
     var data = this._buildData();
 
@@ -67,6 +68,7 @@ var InsightSeasonalView = React.createClass({
       series: [{ values: values, strokeWidth: 2 }],
       domains: { x: [ts ? ts.getStart(scaleX) : 0, ts ? ts.getEnd(scaleX) : 0],
                  y: [ts ? ts.getMin(denormalizeY) : 0, ts ? ts.getMax(denormalizeY) : 1]},
+      labels: metadata && metadata.labels
     }
 
     var showingPatternIndex = this.props.results.showingPatternIndex;
