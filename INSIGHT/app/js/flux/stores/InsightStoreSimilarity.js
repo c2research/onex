@@ -232,7 +232,7 @@ var InsightStoreSimilarity = assign({}, {
             return [i + response.start, val];
           });
           var metadata = InsightStore.getMetadata();
-          var name = (metadata && metadata.name) ? metadata.names[response.seq] :
+          var name = (metadata && metadata.names) ? metadata.names[response.seq] :
                                                    InsightStore.getCurrentDSName();
           var resultTimeSeries = new TimeSeries(endlist, name,
                                                 currentState.qFindWithCustomQuery,
