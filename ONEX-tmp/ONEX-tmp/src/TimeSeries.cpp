@@ -306,7 +306,7 @@ seqitem_t _lp2(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout)
 
 seqitem_t _lp2_norm(TimeSeriesInterval &a, TimeSeriesInterval &b, seqitem_t dropout)
 {
-    seqitem_t smax = sqrt(std::max(a.length(), b.length()));
+    seqitem_t smax = sqrt(std::max(a.length(), b.length()) - 1);
 
     // Correct for normalization.
     if (dropout != INF)
