@@ -28,9 +28,8 @@ var InsightSimilarityResultView = React.createClass({
     var dtwBias = this.props.dtwBias;
     var menuWidth = 40;
     var graphWidth = this.props.width - menuWidth - 10;
-    var graphHeight = 350;
-
-    var contextHeight = height - graphHeight;
+    var contextHeight = 80;
+    var graphHeight = height - contextHeight;
 
     var InsightMenuBarResultJSX =
       <InsightMenuBarResult
