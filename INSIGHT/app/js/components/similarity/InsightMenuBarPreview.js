@@ -26,7 +26,7 @@ var InsightMenuBarPreview = React.createClass({
     var that = this;
 
     var IconsJSX = buttons.map(function(type) {
-      return <MenuIcon 
+      return <MenuIcon
               key={type}
               type={type}
               onClick={ () => InsightActions.findMatch() }/>
@@ -58,7 +58,7 @@ var MenuIcon = React.createClass({
       </i>);
   },
   _handleEnter: function(title, message, icon) {
-    InsightActions.sendMessage([title, icon, '#efefef', '#a3cfec', message, true]);
+    InsightActions.sendMessage([title, icon,  '#58768f', '#bbcddb', message, true]);
   },
   _handleLeave: function(){
     InsightActions.sendMessage(['', '', '', '', '', false]);
