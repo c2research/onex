@@ -89,12 +89,16 @@ var InsightSeasonalView = React.createClass({
 
 var PatternSelector = React.createClass({
   render: function() {
-    return <AnnotatedSlider
-            max={this.props.max}
-            min={this.props.min}
-            step={1}
-            value={this.props.value}
-            onChange={this._changeShowingPattern} />;
+    return (
+      <div>
+        <h3 style={{textAlign : 'left'}}> Choose a repeating pattern </h3>
+        <AnnotatedSlider
+          max={this.props.max}
+          min={this.props.min}
+          step={1}
+          value={this.props.value}
+          onChange={this._changeShowingPattern} />
+      </div>);
   },
 
   _changeShowingPattern: function(e) {
