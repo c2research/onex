@@ -195,6 +195,9 @@ i.menu:hover {
 i.menu:active {
   color: #58768f;
 }
+i.moveRight {
+  padding-left: 7px;
+}
 
 
 table {
@@ -222,4 +225,16 @@ tr td:first-child, tr th:first-child {
 	text-align: right;
 	padding-right: 10px;
 	width: 80px;
+}
+
+/* Search Button Animation */
+@-webkit-keyframes greenPulse {
+  from { background-color: #749a02; -webkit-box-shadow: 0 0 9px #333; }
+  50% { background-color: #91bd09; -webkit-box-shadow: 0 0 18px #91bd09; }
+  to { background-color: #749a02; -webkit-box-shadow: 0 0 9px #333; }
+}
+buttonAnimation {
+  -webkit-animation-name: greenPulse;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: 2s;
 }

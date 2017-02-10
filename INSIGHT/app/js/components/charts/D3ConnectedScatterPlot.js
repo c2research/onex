@@ -214,7 +214,6 @@ D3ConnectedScatterPlot.prototype._drawAxis = function(svg, data) {
        .attr("y", margins.left - 40)
        .text(data.labels.y);
   }
-  console.log('asdf!!')
 }
 
 // Draw lines of the series

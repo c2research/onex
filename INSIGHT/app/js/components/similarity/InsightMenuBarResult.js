@@ -108,6 +108,7 @@ var MenuIcon = React.createClass({
       </div>);
   },
   _handleEnter: function(active, title, message, icon) {
+    // sorry for the gross hard coded number 370
     InsightActions.sendMessage([title, icon,  '#58768f','#bbcddb', message, true]);
   },
   _handleLeave: function(active){

@@ -32,8 +32,8 @@ var InsightMessage = React.createClass({
      var style = {
        component: {
          position: 'absolute',
-         top: 25,
-         right: 25,
+         top: 45,
+         right: 45,
          width: 350,
          opacity: 1,
          zIndex: 999999,

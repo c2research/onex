@@ -49,7 +49,7 @@ var MenuIcon = React.createClass({
     var type = this.props.type;
 
     var [icon, className, title, message] = getTypeInfo(type);
-    className += ' menu';
+    className += ' menu buttonAnimation moveRight';
     return (
       <i className={className}
         onClick={this.props.onClick}
@@ -71,7 +71,7 @@ var getTypeInfo = function(type) {
   switch(type){
     case buttonsType.FIND_MATCH:
        icon = "search";
-       className = "fa fa-search fa-2x";
+       className = "fa fa-play fa-2x";
        title = 'Find matches';
        message =  'finds best matches with selected query from the current dataset';
        break;
