@@ -51,8 +51,8 @@ D3OverviewChart.prototype.create = function(el, props, data) {
  // add the brush group
  svg.append("g")
     .attr("class", "brush")
-    .attr('transform', this._translate())
-    .attr('clip-path', 'url(#mainClip)');
+    .attr('transform', this._translate());
+
 
   this._addTitle(svg);
   this.update(el, data);
@@ -77,6 +77,7 @@ D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
   var xScale = this._scales(data.domains).x;
 
   var _onBrush = function(){
+    console.log('onBrush');
     var s = d3.event.selection;
     if (s) {
       var realStart = s[0];
@@ -91,7 +92,7 @@ D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
   }
 
   var brush = d3.brushX()
-                .extent( function() { return [[0,0], [width, height]]; })
+                .extent([[0,0],[width,height]])
                 .on( "brush", _onBrush);
 
   g.call(brush);
@@ -116,7 +117,7 @@ D3OverviewChart.prototype._drawAxis = function(svg, data) {
                        .tickSizeInner(-width)
                        .tickPadding(7)
                        .ticks(Math.round(height / 30));
-                       
+
   var xaxisWrapper = d3.axisBottom(scales.x)
                        .tickSizeInner(-height)
                        .tickPadding(7)
