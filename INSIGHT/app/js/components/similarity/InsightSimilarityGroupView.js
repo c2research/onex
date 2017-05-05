@@ -40,7 +40,7 @@ var MultiTimeSeriesChartCell = function({rowIndex, data, selectedIndex, ...props
     />
 
   //TODO(charlie): when we add viewing the group this can be used
-  var style = {}; //selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
+  var style = selectedIndex == rowIndex ? { backgroundColor: selectedColor } : {};
   return (
     <Cell {...props} style={style}>
       {chart}
@@ -126,7 +126,14 @@ var InsightSimilarityGroupViewRepresentatives = React.createClass({
         headerHeight={40}
         onColumnResizeEndCallback={this._onColumnResizeEndCallback}
         isColumnResizing={false}
-        onRowClick={(e, rowIndex) => InsightActions.selectGroup(rowIndex)}>
+        onRowClick={(e, rowIndex) => {
+          if (rowIndex == this.props.representativesSelectedIndex) {
+            InsightActions.selectGroup(-1);
+          }
+          else {
+            InsightActions.selectGroup(rowIndex);
+          }
+        }}>
         {ColumnGroupsJSX}
       </Table>;
     </div>
@@ -146,8 +153,7 @@ var InsightSimilarityGroupViewSequence = React.createClass({
   },
 
   render: function() {
-    //TODO(cuong): thoughts on of length? its pretty verbose.
-    var columnGroupHeader = 'Exploring Group ' + this.props.groupIndex[1]; // + ' of length ' + this.props.groupIndex[0];
+    var columnGroupHeader = 'Exploring Similarity Group';
     var ColumnGroupsJSX =
           <ColumnGroup
             header={<TableHeader title={columnGroupHeader} icon={"toggle-on"} />}>

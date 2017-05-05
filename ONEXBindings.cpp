@@ -164,8 +164,9 @@ py::list getSubsequenceDefault(int dbIndex, int dbSeq, int dbStart, int dbEnd) {
  *
  * \param dbIndex index of a dataset in the dataset list.
  * \param binSize number of data points in a bin that used for data compression.
- * \return a list where each element is a Python list representing a sequence
- *         in the dataset
+ * \return a list where each element is a tuple (ts, groupId) where:
+ *         ts: is Python list representing a sequence in the dataset
+ *         groupId: is the id of the group that the sequence resides in
  */
 py::list getAllSequences(int dbIndex, int binSize)
 {
@@ -174,7 +175,8 @@ py::list getAllSequences(int dbIndex, int binSize)
   int seqLength = os.getdbseqlength(dbIndex);
   for (int i = 0; i < seqCount; i++) {
     py::list ts = getSubsequence(dbIndex, i, 0, seqLength - 1, binSize);
-    result.append(ts);
+    int groupId = os.getGroupIndex(dbIndex, i, TimeInterval(0, seqLength - 1)).second;
+    result.append(py::make_tuple(ts, groupId));
   }
   return result;
 }
@@ -320,13 +322,13 @@ py::list getGroupValues(int dbIndex, int length, int groupIndex)
 }
 
 /**
- * Get a group index of a time series. 
+ * Get a group index of a time series.
  * \param dbIndex index of the a dataset
  * \param dbSeq index of a sequence in the dataset
  * \param start starting position of the sequence
  * \param end ending position of the sequence
  * \return a tuple (len, idx) where len is the length of the time series
- *         and idx is the index of the group among the set of groups of length len. 
+ *         and idx is the index of the group among the set of groups of length len.
  */
 py::tuple getGroupIndex(int dbIndex, int dbSeq, int start, int end)
 {

@@ -177,6 +177,9 @@ pair<int, int> OnlineSession::getGroupIndex(int dbIndex, int dbSeq, TimeInterval
   int length = interval.length();
   int index = -1;
   GroupableTimeSeriesSet* currentDS = datasets[dbIndex];
+  if (!currentDS->validGrouping()) {
+    return make_pair(-1, -1);
+  }
   TimeSeriesSetGrouping* allGroups = currentDS->getGrouping();
   TimeSeriesGrouping* sameLengthGroups = allGroups->getGroup(interval.length() - 1);
   const vector<TimeSeriesGroup*> &groups = sameLengthGroups->getGroups();

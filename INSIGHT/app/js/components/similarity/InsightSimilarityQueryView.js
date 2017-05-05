@@ -69,7 +69,15 @@ var InsightSimilarityQueryView = React.createClass({
     var [queryList, queryIndex] = (this.props.queryLocation == InsightConstants.QUERY_LOCATION_DATASET)
       ? [this.props.queryListDataset, this.props.querySelectedIndexDataset]
       : [this.props.queryListUpload, this.props.querySelectedIndexUpload];
-
+    var rep = this.props.representativesSelectedIndex;
+    var filteredQueryList = queryList.filter((ts) => {
+      return rep == -1 || ts.groupID == rep; });
+    var displayIndex = -1;
+    filteredQueryList.forEach((ts, i) => {
+      if (ts.getSeq() == queryIndex) {
+        displayIndex = i;
+      }
+    });
     var queryLocation = this.props.queryLocation;
     var QueriesJSX =
       <ColumnGroup
@@ -77,30 +85,33 @@ var InsightSimilarityQueryView = React.createClass({
         <Column
           columnKey="index"
           header={<Cell>Index</Cell>}
-          cell={<NameCell data={queryList} queryIndex={queryIndex} />}
+          cell={<NameCell data={filteredQueryList} queryIndex={displayIndex} />}
           width={this.state.indexColumnWidth}
           isResizable={true}
         />
         <Column
           header={<Cell>Time Series Query</Cell>}
-          cell={<MultiTimeSeriesChartCell data={queryList} queryIndex={queryIndex} />}
+          cell={<MultiTimeSeriesChartCell data={filteredQueryList} queryIndex={displayIndex} />}
           width={0}
           flexGrow={1}
         />
       </ColumnGroup>;
-      
+
     var tableJSX =
       <div className="viewTable">
         <Table
           rowHeight={50}
-          rowsCount={queryList.length}
+          rowsCount={filteredQueryList.length}
           width={this.props.width}
           height={this.props.height}
           groupHeaderHeight={60}
           headerHeight={40}
           onColumnResizeEndCallback={this._onColumnResizeEndCallback}
           isColumnResizing={false}
-          onRowClick={this._selectQuery}>
+          onRowClick={(e, rowIndex) => {
+            InsightActions.selectSimilarityQuery(filteredQueryList[rowIndex].getSeq());
+            InsightActions.loadSimilarityQuery();
+          }}>
           {QueriesJSX}
         </Table>
       </div>;
@@ -108,10 +119,6 @@ var InsightSimilarityQueryView = React.createClass({
     return <div>
             {tableJSX}
            </div>;
-  },
-  _selectQuery: function(e, rowIndex) {
-    InsightActions.selectSimilarityQuery(rowIndex);
-    InsightActions.loadSimilarityQuery();
   }
 });
 

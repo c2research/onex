@@ -114,7 +114,7 @@ def api_dataset_init():
     return jsonify(dsLength=ds_length,
                    metadata=metadata,
                    normalization=normalization,
-                   numGroups=num_groups, 
+                   numGroups=num_groups,
                    requestID=request_id)
 
 
@@ -330,7 +330,7 @@ def api_get_dataset_queries():
   request_id = request.args.get('requestID', type=int)
   with lock:
     queries = onex.getAllSequences(current_ds_index, 2)
-    queries = map(_to_string, queries)
+    queries = [(_to_string(ts), gr) for ts, gr in queries]
     return jsonify(queries=queries, requestID=request_id)
 
 

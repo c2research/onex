@@ -89,12 +89,15 @@ var InsightStoreSimilarity = assign({}, {
       success: function(response) {
         var name = files[0].name;
         queryListViewData.queryListUpload = response.queries.map(function(array, i) {
-          var values = array.map(function(x, j) { return [j,x]});
+          var ts = array[0];
+          var group = array[1];
+
+          var values = ts.map(function(x, j) { return [j,x]; });
           return new TimeSeries(values, name + " - " + i ,
                                                 InsightConstants.QUERY_LOCATION_UPLOAD,
                                                 i,
                                                 0,
-                                                array.length - 1);
+                                                ts.length - 1);
         });
 
         queryListViewData.queryLocation = InsightConstants.QUERY_LOCATION_UPLOAD;
@@ -369,6 +372,7 @@ var InsightStoreSimilarity = assign({}, {
         var length = InsightStore.getDSCurrentLength();
         groupViewData.groupSequenceSelectedIndex = -1;
         groupViewData.showingRepresentatives = true;
+        groupViewData.representativesSelectedIndex = -1;
         groupViewData.representatives = response.representatives.map(function(tuple, i) {
           var [array, count] = tuple;
           var values = array.map(function(x, j) { return [j,x]});
@@ -453,9 +457,13 @@ var InsightStoreSimilarity = assign({}, {
         var metadata = InsightStore.getMetadata();
 
         queryListViewData.queryListDataset = response.queries.map(function(array, i) {
+          var ts = array[0];
+          var groupID = array[1];
           var name = (metadata && metadata.names) ? metadata.names[i] : dsName + " - " + i;
-          var values = array.map(function(x, j) { return [j,x]});
-          return new TimeSeries(values, name, 0, i, 0, array.length - 1);
+          var values = ts.map(function(x, j) { return [j,x]; });
+          var newTimeSeries = new TimeSeries(values, name, 0, i, 0, ts.length - 1);
+          newTimeSeries.groupID = groupID;
+          return newTimeSeries;
         });
 
         queryListViewData.querySelectedIndexDataset = -1;

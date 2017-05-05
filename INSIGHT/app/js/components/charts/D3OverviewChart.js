@@ -77,7 +77,6 @@ D3OverviewChart.prototype._updateBrushFunction = function(svg, data) {
   var xScale = this._scales(data.domains).x;
 
   var _onBrush = function(){
-    console.log('onBrush');
     var s = d3.event.selection;
     if (s) {
       var realStart = s[0];
