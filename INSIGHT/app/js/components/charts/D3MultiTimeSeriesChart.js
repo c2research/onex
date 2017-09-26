@@ -67,24 +67,15 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
   svg.append('g').classed('yaxisWrapper', true)
      .attr('transform', 'translate(' + margins.left + ',' + margins.top + ')')
 
-  // Clip everything that is out of the main view
-  svg.append('clipPath').attr('id', 'mainClip')
-     .append('rect')
-     .attr('x', 0)
-     .attr('y', 0)
-     .attr('width', width)
-     .attr('height', height);
 
   // Other groups are translated to the main area.
   svg.append('g')
      .classed('linesWrapper', true)
-     .attr('transform', this._translate())
-     .attr('clip-path', 'url(#mainClip)');
+     .attr('transform', this._translate());
 
   svg.append('g')
      .classed('warpingPathWrapper', true)
-     .attr('transform', this._translate())
-     .attr('clip-path', 'url(#mainClip)');
+     .attr('transform', this._translate());
 
   svg.append('g')
     .classed('legend', true)
@@ -93,13 +84,11 @@ D3MultiTimeSeriesChart.prototype.create = function(el, props, data) {
 
   svg.append('g')
      .classed('pointsWrapper', true)
-     .attr('transform', this._translate())
-     .attr('clip-path', 'url(#mainClip)');
+     .attr('transform', this._translate());
 
   svg.append('g')
      .classed('voronoiWrapper', true)
-     .attr('transform', this._translate())
-     .attr('clip-path', 'url(#mainClip)');
+     .attr('transform', this._translate());
 
   var tooltipWrapper = svg.append('g').classed('tooltipWrapper', true).attr('transform', this._translate())
 
