@@ -302,7 +302,9 @@ void TimeSeriesGroup::addMember(int seq, int start, bool update)
     members[seq * perSeq + start] = true;
 
     if (update) {
-        centroid.addArray(dataset->getRawData(seq, start));
+        if (count == 1) {
+            centroid.addArray(dataset->getRawData(seq, start));
+        }
 
         envelopeCacheValid = false;
     }
