@@ -1,7 +1,7 @@
 BOOST_INC = /usr/include
 BOOST_LIB = /usr/lib
 
-ONEX = ONEX-tmp/ONEX-tmp
+ONEX = ONEX
 ONEX_INC = $(ONEX)/src
 ONEX_LIB = $(ONEX)/src
 

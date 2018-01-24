@@ -4,6 +4,7 @@
 *.o
 *.obj
 onex
+!onex/
 
 # Precompiled Headers
 *.gch
