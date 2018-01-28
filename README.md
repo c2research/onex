@@ -1,8 +1,4 @@
-# ONEX-SYstem
-
-## ONEX: 
-
-## INSIGHT: Interactive Time Series Analytics System
+## ONEX-INSIGHT: ONEX-Interactive Time Series Analytics System
 
 INSIGHT is a visual analytics system for interactive time series mining built on top of the Online Exploration of Time Series Data (ONEX).
 
