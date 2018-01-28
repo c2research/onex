@@ -18,7 +18,7 @@ $(TARGET).so: $(TARGET).o $(ONEX_LIB)/*.o
 	g++ -std=c++11 -shared $(TARGET).o $(ONEX_LIB)/*.o $$(python-config --ldflags) -lboost_python -o $(TARGET_LOC)/$(TARGET).so
 
 $(TARGET).o: $(TARGET).cpp
-	g++ -std=c++11 $$(python-config --include) -I$(BOOST_INC) -I$(ONEX_INC) -fPIC -c $(TARGET).cpp
+	g++ -std=c++11 $$(python-config --includes) -I$(BOOST_INC) -I$(ONEX_INC) -fPIC -c $(TARGET).cpp
 
 clean: 
 	rm -f *.so *.o
